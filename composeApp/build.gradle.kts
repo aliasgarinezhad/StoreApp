@@ -55,6 +55,16 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.gson)
+            implementation("androidx.camera:camera-core:1.2.0-alpha01")
+            implementation("androidx.camera:camera-camera2:1.2.0-alpha01")
+            implementation("androidx.camera:camera-lifecycle:1.2.0-alpha01")
+            implementation("androidx.camera:camera-view:1.2.0-alpha01")
+            implementation("androidx.camera:camera-extensions:1.2.0-alpha01")
+            implementation("com.google.mlkit:barcode-scanning:17.0.2")
+            implementation("io.coil-kt:coil-compose:2.1.0")
+
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -97,6 +107,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.volley)
     debugImplementation(compose.uiTooling)
 }
 
