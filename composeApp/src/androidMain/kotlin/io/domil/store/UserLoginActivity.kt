@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.android.volley.NoConnectionError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import com.jeanwest.mobile.theme.ErrorSnackBar
+import io.domil.store.theme.ErrorSnackBar
 import com.jeanwest.mobile.theme.MyApplicationTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

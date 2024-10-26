@@ -1,5 +1,8 @@
 package io.domil.store
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ManualRefillProduct(
     var name: String,
     var KBarCode: String,

@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    kotlin("plugin.serialization") version "2.0.21"
 }
 
 kotlin {
@@ -63,8 +64,7 @@ kotlin {
             implementation("androidx.camera:camera-extensions:1.2.0-alpha01")
             implementation("com.google.mlkit:barcode-scanning:17.0.2")
             implementation("io.coil-kt:coil-compose:2.1.0")
-
-
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -75,6 +75,7 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
         }
     }
 }

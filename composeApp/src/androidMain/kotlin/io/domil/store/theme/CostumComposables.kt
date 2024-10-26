@@ -1,4 +1,4 @@
-package com.jeanwest.mobile.theme
+package io.domil.store.theme
 
 import android.annotation.SuppressLint
 import android.util.Size
@@ -30,6 +30,15 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import com.jeanwest.mobile.theme.BorderLight
+import com.jeanwest.mobile.theme.BottomBar
+import com.jeanwest.mobile.theme.Done
+import com.jeanwest.mobile.theme.Error
+import com.jeanwest.mobile.theme.Jeanswest
+import com.jeanwest.mobile.theme.Shapes
+import com.jeanwest.mobile.theme.borderColor
+import com.jeanwest.mobile.theme.innerBackground
+import com.jeanwest.mobile.theme.warningColor
 import io.domil.store.ManualRefillProduct
 import io.domil.store.R
 import java.util.concurrent.Executors

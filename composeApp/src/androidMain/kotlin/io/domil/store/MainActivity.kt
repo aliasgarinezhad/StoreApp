@@ -39,12 +39,10 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Shapes
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.Typography
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
@@ -67,7 +65,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
@@ -76,14 +73,9 @@ import com.android.volley.NoConnectionError
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.jeanwest.mobile.theme.Background
-import com.jeanwest.mobile.theme.BarcodeScannerWithCamera
 import com.jeanwest.mobile.theme.DisableButtonColor
-import com.jeanwest.mobile.theme.ErrorSnackBar
-import com.jeanwest.mobile.theme.FilterDropDownList
-import com.jeanwest.mobile.theme.Item
 import com.jeanwest.mobile.theme.Jeanswest
 import com.jeanwest.mobile.theme.MyApplicationTheme
 import com.jeanwest.mobile.theme.Shapes
@@ -93,9 +85,15 @@ import com.jeanwest.mobile.theme.deleteColor
 import com.jeanwest.mobile.theme.iconColor
 import com.jeanwest.mobile.theme.unselectedColor
 import com.jeanwest.mobile.theme.warningColor
+import io.domil.store.theme.BarcodeScannerWithCamera
+import io.domil.store.theme.ErrorSnackBar
+import io.domil.store.theme.FilterDropDownList
+import io.domil.store.theme.Item
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -297,9 +295,8 @@ class ManualRefillActivity : ComponentActivity() {
 
         edit.putString(
             "ManualRefillProducts",
-            Gson().toJson(manualRefillProducts).toString()
+            Json.encodeToString(manualRefillProducts)
         )
-
         edit.apply()
     }
 
@@ -307,18 +304,18 @@ class ManualRefillActivity : ComponentActivity() {
 
         val memory = PreferenceManager.getDefaultSharedPreferences(this)
 
-        val type = object : TypeToken<List<ManualRefillProduct>>() {}.type
-
         username = memory.getString("username", "") ?: ""
         token = memory.getString("accessToken", "") ?: ""
         fullName = memory.getString("userFullName", "") ?: ""
 
         storeFilterValue = memory.getInt("userLocationCode", 0)
 
-        manualRefillProducts = Gson().fromJson(
-            memory.getString("ManualRefillProducts", ""),
-            type
-        ) ?: ArrayList()
+        manualRefillProducts = Json.decodeFromString<MutableList<ManualRefillProduct>>(
+            memory.getString(
+                "ManualRefillProducts",
+                ""
+            ) ?: ""
+        )
 
         uiList.addAll(manualRefillProducts)
         sumOfManualRefill = 0
@@ -471,6 +468,7 @@ class ManualRefillActivity : ComponentActivity() {
                                 )
                             }
                         }
+
                         else -> {
                             CoroutineScope(Dispatchers.Default).launch {
                                 state.showSnackbar(
@@ -497,6 +495,7 @@ class ManualRefillActivity : ComponentActivity() {
                         )
                     }
                 }
+
                 else -> {
                     CoroutineScope(Dispatchers.Default).launch {
                         state.showSnackbar(
@@ -576,6 +575,7 @@ class ManualRefillActivity : ComponentActivity() {
                         )
                     }
                 }
+
                 else -> {
                     CoroutineScope(Dispatchers.Default).launch {
                         state.showSnackbar(
