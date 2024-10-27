@@ -39,7 +39,7 @@ import com.jeanwest.mobile.theme.Shapes
 import com.jeanwest.mobile.theme.borderColor
 import com.jeanwest.mobile.theme.innerBackground
 import com.jeanwest.mobile.theme.warningColor
-import io.domil.store.ManualRefillProduct
+import io.domil.store.Product
 import io.domil.store.R
 import java.util.concurrent.Executors
 
@@ -81,7 +81,7 @@ fun ErrorSnackBar(state: SnackbarHostState) {
 @Composable
 fun Item(
     i: Int,
-    uiList: MutableList<ManualRefillProduct>,
+    uiList: MutableList<Product>,
     clickable: Boolean = false,
     onClick: () -> Unit = {}
 ) {
@@ -160,7 +160,7 @@ fun Item(
             ) {
 
                 Text(
-                    text = uiList[i].KBarCode,
+                    text = uiList[i].kBarCode,
                     style = MaterialTheme.typography.body2,
                     textAlign = TextAlign.Right,
                 )

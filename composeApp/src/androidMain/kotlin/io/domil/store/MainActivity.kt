@@ -8,8 +8,6 @@ import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.util.Log
-import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -18,21 +16,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.FabPosition
 import androidx.compose.material.Icon
@@ -53,10 +45,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.BottomStart
 import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -70,21 +60,12 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.android.volley.NoConnectionError
-import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import com.google.gson.reflect.TypeToken
-import com.jeanwest.mobile.theme.Background
-import com.jeanwest.mobile.theme.DisableButtonColor
-import com.jeanwest.mobile.theme.Jeanswest
 import com.jeanwest.mobile.theme.MyApplicationTheme
 import com.jeanwest.mobile.theme.Shapes
 import com.jeanwest.mobile.theme.Typography
-import com.jeanwest.mobile.theme.deleteCircleColor
-import com.jeanwest.mobile.theme.deleteColor
 import com.jeanwest.mobile.theme.iconColor
-import com.jeanwest.mobile.theme.unselectedColor
-import com.jeanwest.mobile.theme.warningColor
 import io.domil.store.theme.BarcodeScannerWithCamera
 import io.domil.store.theme.ErrorSnackBar
 import io.domil.store.theme.FilterDropDownList
@@ -92,8 +73,6 @@ import io.domil.store.theme.Item
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -106,18 +85,13 @@ class ManualRefillActivity : ComponentActivity() {
     private var token = ""
 
     //charge ui parameters
-    private var isDataLoading by mutableStateOf(false)
+    private var loading by mutableStateOf(false)
     private var state = SnackbarHostState()
-    var uiList = mutableStateListOf<ManualRefillProduct>()
-    private var sumOfManualRefill by mutableStateOf(0)
-    private var isSubmitting by mutableStateOf(false)
-    private var isSubmitSelected by mutableStateOf(false)
-    private var manualRefillProducts = mutableListOf<ManualRefillProduct>()
 
     // search ui parameters
     private var productCode by mutableStateOf("")
-    private var searchUiList = mutableStateListOf<ManualRefillProduct>()
-    private var filteredUiList = mutableStateListOf<ManualRefillProduct>()
+    private var searchUiList = mutableStateListOf<Product>()
+    private var filteredUiList = mutableStateListOf<Product>()
     private var colorFilterValues = mutableStateListOf("همه رنگ ها")
     private var sizeFilterValues = mutableStateListOf("همه سایز ها")
     private var colorFilterValue by mutableStateOf("همه رنگ ها")
@@ -128,11 +102,7 @@ class ManualRefillActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            Page()
-        }
         loadMemory()
-
         if (username == "") {
             val intent =
                 Intent(this, UserLoginActivity::class.java)
@@ -141,6 +111,9 @@ class ManualRefillActivity : ComponentActivity() {
         }
         checkPermission()
         clearCash()
+        setContent {
+            Page()
+        }
     }
 
     private fun clearCash() {
@@ -185,210 +158,16 @@ class ManualRefillActivity : ComponentActivity() {
         }
     }
 
-    private fun sendManualRefillRequest() {
-
-        if (sumOfManualRefill == 0) {
-            CoroutineScope(Dispatchers.Default).launch {
-                state.showSnackbar(
-                    "هنوز کالایی برای شارژ انتخاب نکرده اید",
-                    null,
-                    SnackbarDuration.Long
-                )
-            }
-            return
-        }
-
-        uiList.forEach {
-            if (it.requestedNum > it.wareHouseNumber) {
-                CoroutineScope(Dispatchers.Default).launch {
-                    state.showSnackbar(
-                        "تعداد درخواستی کالای ${it.KBarCode}" + " از موجودی انبار بیشتر است.",
-                        null,
-                        SnackbarDuration.Long
-                    )
-                }
-                return
-            }
-        }
-
-        isSubmitting = true
-
-        val url = "https://rfid-api.avakatan.ir/charge-requests"
-        val request = object : JsonArrayRequest(Method.POST, url, null, {
-
-            CoroutineScope(Dispatchers.Default).launch {
-                state.showSnackbar(
-                    "درخواست برای انبار دار ارسال شد.",
-                    null,
-                    SnackbarDuration.Long
-                )
-            }
-            isSubmitting = false
-            uiList.clear()
-            manualRefillProducts.clear()
-            sumOfManualRefill = 0
-            saveToMemory()
-
-        }, {
-            if (it is NoConnectionError) {
-                CoroutineScope(Dispatchers.Default).launch {
-                    state.showSnackbar(
-                        "اینترنت قطع است. شبکه وای فای را بررسی کنید.",
-                        null,
-                        SnackbarDuration.Long
-                    )
-                }
-            } else {
-                CoroutineScope(Dispatchers.Default).launch {
-                    state.showSnackbar(
-                        it.toString(),
-                        null,
-                        SnackbarDuration.Long
-                    )
-                }
-                Log.e("error", it.toString())
-            }
-
-            isSubmitting = false
-        }) {
-            override fun getHeaders(): MutableMap<String, String> {
-                val params = HashMap<String, String>()
-                params["Content-Type"] = "application/json;charset=UTF-8"
-                params["Authorization"] =
-                    "Bearer $token"
-                return params
-            }
-
-            override fun getBody(): ByteArray {
-
-                val products = JSONArray()
-
-                uiList.forEach {
-                    repeat(it.requestedNum) { _ ->
-                        val productJson = JSONObject()
-                        productJson.put("BarcodeMainID", it.primaryKey)
-                        productJson.put("KBarCode", it.KBarCode)
-                        products.put(productJson)
-                    }
-                }
-
-                return products.toString().toByteArray()
-            }
-        }
-
-        val queue = Volley.newRequestQueue(this)
-        queue.add(request)
-    }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-
-        if (keyCode == 4) {
-            back()
-        }
-        return true
-    }
-
-    private fun saveToMemory() {
-
-        val memory = PreferenceManager.getDefaultSharedPreferences(this)
-        val edit = memory.edit()
-
-        edit.putString(
-            "ManualRefillProducts",
-            Json.encodeToString(manualRefillProducts)
-        )
-        edit.apply()
-    }
-
     private fun loadMemory() {
-
         val memory = PreferenceManager.getDefaultSharedPreferences(this)
-
         username = memory.getString("username", "") ?: ""
         token = memory.getString("accessToken", "") ?: ""
         fullName = memory.getString("userFullName", "") ?: ""
-
         storeFilterValue = memory.getInt("userLocationCode", 0)
 
-        manualRefillProducts = Json.decodeFromString<MutableList<ManualRefillProduct>>(
-            memory.getString(
-                "ManualRefillProducts",
-                ""
-            ) ?: ""
-        )
-
-        uiList.addAll(manualRefillProducts)
-        sumOfManualRefill = 0
-        uiList.forEach {
-            sumOfManualRefill += it.requestedNum
-        }
-    }
-
-
-    private fun addToRefillList(KBarCode: String) {
-
-        val productIndexInUiList = searchUiList.indexOfLast {
-            it.KBarCode == KBarCode
-        }
-
-        manualRefillProducts.forEach {
-            if (searchUiList[productIndexInUiList].KBarCode == it.KBarCode) {
-                if (it.requestedNum >= it.wareHouseNumber) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        state.showSnackbar(
-                            "تعداد درخواستی از موجودی انبار بیشتر است.",
-                            null,
-                            SnackbarDuration.Long,
-                        )
-                    }
-                    return
-                } else {
-                    it.requestedNum++
-                    filterUiList()
-                    saveToMemory()
-                    return
-                }
-            }
-        }
-
-        if (searchUiList[productIndexInUiList].wareHouseNumber == 0) {
-            CoroutineScope(Dispatchers.Main).launch {
-                state.showSnackbar(
-                    "تعداد درخواستی از موجودی انبار بیشتر است.",
-                    null,
-                    SnackbarDuration.Long,
-                )
-            }
-            return
-        }
-
-        manualRefillProducts.add(searchUiList[productIndexInUiList])
-        manualRefillProducts[manualRefillProducts.indexOfLast {
-            it.KBarCode == KBarCode
-        }].requestedNum++
-
-        filterUiList()
-        saveToMemory()
     }
 
     private fun filterUiList() {
-
-        searchUiList.forEach {
-            var isRequested = false
-            manualRefillProducts.forEach { it1 ->
-                if (it.KBarCode == it1.KBarCode) {
-                    it.requestedNum = it1.requestedNum
-                    isRequested = true
-                }
-            }
-            if (!isRequested) {
-                it.requestedNum = 0
-            }
-        }
-
-        /*val wareHouseFilterOutput = searchUiList.filter {
-            it.wareHouseNumber > 0
-        }*/
 
         val sizeFilterOutput = if (sizeFilterValue == "همه سایز ها") {
             searchUiList
@@ -407,12 +186,7 @@ class ManualRefillActivity : ComponentActivity() {
         }
         filteredUiList.clear()
         filteredUiList.addAll(colorFilterOutput)
-        sumOfManualRefill = 0
-        uiList.clear()
-        uiList.addAll(manualRefillProducts)
-        uiList.forEach {
-            sumOfManualRefill += it.requestedNum
-        }
+
     }
 
     private fun getSimilarProducts() {
@@ -427,7 +201,7 @@ class ManualRefillActivity : ComponentActivity() {
             }
         }
 
-        isDataLoading = true
+        loading = true
 
         searchUiList.clear()
         filteredUiList.clear()
@@ -443,7 +217,7 @@ class ManualRefillActivity : ComponentActivity() {
 
             if (products.length() > 0) {
                 jsonArrayProcess(products)
-                isDataLoading = false
+                loading = false
             } else {
 
                 val url2 =
@@ -456,7 +230,7 @@ class ManualRefillActivity : ComponentActivity() {
                     if (products2.length() > 0) {
                         jsonArrayProcess(products2)
                     }
-                    isDataLoading = false
+                    loading = false
                 }, { it2 ->
                     when (it2) {
                         is NoConnectionError -> {
@@ -479,7 +253,7 @@ class ManualRefillActivity : ComponentActivity() {
                             }
                         }
                     }
-                    isDataLoading = false
+                    loading = false
                 })
                 val queue2 = Volley.newRequestQueue(this)
                 queue2.add(request2)
@@ -506,7 +280,7 @@ class ManualRefillActivity : ComponentActivity() {
                     }
                 }
             }
-            isDataLoading = false
+            loading = false
         })
 
         val queue = Volley.newRequestQueue(this)
@@ -522,9 +296,9 @@ class ManualRefillActivity : ComponentActivity() {
             colorFilterValues.add(json.getString("Color"))
             sizeFilterValues.add(json.getString("Size"))
 
-            val product = ManualRefillProduct(
+            val product = Product(
                 name = json.getString("productName"),
-                KBarCode = json.getString("KBarCode"),
+                kBarCode = json.getString("KBarCode"),
                 imageUrl = json.getString("ImgUrl"),
                 wareHouseNumber = json.getInt("dbCountDepo"),
                 productCode = json.getString("K_Bar_Code"),
@@ -549,7 +323,7 @@ class ManualRefillActivity : ComponentActivity() {
 
     private fun getScannedProductProperties() {
 
-        isDataLoading = true
+        loading = true
 
         val url = "https://rfid-api.avakatan.ir/products/v4"
 
@@ -561,7 +335,7 @@ class ManualRefillActivity : ComponentActivity() {
             }
             productCode = searchUiList[0].productCode
             filterUiList()
-            isDataLoading = false
+            loading = false
 
         }, {
             when (it) {
@@ -586,7 +360,7 @@ class ManualRefillActivity : ComponentActivity() {
                     }
                 }
             }
-            isDataLoading = false
+            loading = false
 
         }) {
             override fun getHeaders(): MutableMap<String, String> {
@@ -613,82 +387,17 @@ class ManualRefillActivity : ComponentActivity() {
         queue.add(request)
     }
 
-    private fun back() {
-
-        if (isCameraOn) {
-            isCameraOn = false
-        } else {
-            saveToMemory()
-            finish()
-        }
-    }
-
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
     fun Page() {
         MyApplicationTheme {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                 Scaffold(
-                    bottomBar = { BottomBar() },
-                    content = {
-                        if (isSubmitSelected) {
-                            Content()
-                        } else {
-                            SearchContent()
-                        }
-                    },
+                    content = { SearchContent() },
                     snackbarHost = { ErrorSnackBar(state) },
-                    floatingActionButton = {
-                        if (!isSubmitSelected) {
-                            BarcodeScanButton()
-                        }
-                    },
-                    floatingActionButtonPosition = if (!isSubmitSelected) {
-                        FabPosition.Center
-                    } else {
-                        FabPosition.End
-                    },
+                    floatingActionButton = { BarcodeScanButton() },
+                    floatingActionButtonPosition = FabPosition.End,
                 )
-            }
-        }
-    }
-
-    @Composable
-    fun SendRequestButton() {
-
-        Box(modifier = Modifier.fillMaxSize()) {
-
-            Box(
-                modifier = Modifier
-                    .padding(bottom = 56.dp)
-                    .shadow(6.dp, RoundedCornerShape(0.dp))
-                    .background(Color.White, RoundedCornerShape(0.dp))
-                    .height(100.dp)
-                    .align(BottomCenter),
-            ) {
-
-                Button(modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
-                    .align(Center)
-                    .fillMaxWidth()
-                    .align(Center),
-                    enabled = !isSubmitting,
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Jeanswest,
-                        disabledBackgroundColor = DisableButtonColor,
-                        disabledContentColor = Color.White
-                    ),
-                    onClick = {
-                        if (!isSubmitting) {
-                            sendManualRefillRequest()
-                        }
-                    }) {
-                    Text(
-                        text = if (isSubmitting) "در حال ارسال درخواست" else "ارسال درخواست به انباردار",
-                        style = Typography.body1,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
             }
         }
     }
@@ -711,210 +420,6 @@ class ManualRefillActivity : ComponentActivity() {
                 Text(
                     text = "اسکن کالای جدید",
                     style = Typography.h1
-                )
-            }
-        }
-    }
-
-    @Composable
-    fun BottomBar() {
-
-        BottomNavigation(backgroundColor = com.jeanwest.mobile.theme.BottomBar) {
-            BottomNavigationItem(
-                selected = !isSubmitSelected,
-                onClick = {
-                    isSubmitSelected = false
-                    filterUiList()
-                },
-                selectedContentColor = Jeanswest,
-                unselectedContentColor = unselectedColor,
-                icon = {
-
-                    Box(
-                        modifier = Modifier
-                            .height(30.dp)
-                            .fillMaxWidth()
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_add),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .padding(top = 0.dp)
-                                .size(24.dp)
-                                .align(Center)
-                        )
-                    }
-                },
-                label = {
-                    Text(text = "شارژ")
-                }
-            )
-
-            BottomNavigationItem(
-                selected = isSubmitSelected,
-                onClick = {
-                    isSubmitSelected = true
-                    uiList.clear()
-                    uiList.addAll(manualRefillProducts)
-                    sumOfManualRefill = 0
-                    uiList.forEach {
-                        sumOfManualRefill += it.requestedNum
-                    }
-                },
-                selectedContentColor = Jeanswest,
-                unselectedContentColor = unselectedColor,
-                icon = {
-                    Box(modifier = Modifier.height(30.dp)) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.submit),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .padding(top = 2.dp)
-                                .size(24.dp)
-                                .align(Center)
-                        )
-                        if (sumOfManualRefill > 0) {
-                            Box(
-                                modifier = Modifier
-                                    .padding(top = 0.dp, end = 24.dp)
-                                    .background(
-                                        shape = RoundedCornerShape(24.dp),
-                                        color = warningColor
-                                    )
-                                    .size(18.dp)
-                                    .align(TopCenter)
-                            ) {
-                                Text(
-                                    text = sumOfManualRefill.toString(),
-                                    modifier = Modifier
-                                        .fillMaxHeight()
-                                        .align(Center),
-                                    style = Typography.caption,
-                                    color = Color.Black
-                                )
-                            }
-                        }
-                    }
-                },
-                label = {
-                    Text(text = "ثبت درخواست")
-                }
-            )
-        }
-    }
-
-    @Composable
-    fun Content() {
-
-        Column {
-
-            Column(
-                modifier = Modifier
-                    .padding(start = 8.dp, end = 8.dp, top = 0.dp, bottom = 0.dp)
-                    .background(
-                        MaterialTheme.colors.onPrimary,
-                        shape = MaterialTheme.shapes.small
-                    )
-                    .fillMaxWidth()
-            ) {
-
-                Text(
-                    "ثبت درخواست " + "(" + sumOfManualRefill + ")",
-                    style = Typography.h1,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Right,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = Background, shape = Shapes.small)
-                        .padding(start = 16.dp, end = 16.dp, top = 16.dp),
-                )
-            }
-
-            if (uiList.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .padding(bottom = 56.dp)
-                        .fillMaxSize()
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .align(Center)
-                            .width(256.dp)
-                    ) {
-                        Box(
-
-
-                            modifier = Modifier
-                                .background(color = Color.White, shape = Shapes.medium)
-                                .size(256.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_empty_box),
-                                contentDescription = "",
-                                tint = Color.Unspecified,
-                                modifier = Modifier.align(Center)
-                            )
-                        }
-
-                        Text(
-                            "هنوز کالایی برای ثبت درخواست شارژ انتخاب نکرده اید",
-                            style = Typography.h1,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                            modifier = Modifier.padding(top = 16.dp, start = 4.dp, end = 4.dp),
-                        )
-                    }
-                }
-            } else {
-                LazyColumn(modifier = Modifier.padding(top = 2.dp, bottom = 156.dp)) {
-
-                    items(uiList.size) { i ->
-                        LazyColumnItem(i)
-                    }
-                }
-            }
-        }
-
-        if (!uiList.isEmpty()) {
-            SendRequestButton()
-        }
-    }
-
-    @Composable
-    fun LazyColumnItem(i: Int) {
-
-        val topPaddingClearButton = if (i == 0) 8.dp else 4.dp
-
-        Box {
-
-            Item(i, uiList)
-
-            Box(
-                modifier = Modifier
-                    .padding(top = topPaddingClearButton, end = 8.dp)
-                    .background(
-                        shape = RoundedCornerShape(36.dp),
-                        color = deleteCircleColor
-                    )
-                    .size(30.dp)
-                    .align(Alignment.TopEnd)
-                    .clickable {
-
-                        manualRefillProducts.remove(uiList[i])
-                        saveToMemory()
-                        uiList.clear()
-                        uiList.addAll(manualRefillProducts)
-                        sumOfManualRefill = 0
-                        uiList.forEach {
-                            sumOfManualRefill += it.requestedNum
-                        }
-                    }
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_clear_24),
-                    contentDescription = "",
-                    tint = deleteColor,
-                    modifier = Modifier
-                        .align(Center)
-                        .size(20.dp)
                 )
             }
         }
@@ -1012,7 +517,7 @@ class ManualRefillActivity : ComponentActivity() {
                 }
             }
 
-            if (isDataLoading) {
+            if (loading) {
                 Row(
                     modifier = Modifier
                         .padding(32.dp)
@@ -1020,7 +525,7 @@ class ManualRefillActivity : ComponentActivity() {
                 ) {
                     CircularProgressIndicator(color = MaterialTheme.colors.primary)
 
-                    if (isDataLoading) {
+                    if (loading) {
                         Text(
                             text = "در حال بارگذاری",
                             modifier = Modifier
@@ -1041,11 +546,9 @@ class ManualRefillActivity : ComponentActivity() {
             if (filteredUiList.isEmpty()) {
                 EmptyList()
             } else {
-                LazyColumn(modifier = Modifier.padding(top = 0.dp, bottom = 56.dp)) {
-
+                LazyColumn {
                     items(filteredUiList.size) { i ->
                         Item(i, filteredUiList, true) {
-                            addToRefillList(filteredUiList[i].KBarCode)
                         }
                     }
                 }
