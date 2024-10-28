@@ -8,7 +8,6 @@ import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -44,7 +43,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomStart
 import androidx.compose.ui.Alignment.Companion.Center
@@ -60,9 +58,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.android.volley.NoConnectionError
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
 import com.jeanwest.mobile.theme.MyApplicationTheme
 import com.jeanwest.mobile.theme.Shapes
 import com.jeanwest.mobile.theme.Typography
@@ -71,20 +66,15 @@ import io.domil.store.theme.BarcodeScannerWithCamera
 import io.domil.store.theme.ErrorSnackBar
 import io.domil.store.theme.FilterDropDownList
 import io.domil.store.theme.Item
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.engine.okhttp.OkHttp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import networking.GetProductData
 import networking.Product
 import networking.createHttpClient
-import org.json.JSONArray
-import org.json.JSONObject
 import util.onError
 import util.onSuccess
 import java.io.File
-
 
 class ManualRefillActivity : ComponentActivity() {
 
@@ -107,13 +97,12 @@ class ManualRefillActivity : ComponentActivity() {
     private var storeFilterValue = 0
     private val beep: ToneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
     private var isCameraOn by mutableStateOf(false)
-    private lateinit var client : GetProductData
+    private lateinit var client: GetProductData
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loadMemory()
-        if (username == "") {
-            val intent =
-                Intent(this, UserLoginActivity::class.java)
+        if (token == "") {
+            val intent = Intent(this, UserLoginActivity::class.java)
             intent.flags += Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         }
@@ -142,7 +131,6 @@ class ManualRefillActivity : ComponentActivity() {
     }
 
     private fun checkPermission() {
-
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.CAMERA
@@ -196,215 +184,88 @@ class ManualRefillActivity : ComponentActivity() {
         filteredUiList.addAll(colorFilterOutput)
 
     }
-//
-//    private fun getSimilarProducts() {
-//
-//        if (productCode == "کد محصول") {
-//            CoroutineScope(Dispatchers.Default).launch {
-//                state.showSnackbar(
-//                    "لطفا کد محصول را وارد کنید.",
-//                    null,
-//                    SnackbarDuration.Long
-//                )
-//            }
-//        }
-//
-//        loading = true
-//
-//        searchUiList.clear()
-//        filteredUiList.clear()
-//        colorFilterValues = mutableStateListOf("همه رنگ ها")
-//        sizeFilterValues = mutableStateListOf("همه سایز ها")
-//
-//        val url1 =
-//            "https://rfid-api.avakatan.ir/products/similars?DepartmentInfo_ID=$storeFilterValue&K_Bar_Code=$productCode"
-//
-//        val request1 = JsonObjectRequest(url1, { response1 ->
-//
-//            val products = response1.getJSONArray("products")
-//
-//            if (products.length() > 0) {
-//                jsonArrayProcess(products)
-//                loading = false
-//            } else {
-//
-//                val url2 =
-//                    "https://rfid-api.avakatan.ir/products/similars?DepartmentInfo_ID=$storeFilterValue&kbarcode=$productCode"
-//
-//                val request2 = JsonObjectRequest(url2, { response2 ->
-//
-//                    val products2 = response2.getJSONArray("products")
-//
-//                    if (products2.length() > 0) {
-//                        jsonArrayProcess(products2)
-//                    }
-//                    loading = false
-//                }, { it2 ->
-//                    when (it2) {
-//                        is NoConnectionError -> {
-//                            CoroutineScope(Dispatchers.Default).launch {
-//                                state.showSnackbar(
-//                                    "اینترنت قطع است. شبکه وای فای را بررسی کنید.",
-//                                    null,
-//                                    SnackbarDuration.Long
-//                                )
-//                            }
-//                        }
-//
-//                        else -> {
-//                            CoroutineScope(Dispatchers.Default).launch {
-//                                state.showSnackbar(
-//                                    it2.toString(),
-//                                    null,
-//                                    SnackbarDuration.Long
-//                                )
-//                            }
-//                        }
-//                    }
-//                    loading = false
-//                })
-//                val queue2 = Volley.newRequestQueue(this)
-//                queue2.add(request2)
-//            }
-//        }, {
-//            when (it) {
-//                is NoConnectionError -> {
-//                    CoroutineScope(Dispatchers.Default).launch {
-//                        state.showSnackbar(
-//                            "اینترنت قطع است. شبکه وای فای را بررسی کنید.",
-//                            null,
-//                            SnackbarDuration.Long
-//                        )
-//                    }
-//                }
-//
-//                else -> {
-//                    CoroutineScope(Dispatchers.Default).launch {
-//                        state.showSnackbar(
-//                            it.toString(),
-//                            null,
-//                            SnackbarDuration.Long
-//                        )
-//                    }
-//                }
-//            }
-//            loading = false
-//        })
-//
-//        val queue = Volley.newRequestQueue(this)
-//        queue.add(request1)
-//    }
 
-//    private fun jsonArrayProcess(similarProductsJsonArray: JSONArray) {
-//
-//        for (i in 0 until similarProductsJsonArray.length()) {
-//
-//            val json = similarProductsJsonArray.getJSONObject(i)
-//
-//            colorFilterValues.add(json.getString("Color"))
-//            sizeFilterValues.add(json.getString("Size"))
-//
-//            val product = Product(
-//                name = json.getString("productName"),
-//                kBarCode = json.getString("KBarCode"),
-//                imageUrl = json.getString("ImgUrl"),
-//                wareHouseNumber = json.getInt("dbCountDepo"),
-//                productCode = json.getString("K_Bar_Code"),
-//                size = json.getString("Size"),
-//                color = json.getString("Color"),
-//                originalPrice = json.getString("OrigPrice"),
-//                salePrice = json.getString("SalePrice"),
-//                primaryKey = json.getLong("BarcodeMain_ID"),
-//                rfidKey = json.getLong("RFID"),
-//                kName = json.getString("K_Name"),
-//                requestedNum = 0,
-//                storeNumber = json.getInt("dbCountStore"),
-//            )
-//            searchUiList.add(product)
-//        }
-//
-//        colorFilterValues = colorFilterValues.distinct().toMutableStateList()
-//        sizeFilterValues = sizeFilterValues.distinct().toMutableStateList()
-//
-//        getScannedProductProperties()
-//    }
+    private fun clear() {
+        searchUiList.clear()
+        filteredUiList.clear()
+        colorFilterValues = mutableStateListOf("همه رنگ ها")
+        sizeFilterValues = mutableStateListOf("همه سایز ها")
+        productCode = ""
+    }
+
+    private fun getSimilarProducts() {
+        if (productCode == "کد محصول") {
+            CoroutineScope(Dispatchers.Default).launch {
+                state.showSnackbar(
+                    "لطفا کد محصول را وارد کنید.",
+                    null,
+                    SnackbarDuration.Long
+                )
+            }
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            loading = true
+            clear()
+            client.getSimilarProductsByBarcode(productCode, storeFilterValue)
+                .onSuccess { responseBarcode ->
+                    if (responseBarcode.isEmpty()) {
+                        client.getSimilarProductsBySearchCode(productCode, storeFilterValue)
+                            .onSuccess { responseSearchCode ->
+                                if (responseSearchCode.isEmpty()) {
+                                    println("request body = 1st body is empty")
+                                    loading = false
+                                } else {
+                                    clear()
+                                    searchUiList.addAll(responseSearchCode)
+                                    filterUiList()
+                                    loading = false
+                                }
+                            }.onError {
+                                println("request body = error1")
+                                loading = false
+                            }
+                        loading = false
+                    } else {
+                        clear()
+                        searchUiList.addAll(responseBarcode)
+                        filterUiList()
+                        loading = false
+                    }
+                }.onError {
+                    client.getSimilarProductsBySearchCode(productCode, storeFilterValue)
+                        .onSuccess { responseSearchCode ->
+                            if (responseSearchCode.isEmpty()) {
+                                println("request body = 1st body is empty")
+                                loading = false
+                            } else {
+                                clear()
+                                searchUiList.addAll(responseSearchCode)
+                                filterUiList()
+                                loading = false
+                            }
+                        }.onError {
+                            loading = false
+                            println("request body = error1")
+                        }
+                    loading = false
+                    println("request body = error2 $it")
+                }
+            loading = false
+        }
+    }
 
     private fun getScannedProductProperties() {
-
-//        loading = true
-//
-//        val url = "https://rfid-api.avakatan.ir/products/v4"
-//
-//        val request = object : JsonObjectRequest(Method.POST, url, null, {
-//
-//            val barcodes = it.getJSONArray("KBarCodes")
-//            if (barcodes.length() != 0) {
-//                colorFilterValue = barcodes.getJSONObject(0).getString("Color")
-//            }
-//            productCode = searchUiList[0].productCode
-//            filterUiList()
-//            loading = false
-//
-//        }, {
-//            when (it) {
-//                is NoConnectionError -> {
-//
-//                    CoroutineScope(Dispatchers.Default).launch {
-//                        state.showSnackbar(
-//                            "اینترنت قطع است. شبکه وای فای را بررسی کنید.",
-//                            null,
-//                            SnackbarDuration.Long
-//                        )
-//                    }
-//                }
-//
-//                else -> {
-//                    CoroutineScope(Dispatchers.Default).launch {
-//                        state.showSnackbar(
-//                            it.toString(),
-//                            null,
-//                            SnackbarDuration.Long
-//                        )
-//                    }
-//                }
-//            }
-//            loading = false
-//
-//        }) {
-//            override fun getHeaders(): MutableMap<String, String> {
-//                val params = HashMap<String, String>()
-//                params["Content-Type"] = "application/json;charset=UTF-8"
-//                params["Authorization"] = "Bearer $token"
-//                return params
-//            }
-//
-//            override fun getBody(): ByteArray {
-//                val json = JSONObject()
-//                val epcArray = JSONArray()
-//                val barcodeArray = JSONArray()
-//
-//                barcodeArray.put(productCode)
-//
-//                json.put("epcs", epcArray)
-//                json.put("KBarCodes", barcodeArray)
-//                return json.toString().toByteArray()
-//            }
-//        }
-//
-//        val queue = Volley.newRequestQueue(this)
-//        queue.add(request)
-
         CoroutineScope(Dispatchers.IO).launch {
+            loading = true
             client.getScannedProductProperties(productCode)
                 .onSuccess {
-                    searchUiList.clear()
+                    clear()
                     searchUiList.addAll(it)
                     filterUiList()
-                    Log.e("api response", "finally worked")
                 }
                 .onError {
-                    Log.e("api response", it.name)
                 }
+            loading = false
         }
     }
 
@@ -561,8 +422,7 @@ class ManualRefillActivity : ComponentActivity() {
                 isCameraOn = false
                 productCode = barcodes[0].displayValue.toString()
                 beep.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
-                //getSimilarProducts()
-                getScannedProductProperties()
+                getSimilarProducts()
             }
 
             if (filteredUiList.isEmpty()) {
@@ -607,7 +467,7 @@ class ManualRefillActivity : ComponentActivity() {
             keyboardActions = KeyboardActions(onSearch = {
                 focusManager.clearFocus()
                 isCameraOn = false
-                //getSimilarProducts()
+                getSimilarProducts()
             }),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             colors = TextFieldDefaults.outlinedTextFieldColors(

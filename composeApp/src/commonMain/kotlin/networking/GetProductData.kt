@@ -2,8 +2,9 @@ package networking
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.plugins.timeout
+import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -12,11 +13,9 @@ import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromJsonElement
-import kotlinx.serialization.json.jsonArray
 import util.NetworkError
 import util.Result
 
@@ -24,37 +23,84 @@ class GetProductData(
     private val token: String,
     private val httpClient: HttpClient
 ) {
-//    suspend fun getSimilarProducts(uncensored: String): Result<String, NetworkError> {
-//        val response = try {
-//            httpClient.get(
-//                urlString = "https://www.purgomalum.com/service/json"
-//            ) {
-//                parameter("text", uncensored)
-//            }
-//        } catch (e: UnresolvedAddressException) {
-//            return Result.Error(NetworkError.NO_INTERNET)
-//        } catch (e: SerializationException) {
-//            return Result.Error(NetworkError.SERIALIZATION)
-//        }
-//
-//        return when (response.status.value) {
-//            in 200..299 -> {
-//                val censoredText = response.body<CensoredText>()
-//                Result.Success(censoredText.result)
-//            }
-//
-//            401 -> Result.Error(NetworkError.UNAUTHORIZED)
-//            409 -> Result.Error(NetworkError.CONFLICT)
-//            408 -> Result.Error(NetworkError.REQUEST_TIMEOUT)
-//            413 -> Result.Error(NetworkError.PAYLOAD_TOO_LARGE)
-//            in 500..599 -> Result.Error(NetworkError.SERVER_ERROR)
-//            else -> Result.Error(NetworkError.UNKNOWN)
-//        }
-//    }
 
+    suspend fun getSimilarProductsByBarcode(
+        barcode: String,
+        depId: Int
+    ): Result<List<Product>, NetworkError> {
+
+        val response = try {
+            httpClient.get(
+                urlString = "https://rfid-api.avakatan.ir/products/similars/localdb?DepartmentInfo_ID=$depId&kbarcode=$barcode"
+            ) {
+                contentType(ContentType.Application.Json)
+                header("Authorization", "Bearer $token")
+            }
+
+        } catch (e: UnresolvedAddressException) {
+            return Result.Error(NetworkError.NO_INTERNET)
+        } catch (e: SerializationException) {
+            return Result.Error(NetworkError.SERIALIZATION)
+        } finally {
+            httpClient.close()
+        }
+
+        return when (response.status.value) {
+            in 200..299 -> {
+                val respone = Json.decodeFromJsonElement<List<Product>>(response.body<JsonObject>()["products"]!!)
+                println("response navid ${respone.toList()}")
+                Result.Success(respone)
+            }
+
+            401 -> Result.Error(NetworkError.UNAUTHORIZED)
+            409 -> Result.Error(NetworkError.CONFLICT)
+            408 -> Result.Error(NetworkError.REQUEST_TIMEOUT)
+            413 -> Result.Error(NetworkError.PAYLOAD_TOO_LARGE)
+            in 500..599 -> Result.Error(NetworkError.SERVER_ERROR)
+            else -> {
+                Result.Error(NetworkError.UNKNOWN)
+            }
+        }
+    }
+
+    suspend fun getSimilarProductsBySearchCode(
+        searhCode: String,
+        depId: Int
+    ): Result<List<Product>, NetworkError> {
+        val response = try {
+            httpClient.get(
+                urlString = "https://rfid-api.avakatan.ir/products/similars/localdb?DepartmentInfo_ID=$depId&&K_Bar_Code=$searhCode"
+            ) {
+                contentType(ContentType.Application.Json)
+                header("Authorization", "Bearer $token")
+            }
+
+        } catch (e: UnresolvedAddressException) {
+            return Result.Error(NetworkError.NO_INTERNET)
+        } catch (e: SerializationException) {
+            return Result.Error(NetworkError.SERIALIZATION)
+        } finally {
+            httpClient.close()
+        }
+
+        return when (response.status.value) {
+            in 200..299 -> {
+                val respone = Json.decodeFromJsonElement<List<Product>>(response.body<JsonObject>()["products"]!!)
+                println("response navid ${respone.toList()}")
+                Result.Success(respone)
+            }
+            401 -> Result.Error(NetworkError.UNAUTHORIZED)
+            409 -> Result.Error(NetworkError.CONFLICT)
+            408 -> Result.Error(NetworkError.REQUEST_TIMEOUT)
+            413 -> Result.Error(NetworkError.PAYLOAD_TOO_LARGE)
+            in 500..599 -> Result.Error(NetworkError.SERVER_ERROR)
+            else -> {
+                Result.Error(NetworkError.UNKNOWN)
+            }
+        }
+    }
 
     suspend fun getScannedProductProperties(productCode: String): Result<List<Product>, NetworkError> {
-
         val bodyMap = mapOf("KBarCodes" to JsonArray(listOf(JsonPrimitive(productCode))))
         val body = JsonObject(bodyMap)
         println("request body = $body")
@@ -64,8 +110,6 @@ class GetProductData(
                 urlString = "https://rfid-api.avakatan.ir/products/v4"
             ) {
                 contentType(ContentType.Application.Json)
-                // charset(Charset.forName("UTF-8"))
-
                 setBody(body)
                 header("Authorization", "Bearer $token")
             }
@@ -80,8 +124,8 @@ class GetProductData(
 
         return when (response.status.value) {
             in 200..299 -> {
-                println(response.toString())
-                val respone = Json.decodeFromJsonElement<List<Product>>(response.body<JsonObject>()["KBarCodes"]!!)
+                val respone =
+                    Json.decodeFromJsonElement<List<Product>>(response.body<JsonObject>()["KBarCodes"]!!)
                 Result.Success(respone)
             }
 

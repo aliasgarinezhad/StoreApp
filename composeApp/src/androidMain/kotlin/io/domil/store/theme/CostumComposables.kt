@@ -143,12 +143,12 @@ fun Item(
             ) {
 
                 Text(
-                    text = uiList[i].KBarCode,
+                    text = uiList[i].KBarCode ?: "not found",
                     style = MaterialTheme.typography.body2,
                     textAlign = TextAlign.Right,
                 )
                 Text(
-                    text = uiList[i].ItemName,
+                    text = uiList[i].productName ?: "not found",
                     style = MaterialTheme.typography.h4,
                     textAlign = TextAlign.Right,
                 )
@@ -168,7 +168,7 @@ fun Item(
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Text(
-                    text = "فروشگاه: " + uiList[i].storeCount,
+                    text = "فروشگاه: " + uiList[i].dbCountStore,
                     style = MaterialTheme.typography.h3,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
@@ -181,7 +181,7 @@ fun Item(
                         .width(66.dp)
                 )
                 Text(
-                    text = "انبار: " + uiList[i].depoCount.toString(),
+                    text = "انبار: " + uiList[i].dbCountDepo.toString(),
                     style = MaterialTheme.typography.h3,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
