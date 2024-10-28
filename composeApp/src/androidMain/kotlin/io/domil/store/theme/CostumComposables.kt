@@ -39,7 +39,7 @@ import com.jeanwest.mobile.theme.Shapes
 import com.jeanwest.mobile.theme.borderColor
 import com.jeanwest.mobile.theme.innerBackground
 import com.jeanwest.mobile.theme.warningColor
-import io.domil.store.Product
+import networking.Product
 import io.domil.store.R
 import java.util.concurrent.Executors
 
@@ -110,7 +110,7 @@ fun Item(
 
             Image(
                 painter = rememberImagePainter(
-                    uiList[i].imageUrl,
+                    uiList[i].ImgUrl,
                 ),
                 contentDescription = "",
                 modifier = Modifier
@@ -127,23 +127,6 @@ fun Item(
                     .fillMaxHeight()
                     .width(70.dp)
             )
-
-            if (uiList[i].requestedNum > 0) {
-                Box(
-                    modifier = Modifier
-                        .padding(top = 6.dp, start = 6.dp)
-                        .background(
-                            shape = RoundedCornerShape(24.dp),
-                            color = warningColor
-                        )
-                        .size(24.dp)
-                ) {
-                    Text(
-                        text = uiList[i].requestedNum.toString(),
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            }
         }
 
         Row(
@@ -160,12 +143,12 @@ fun Item(
             ) {
 
                 Text(
-                    text = uiList[i].kBarCode,
+                    text = uiList[i].KBarCode,
                     style = MaterialTheme.typography.body2,
                     textAlign = TextAlign.Right,
                 )
                 Text(
-                    text = uiList[i].name,
+                    text = uiList[i].ItemName,
                     style = MaterialTheme.typography.h4,
                     textAlign = TextAlign.Right,
                 )
@@ -185,7 +168,7 @@ fun Item(
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Text(
-                    text = "فروشگاه: " + uiList[i].storeNumber,
+                    text = "فروشگاه: " + uiList[i].storeCount,
                     style = MaterialTheme.typography.h3,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
@@ -198,7 +181,7 @@ fun Item(
                         .width(66.dp)
                 )
                 Text(
-                    text = "انبار: " + uiList[i].wareHouseNumber.toString(),
+                    text = "انبار: " + uiList[i].depoCount.toString(),
                     style = MaterialTheme.typography.h3,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
