@@ -69,14 +69,13 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.runtime.compose)
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
             implementation(libs.bundles.ktor)
             implementation(libs.coil.compose.core)
             implementation(libs.coil.compose)
             implementation(libs.coil.mp)
             implementation(libs.coil.network.ktor)
+            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha10")
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -112,7 +111,6 @@ android {
 }
 
 dependencies {
-    implementation(libs.volley)
     debugImplementation(compose.uiTooling)
 }
 

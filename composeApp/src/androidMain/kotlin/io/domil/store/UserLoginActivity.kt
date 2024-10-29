@@ -16,9 +16,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.android.volley.NoConnectionError
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
 import io.domil.store.theme.ErrorSnackBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +34,7 @@ class UserLoginActivity : ComponentActivity() {
     }
 
     private fun signIn() {
-
+/*
         val memory = PreferenceManager.getDefaultSharedPreferences(this)
         val editor = memory.edit()
 
@@ -115,6 +112,8 @@ class UserLoginActivity : ComponentActivity() {
             }
         }
         logInRequest.add(jsonRequest)
+
+ */
     }
 /*
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")

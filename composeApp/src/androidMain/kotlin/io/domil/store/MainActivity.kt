@@ -70,29 +70,8 @@ import java.io.File
 
 class ManualRefillActivity : ComponentActivity() {
 
-    private var fullName = ""
-    private var username = ""
-    private var token = ""
-
-    //charge ui parameters
-    private var loading by mutableStateOf(false)
-    private var state = SnackbarHostState()
-
-    // search ui parameters
-    private var productCode by mutableStateOf("")
-    private var searchUiList = mutableStateListOf<Product>()
-    private var filteredUiList = mutableStateListOf<Product>()
-    private var colorFilterValues = mutableStateListOf("همه رنگ ها")
-    private var sizeFilterValues = mutableStateListOf("همه سایز ها")
-    private var colorFilterValue by mutableStateOf("همه رنگ ها")
-    private var sizeFilterValue by mutableStateOf("همه سایز ها")
-    private var storeFilterValue = 0
-    private var isCameraOn by mutableStateOf(false)
-    private lateinit var client: GetProductData
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        loadMemory()
         /*if (token == "") {
             val intent = Intent(this, UserLoginActivity::class.java)
             intent.flags += Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -100,35 +79,8 @@ class ManualRefillActivity : ComponentActivity() {
         }*/
         checkPermission()
         clearCash()
-        client = GetProductData(token, createHttpClient())
-        setContent {
-            Page(
-                state = state,
-                sizeFilterValue = sizeFilterValue,
-                sizeFilterValues = sizeFilterValues,
-                colorFilterValue = colorFilterValue,
-                colorFilterValues = colorFilterValues,
-                onImeAction = { onImeAction() },
-                onScanButtonClick = { openCamera() },
-                onTextValueChange = { productCode = it },
-                onSizeFilterValueChange = { sizeFilterValue = it },
-                onColorFilterValueChange = { colorFilterValue = it },
-                onBottomBarButtonClick = { openCamera() },
-                loading = loading,
-                isCameraOn = isCameraOn,
-                textFieldValue = productCode,
-                uiList = filteredUiList
-            )
-        }
-    }
 
-    private fun onImeAction() {
-        isCameraOn = false
-        getSimilarProducts()
-    }
-
-    private fun openCamera() {
-        isCameraOn = true
+        setContent { App() }
     }
 
     private fun clearCash() {
@@ -169,122 +121,6 @@ class ManualRefillActivity : ComponentActivity() {
                 ),
                 0
             )
-        }
-    }
-
-    private fun loadMemory() {
-        val memory = PreferenceManager.getDefaultSharedPreferences(this)
-        username = memory.getString("username", "") ?: ""
-        token = memory.getString("accessToken", "") ?: ""
-        fullName = memory.getString("userFullName", "") ?: ""
-        storeFilterValue = memory.getInt("userLocationCode", 0)
-        storeFilterValue = 68
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MDE2IiwibmFtZSI6Itiq2LPYqiBSRklEINiq2LPYqiBSRklEIiwiZGVwSWQiOjY4LCJ3YXJlaG91c2VzIjpbeyJXYXJlSG91c2VfSUQiOjE3MDYsIldhcmVIb3VzZVR5cGVzX0lEIjoxfSx7IldhcmVIb3VzZV9JRCI6MTcwNywiV2FyZUhvdXNlVHlwZXNfSUQiOjJ9LHsiV2FyZUhvdXNlX0lEIjoxOTE4LCJXYXJlSG91c2VUeXBlc19JRCI6Mn0seyJXYXJlSG91c2VfSUQiOjE5MTksIldhcmVIb3VzZVR5cGVzX0lEIjoxfV0sInJvbGVzIjpbInVzZXIiXSwic2NvcGVzIjpbImVycCJdLCJpYXQiOjE3MzAxMzE1MzgsImV4cCI6MjMxMDczOTUzOCwiYXVkIjoiZXJwIn0.5_2b4yTWVGAv3LSuaERsdONtSUMRqEg-vZq6wxD1rMo"
-    }
-
-    private fun filterUiList() {
-
-        val sizeFilterOutput = if (sizeFilterValue == "همه سایز ها") {
-            searchUiList
-        } else {
-            searchUiList.filter {
-                it.Size == sizeFilterValue
-            }
-        }
-
-        val colorFilterOutput = if (colorFilterValue == "همه رنگ ها") {
-            sizeFilterOutput
-        } else {
-            sizeFilterOutput.filter {
-                it.Color == colorFilterValue
-            }
-        }
-        filteredUiList.clear()
-        filteredUiList.addAll(colorFilterOutput)
-
-    }
-
-    private fun clear() {
-        searchUiList.clear()
-        filteredUiList.clear()
-        colorFilterValues = mutableStateListOf("همه رنگ ها")
-        sizeFilterValues = mutableStateListOf("همه سایز ها")
-        productCode = ""
-    }
-
-    private fun getSimilarProducts() {
-        if (productCode == "کد محصول") {
-            CoroutineScope(Dispatchers.Default).launch {
-                state.showSnackbar(
-                    "لطفا کد محصول را وارد کنید.",
-                    null,
-                    SnackbarDuration.Long
-                )
-            }
-        }
-        CoroutineScope(Dispatchers.IO).launch {
-            loading = true
-            client.getSimilarProductsByBarcode(productCode, storeFilterValue)
-                .onSuccess { responseBarcode ->
-                    if (responseBarcode.isEmpty()) {
-                        client.getSimilarProductsBySearchCode(productCode, storeFilterValue)
-                            .onSuccess { responseSearchCode ->
-                                if (responseSearchCode.isEmpty()) {
-                                    println("request body = 1st body is empty")
-                                    loading = false
-                                } else {
-                                    clear()
-                                    searchUiList.addAll(responseSearchCode)
-                                    filterUiList()
-                                    loading = false
-                                }
-                            }.onError {
-                                println("request body = error1")
-                                loading = false
-                            }
-                        loading = false
-                    } else {
-                        println("response: $responseBarcode")
-                        clear()
-                        searchUiList.clear()
-                        searchUiList.addAll(responseBarcode)
-                        filterUiList()
-                        loading = false
-                    }
-                }.onError {
-                    client.getSimilarProductsBySearchCode(productCode, storeFilterValue)
-                        .onSuccess { responseSearchCode ->
-                            if (responseSearchCode.isEmpty()) {
-                                println("request body = 1st body is empty")
-                                loading = false
-                            } else {
-                                clear()
-                                searchUiList.addAll(responseSearchCode)
-                                filterUiList()
-                                loading = false
-                            }
-                        }.onError {
-                            loading = false
-                            println("request body = error1")
-                        }
-                    loading = false
-                    println("request body = error2 $it")
-                }
-        }
-    }
-
-    private fun getScannedProductProperties() {
-        CoroutineScope(Dispatchers.IO).launch {
-            loading = true
-            client.getScannedProductProperties(productCode)
-                .onSuccess {
-                    clear()
-                    searchUiList.addAll(it)
-                    filterUiList()
-                }
-                .onError {
-                }
-            loading = false
         }
     }
 }
