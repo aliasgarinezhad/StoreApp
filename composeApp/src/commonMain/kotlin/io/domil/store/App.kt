@@ -40,13 +40,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.jeanwest.mobile.theme.MyApplicationTheme
-import com.jeanwest.mobile.theme.Shapes
-import com.jeanwest.mobile.theme.Typography
-import io.domil.store.theme.iconColor
 import io.domil.store.theme.ErrorSnackBar
 import io.domil.store.theme.FilterDropDownList
 import io.domil.store.theme.Item
+import io.domil.store.theme.MyApplicationTheme
+import io.domil.store.theme.Shapes
+import io.domil.store.theme.iconColor
 import networking.Product
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -142,7 +141,7 @@ fun BarcodeScanButton(onBottomBarButtonClick: () -> Unit) {
             )
             Text(
                 text = "اسکن کالای جدید",
-                style = Typography.h1
+                style = MaterialTheme.typography.h1
             )
         }
     }
@@ -357,7 +356,7 @@ fun EmptyList(
 
             Text(
                 "بارکد را اسکن یا کد محصول را در کادر جستجو وارد کنید",
-                style = Typography.h1,
+                style = MaterialTheme.typography.h1,
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                 modifier = Modifier.padding(top = 16.dp, start = 4.dp, end = 4.dp),
             )

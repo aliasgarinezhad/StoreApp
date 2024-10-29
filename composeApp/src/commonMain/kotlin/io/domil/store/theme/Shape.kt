@@ -1,4 +1,4 @@
-package com.jeanwest.mobile.theme
+package io.domil.store.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

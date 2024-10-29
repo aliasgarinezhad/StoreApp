@@ -1,4 +1,4 @@
-package com.jeanwest.mobile.theme
+package io.domil.store.theme
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
@@ -45,7 +45,7 @@ fun MyApplicationTheme(
 
     MaterialTheme(
         colors = colors,
-        typography = Typography,
+        typography = MyTypography(),
         shapes = Shapes,
         content = content
     )

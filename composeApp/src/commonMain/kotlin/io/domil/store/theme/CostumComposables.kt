@@ -1,17 +1,30 @@
 package io.domil.store.theme
 
-import android.annotation.SuppressLint
-import android.util.Size
-import androidx.activity.ComponentActivity
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material.Divider
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,27 +34,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import coil.compose.rememberImagePainter
-import com.google.mlkit.vision.barcode.BarcodeScannerOptions
-import com.google.mlkit.vision.barcode.BarcodeScanning
-import com.google.mlkit.vision.barcode.common.Barcode
-import com.google.mlkit.vision.common.InputImage
-import com.jeanwest.mobile.theme.BorderLight
-import com.jeanwest.mobile.theme.BottomBar
-import com.jeanwest.mobile.theme.Done
-import com.jeanwest.mobile.theme.Error
-import com.jeanwest.mobile.theme.Jeanswest
-import com.jeanwest.mobile.theme.Shapes
-import com.jeanwest.mobile.theme.borderColor
-import com.jeanwest.mobile.theme.innerBackground
-import com.jeanwest.mobile.theme.warningColor
+import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
+import coil3.compose.rememberAsyncImagePainter
 import networking.Product
-import io.domil.store.R
-import java.util.concurrent.Executors
+import org.jetbrains.compose.resources.painterResource
+import storeapp.composeapp.generated.resources.Res
+import storeapp.composeapp.generated.resources.ic_baseline_arrow_drop_down_24
+import storeapp.composeapp.generated.resources.ic_baseline_arrow_drop_up_24
 
 @Composable
 fun ErrorSnackBar(state: SnackbarHostState) {
@@ -81,7 +83,7 @@ fun ErrorSnackBar(state: SnackbarHostState) {
 @Composable
 fun Item(
     i: Int,
-    uiList: MutableList<Product>,
+    uiList: List<Product>,
     clickable: Boolean = false,
     onClick: () -> Unit = {}
 ) {
@@ -108,10 +110,8 @@ fun Item(
 
         Box {
 
-            Image(
-                painter = rememberImagePainter(
-                    uiList[i].ImgUrl,
-                ),
+            AsyncImage(
+                model = uiList[i].ImgUrl,
                 contentDescription = "",
                 modifier = Modifier
                     .padding(end = 4.dp, top = 12.dp, bottom = 12.dp, start = 12.dp)
@@ -196,7 +196,7 @@ fun FilterDropDownList(
     modifier: Modifier,
     icon: @Composable () -> Unit,
     text: @Composable () -> Unit,
-    values: MutableList<String>,
+    values: List<String>,
     onClick: (item: String) -> Unit
 ) {
 
@@ -228,10 +228,10 @@ fun FilterDropDownList(
             text()
             Icon(
                 painter = painterResource(
-                    id = if (expanded) {
-                        R.drawable.ic_baseline_arrow_drop_up_24
+                    if (expanded) {
+                        Res.drawable.ic_baseline_arrow_drop_up_24
                     } else {
-                        R.drawable.ic_baseline_arrow_drop_down_24
+                        Res.drawable.ic_baseline_arrow_drop_down_24
                     }
                 ),
                 "",
@@ -259,7 +259,7 @@ fun FilterDropDownList(
         }
     }
 }
-
+/*
 @SuppressLint("UnsafeOptInUsageError")
 @Composable
 fun BarcodeScannerWithCamera(
@@ -328,4 +328,4 @@ fun BarcodeScannerWithCamera(
             AndroidView({ previewView }, modifier = Modifier.fillMaxSize())
         }
     }
-}
+}*/

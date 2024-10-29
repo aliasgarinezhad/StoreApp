@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import com.android.volley.NoConnectionError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import com.jeanwest.mobile.theme.MyApplicationTheme
 import io.domil.store.theme.ErrorSnackBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +33,7 @@ class UserLoginActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { Page() }
+        //setContent { Page() }
     }
 
     private fun signIn() {
@@ -117,7 +116,7 @@ class UserLoginActivity : ComponentActivity() {
         }
         logInRequest.add(jsonRequest)
     }
-
+/*
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
     fun Page() {
@@ -200,5 +199,7 @@ class UserLoginActivity : ComponentActivity() {
             label = { Text(text = "رمز عبور") }
         )
     }
+
+ */
 
 }

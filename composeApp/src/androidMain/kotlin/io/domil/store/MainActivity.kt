@@ -58,14 +58,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.jeanwest.mobile.theme.MyApplicationTheme
-import com.jeanwest.mobile.theme.Shapes
-import com.jeanwest.mobile.theme.Typography
-import com.jeanwest.mobile.theme.iconColor
-import io.domil.store.theme.BarcodeScannerWithCamera
-import io.domil.store.theme.ErrorSnackBar
-import io.domil.store.theme.FilterDropDownList
-import io.domil.store.theme.Item
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -95,23 +87,48 @@ class ManualRefillActivity : ComponentActivity() {
     private var colorFilterValue by mutableStateOf("همه رنگ ها")
     private var sizeFilterValue by mutableStateOf("همه سایز ها")
     private var storeFilterValue = 0
-    private val beep: ToneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
     private var isCameraOn by mutableStateOf(false)
     private lateinit var client: GetProductData
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loadMemory()
-        if (token == "") {
+        /*if (token == "") {
             val intent = Intent(this, UserLoginActivity::class.java)
             intent.flags += Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
-        }
+        }*/
         checkPermission()
         clearCash()
         client = GetProductData(token, createHttpClient())
         setContent {
-            Page()
+            Page(
+                state = state,
+                sizeFilterValue = sizeFilterValue,
+                sizeFilterValues = sizeFilterValues,
+                colorFilterValue = colorFilterValue,
+                colorFilterValues = colorFilterValues,
+                onImeAction = { onImeAction() },
+                onScanButtonClick = { openCamera() },
+                onTextValueChange = { productCode = it },
+                onSizeFilterValueChange = { sizeFilterValue = it },
+                onColorFilterValueChange = { colorFilterValue = it },
+                onBottomBarButtonClick = { openCamera() },
+                loading = loading,
+                isCameraOn = isCameraOn,
+                textFieldValue = productCode,
+                uiList = filteredUiList
+            )
         }
+    }
+
+    private fun onImeAction() {
+        isCameraOn = false
+        getSimilarProducts()
+    }
+
+    private fun openCamera() {
+        isCameraOn = true
     }
 
     private fun clearCash() {
@@ -161,6 +178,8 @@ class ManualRefillActivity : ComponentActivity() {
         token = memory.getString("accessToken", "") ?: ""
         fullName = memory.getString("userFullName", "") ?: ""
         storeFilterValue = memory.getInt("userLocationCode", 0)
+        storeFilterValue = 68
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MDE2IiwibmFtZSI6Itiq2LPYqiBSRklEINiq2LPYqiBSRklEIiwiZGVwSWQiOjY4LCJ3YXJlaG91c2VzIjpbeyJXYXJlSG91c2VfSUQiOjE3MDYsIldhcmVIb3VzZVR5cGVzX0lEIjoxfSx7IldhcmVIb3VzZV9JRCI6MTcwNywiV2FyZUhvdXNlVHlwZXNfSUQiOjJ9LHsiV2FyZUhvdXNlX0lEIjoxOTE4LCJXYXJlSG91c2VUeXBlc19JRCI6Mn0seyJXYXJlSG91c2VfSUQiOjE5MTksIldhcmVIb3VzZVR5cGVzX0lEIjoxfV0sInJvbGVzIjpbInVzZXIiXSwic2NvcGVzIjpbImVycCJdLCJpYXQiOjE3MzAxMzE1MzgsImV4cCI6MjMxMDczOTUzOCwiYXVkIjoiZXJwIn0.5_2b4yTWVGAv3LSuaERsdONtSUMRqEg-vZq6wxD1rMo"
     }
 
     private fun filterUiList() {
@@ -205,7 +224,6 @@ class ManualRefillActivity : ComponentActivity() {
         }
         CoroutineScope(Dispatchers.IO).launch {
             loading = true
-            clear()
             client.getSimilarProductsByBarcode(productCode, storeFilterValue)
                 .onSuccess { responseBarcode ->
                     if (responseBarcode.isEmpty()) {
@@ -226,7 +244,9 @@ class ManualRefillActivity : ComponentActivity() {
                             }
                         loading = false
                     } else {
+                        println("response: $responseBarcode")
                         clear()
+                        searchUiList.clear()
                         searchUiList.addAll(responseBarcode)
                         filterUiList()
                         loading = false
@@ -250,7 +270,6 @@ class ManualRefillActivity : ComponentActivity() {
                     loading = false
                     println("request body = error2 $it")
                 }
-            loading = false
         }
     }
 
@@ -266,251 +285,6 @@ class ManualRefillActivity : ComponentActivity() {
                 .onError {
                 }
             loading = false
-        }
-    }
-
-    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-    @Composable
-    fun Page() {
-        MyApplicationTheme {
-            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-                Scaffold(
-                    content = { SearchContent() },
-                    snackbarHost = { ErrorSnackBar(state) },
-                    floatingActionButton = { BarcodeScanButton() },
-                    floatingActionButtonPosition = FabPosition.End,
-                )
-            }
-        }
-    }
-
-    @Composable
-    fun BarcodeScanButton() {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Button(modifier = Modifier
-                .align(BottomStart)
-                .padding(start = 16.dp), onClick = {
-                isCameraOn = true
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_barcode_scan),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .size(36.dp)
-                        .padding(end = 8.dp)
-                )
-                Text(
-                    text = "اسکن کالای جدید",
-                    style = Typography.h1
-                )
-            }
-        }
-    }
-
-    @Composable
-    fun SearchContent() {
-
-        Column(modifier = Modifier.fillMaxSize()) {
-
-            Column(
-                modifier = Modifier
-                    .padding(bottom = 0.dp)
-                    .shadow(elevation = 6.dp, shape = MaterialTheme.shapes.large)
-                    .background(
-                        color = MaterialTheme.colors.onPrimary,
-                        shape = MaterialTheme.shapes.large
-                    )
-                    .fillMaxWidth(),
-            ) {
-
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    ProductCodeTextField(
-                        modifier = Modifier
-                            .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 14.dp)
-                            .weight(1F)
-                            .fillMaxWidth(),
-                    )
-                }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-
-                    FilterDropDownList(
-                        modifier = Modifier
-                            .padding(start = 16.dp, bottom = 16.dp),
-                        icon = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_baseline_color_lens_24),
-                                contentDescription = "",
-                                tint = iconColor,
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically)
-                                    .padding(start = 4.dp)
-                            )
-                        },
-                        text = {
-                            Text(
-                                style = MaterialTheme.typography.body2,
-                                text = colorFilterValue,
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically)
-                                    .padding(start = 4.dp)
-                            )
-                        },
-                        onClick = {
-                            colorFilterValue = it
-                            filterUiList()
-                        },
-                        values = colorFilterValues
-                    )
-
-                    FilterDropDownList(
-                        modifier = Modifier
-                            .padding(start = 16.dp, bottom = 16.dp),
-                        icon = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.size),
-                                contentDescription = "",
-                                tint = iconColor,
-                                modifier = Modifier
-                                    .size(28.dp)
-                                    .align(Alignment.CenterVertically)
-                                    .padding(start = 6.dp)
-                            )
-                        },
-                        text = {
-                            Text(
-                                text = sizeFilterValue,
-                                style = MaterialTheme.typography.body2,
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically)
-                                    .padding(start = 6.dp)
-                            )
-                        },
-                        onClick = {
-                            sizeFilterValue = it
-                            filterUiList()
-                        },
-                        values = sizeFilterValues
-                    )
-                }
-            }
-
-            if (loading) {
-                Row(
-                    modifier = Modifier
-                        .padding(32.dp)
-                        .fillMaxWidth(), horizontalArrangement = Arrangement.Center
-                ) {
-                    CircularProgressIndicator(color = MaterialTheme.colors.primary)
-
-                    if (loading) {
-                        Text(
-                            text = "در حال بارگذاری",
-                            modifier = Modifier
-                                .padding(start = 16.dp)
-                                .align(Alignment.CenterVertically)
-                        )
-                    }
-                }
-            }
-
-            BarcodeScannerWithCamera(isCameraOn, this@ManualRefillActivity) { barcodes ->
-                isCameraOn = false
-                productCode = barcodes[0].displayValue.toString()
-                beep.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
-                getSimilarProducts()
-            }
-
-            if (filteredUiList.isEmpty()) {
-                EmptyList()
-            } else {
-                LazyColumn {
-                    items(filteredUiList.size) { i ->
-                        Item(i, filteredUiList, true) {
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @Composable
-    fun ProductCodeTextField(
-        modifier: Modifier
-    ) {
-
-        val focusManager = LocalFocusManager.current
-
-        OutlinedTextField(
-            textStyle = MaterialTheme.typography.body2,
-
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Outlined.Search,
-                    contentDescription = ""
-                )
-            },
-            value = productCode,
-            onValueChange = {
-                productCode = it
-            },
-            modifier = modifier
-                .testTag("SearchProductCodeTextField")
-                .background(
-                    color = MaterialTheme.colors.secondary,
-                    shape = MaterialTheme.shapes.small
-                ),
-            keyboardActions = KeyboardActions(onSearch = {
-                focusManager.clearFocus()
-                isCameraOn = false
-                getSimilarProducts()
-            }),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                unfocusedBorderColor = MaterialTheme.colors.secondary
-            ),
-            placeholder = { Text(text = "کد محصول") }
-        )
-    }
-
-    @Composable
-    fun EmptyList() {
-        Box(
-            modifier = Modifier
-                .padding(bottom = 56.dp)
-                .fillMaxSize()
-        ) {
-            Column(
-                modifier = Modifier
-                    .align(Center)
-                    .width(256.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .background(color = Color.White, shape = Shapes.medium)
-                        .size(256.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_big_barcode_scan),
-                        contentDescription = "",
-                        tint = Color.Unspecified,
-                        modifier = Modifier
-                            .align(Center)
-                            .clickable { isCameraOn = true }
-                    )
-                }
-
-                Text(
-                    "بارکد را اسکن یا کد محصول را در کادر جستجو وارد کنید",
-                    style = Typography.h1,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                    modifier = Modifier.padding(top = 16.dp, start = 4.dp, end = 4.dp),
-                )
-            }
         }
     }
 }

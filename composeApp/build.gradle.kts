@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -54,17 +53,13 @@ kotlin {
     sourceSets {
         
         androidMain.dependencies {
-            implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-            implementation(libs.gson)
             implementation("androidx.camera:camera-core:1.2.0-alpha01")
             implementation("androidx.camera:camera-camera2:1.2.0-alpha01")
             implementation("androidx.camera:camera-lifecycle:1.2.0-alpha01")
             implementation("androidx.camera:camera-view:1.2.0-alpha01")
             implementation("androidx.camera:camera-extensions:1.2.0-alpha01")
             implementation("com.google.mlkit:barcode-scanning:17.0.2")
-            implementation("io.coil-kt:coil-compose:2.1.0")
-            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
             implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
@@ -78,7 +73,10 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
             implementation(libs.bundles.ktor)
-            implementation("io.ktor:ktor-client-cio:2.0.0") // CIO engine for HTTP
+            implementation(libs.coil.compose.core)
+            implementation(libs.coil.compose)
+            implementation(libs.coil.mp)
+            implementation(libs.coil.network.ktor)
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
