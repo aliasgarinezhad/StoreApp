@@ -54,7 +54,6 @@ import storeapp.composeapp.generated.resources.ic_baseline_color_lens_24
 import storeapp.composeapp.generated.resources.ic_big_barcode_scan
 import storeapp.composeapp.generated.resources.size
 
-
 @Composable
 fun MainPage(
     state: SnackbarHostState,

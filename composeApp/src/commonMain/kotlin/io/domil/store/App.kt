@@ -15,7 +15,6 @@ fun App() {
 @Composable
 fun ComposableHost(viewModel: MainViewModel) {
 
-
     MainPage(
         state = viewModel.state,
         sizeFilterValue = viewModel.sizeFilterValue,
