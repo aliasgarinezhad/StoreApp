@@ -100,9 +100,8 @@ class MainViewModel {
     private fun getSimilarProducts() {
 
         storeFilterValue = 68
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MDE2IiwibmFtZSI6Itiq2LPYqiBSRklEINiq2LPYqiBSRklEIiwiZGVwSWQiOjY4LCJ3YXJlaG91c2VzIjpbeyJXYXJlSG91c2VfSUQiOjE3MDYsIldhcmVIb3VzZVR5cGVzX0lEIjoxfSx7IldhcmVIb3VzZV9JRCI6MTcwNywiV2FyZUhvdXNlVHlwZXNfSUQiOjJ9LHsiV2FyZUhvdXNlX0lEIjoxOTE4LCJXYXJlSG91c2VUeXBlc19JRCI6Mn0seyJXYXJlSG91c2VfSUQiOjE5MTksIldhcmVIb3VzZVR5cGVzX0lEIjoxfV0sInJvbGVzIjpbInVzZXIiXSwic2NvcGVzIjpbImVycCJdLCJpYXQiOjE3MzAxMzE1MzgsImV4cCI6MjMxMDczOTUzOCwiYXVkIjoiZXJwIn0.5_2b4yTWVGAv3LSuaERsdONtSUMRqEg-vZq6wxD1rMo"
-
-        if (productCode == "کد محصول") {
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MDE2IiwibmFtZSI6Itiq2LPYqiBSRklEINiq2LPYqiBSRklEIiwiZGVwSWQiOjY4LCJ3YXJlaG91c2VzIjpbeyJXYXJlSG91c2VfSUQiOjE3MDYsIldhcmVIb3VzZVR5cGVzX0lEIjoxfSx7IldhcmVIb3VzZV9JRCI6MTcwNywiV2FyZUhvdXNlVHlwZXNfSUQiOjJ9LHsiV2FyZUhvdXNlX0lEIjoxOTE4LCJXYXJlSG91c2VUeXBlc19JRCI6Mn0seyJXYXJlSG91c2VfSUQiOjE5MTksIldhcmVIb3VzZVR5cGVzX0lEIjoxfV0sInJvbGVzIjpbInVzZXIiXSwic2NvcGVzIjpbImVycCJdLCJpYXQiOjE3MzAyODA0NDAsImV4cCI6MjMxMDg4ODQ0MCwiYXVkIjoiZXJwIn0.hsvOBrJO4Qsa64pjngdNEl82BcxwLT2Y3PBFNbIaE-s"
+        if (productCode == "") {
             CoroutineScope(Dispatchers.Default).launch {
                 state.showSnackbar(
                     "لطفا کد محصول را وارد کنید.",
@@ -110,70 +109,56 @@ class MainViewModel {
                     SnackbarDuration.Long
                 )
             }
+            return
         }
+
         CoroutineScope(Dispatchers.Default).launch {
             loading = true
-            client.getSimilarProductsByBarcode(productCode, storeFilterValue)
-                .onSuccess { responseBarcode ->
-                    if (responseBarcode.isEmpty()) {
-                        client.getSimilarProductsBySearchCode(productCode, storeFilterValue)
-                            .onSuccess { responseSearchCode ->
-                                if (responseSearchCode.isEmpty()) {
-                                    println("request body = 1st body is empty")
-                                    loading = false
-                                } else {
-                                    clear()
-                                    searchUiList.addAll(responseSearchCode)
-                                    filterUiList()
-                                    loading = false
-                                }
-                            }.onError {
-                                println("request body = error1")
-                                loading = false
-                            }
-                        loading = false
+            try {
+                client.getSimilarProductsByBarcode(productCode.trim(), storeFilterValue).onSuccess {
+                    if (it.isNotEmpty()) {
+                        handleResponse(it)
                     } else {
-                        println("response: $responseBarcode")
-                        clear()
-                        searchUiList.clear()
-                        searchUiList.addAll(responseBarcode)
-                        filterUiList()
-                        loading = false
-                    }
-                }.onError {
-                    client.getSimilarProductsBySearchCode(productCode, storeFilterValue)
-                        .onSuccess { responseSearchCode ->
-                            if (responseSearchCode.isEmpty()) {
-                                println("request body = 1st body is empty")
-                                loading = false
-                            } else {
-                                clear()
-                                searchUiList.addAll(responseSearchCode)
-                                filterUiList()
-                                loading = false
+                        client.getSimilarProductsBySearchCode(productCode.trim(), storeFilterValue)
+                            .onSuccess { it1 ->
+                                handleResponse(it1)
+                            }.onError { e1 ->
+                                println("Request error1: ${e1.name}")
+                                client
                             }
-                        }.onError {
-                            loading = false
-                            println("request body = error1")
+                    }
+                }.onError { e2 ->
+                    client.getSimilarProductsBySearchCode(productCode.trim(), storeFilterValue)
+                        .onSuccess { it1 ->
+                            handleResponse(it1)
+                        }.onError { e1 ->
+                            println("Request error1: ${e1.name}")
+                            clear()
                         }
-                    loading = false
-                    println("request body = error2 $it")
+                    println("Request error: $e2")
                 }
+
+            } catch (e: Exception) {
+                println("Request error: $e")
+                // You could also attempt a retry here if needed
+            } finally {
+                loading = false // Ensure loading is set to false in all cases
+            }
         }
     }
 
-    private fun getScannedProductProperties() {
-        CoroutineScope(Dispatchers.Default).launch {
-            loading = true
-            client.getScannedProductProperties(productCode)
-                .onSuccess {
-                    clear()
-                    searchUiList.addAll(it)
-                    filterUiList()
-                }
-                .onError {
-                }
-            loading = false
+    private fun handleResponse(response: List<Product>) {
+        if (response.isEmpty()) {
+            clear()
+            println("request body = 1st body is empty")
+        } else {
+            clear()
+            searchUiList.apply {
+                clear()
+                addAll(response)
+            }
+            filterUiList()
         }
     }
+
 }

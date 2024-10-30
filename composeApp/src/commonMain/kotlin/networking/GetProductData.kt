@@ -42,7 +42,7 @@ class GetProductData(
         } catch (e: SerializationException) {
             return Result.Error(NetworkError.SERIALIZATION)
         } finally {
-            httpClient.close()
+       //     httpClient.close()
         }
 
         return when (response.status.value) {
@@ -80,7 +80,7 @@ class GetProductData(
         } catch (e: SerializationException) {
             return Result.Error(NetworkError.SERIALIZATION)
         } finally {
-            httpClient.close()
+    //        httpClient.close()
         }
 
         return when (response.status.value) {
