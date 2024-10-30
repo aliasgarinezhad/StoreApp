@@ -4,7 +4,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.header
-import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -45,7 +44,8 @@ class GetProductData(
 
         return when (response.status.value) {
             in 200..299 -> {
-                val respone = Json.decodeFromJsonElement<List<Product>>(response.body<JsonObject>()["products"]!!)
+                val respone =
+                    Json.decodeFromJsonElement<List<Product>>(response.body<JsonObject>()["products"]!!)
                 println("response navid ${respone.toList()}")
                 Result.Success(respone)
             }
@@ -81,10 +81,12 @@ class GetProductData(
 
         return when (response.status.value) {
             in 200..299 -> {
-                val respone = Json.decodeFromJsonElement<List<Product>>(response.body<JsonObject>()["products"]!!)
+                val respone =
+                    Json.decodeFromJsonElement<List<Product>>(response.body<JsonObject>()["products"]!!)
                 println("response navid ${respone.toList()}")
                 Result.Success(respone)
             }
+
             401 -> Result.Error(NetworkError.UNAUTHORIZED)
             409 -> Result.Error(NetworkError.CONFLICT)
             408 -> Result.Error(NetworkError.REQUEST_TIMEOUT)
@@ -141,11 +143,15 @@ class GetProductData(
     suspend fun loginUser(
         userName: String,
         password: String
-    ): Result<User, NetworkError>{
+    ): Result<User, NetworkError> {
         val response = try {
-            httpClient.post(urlString = "https://rfid-api.avakatan.ir/login"
+            httpClient.post(
+                urlString = "https://rfid-api.avakatan.ir/login"
             ) {
-                val bodyMap = mutableMapOf("username" to JsonPrimitive(userName),"password" to JsonPrimitive(password))
+                val bodyMap = mutableMapOf(
+                    "username" to JsonPrimitive(userName),
+                    "password" to JsonPrimitive(password)
+                )
                 val body = JsonObject(bodyMap)
                 setBody(body)
                 contentType(ContentType.Application.Json)
@@ -163,6 +169,7 @@ class GetProductData(
                 val respone = Json.decodeFromJsonElement<User>(response.body<JsonObject>())
                 Result.Success(respone)
             }
+
             401 -> Result.Error(NetworkError.UNAUTHORIZED)
             409 -> Result.Error(NetworkError.CONFLICT)
             408 -> Result.Error(NetworkError.REQUEST_TIMEOUT)
@@ -173,4 +180,5 @@ class GetProductData(
             }
         }
     }
+
 }
