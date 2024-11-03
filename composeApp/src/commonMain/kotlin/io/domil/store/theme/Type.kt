@@ -48,6 +48,6 @@ fun MyTypography() = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp
     ),
-    //defaultFontFamily = FontFamily(Font(Res.font.sans_regular)),
+    defaultFontFamily = FontFamily(Font(Res.font.sans_regular)),
 
     )

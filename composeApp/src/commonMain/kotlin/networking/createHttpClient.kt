@@ -22,6 +22,7 @@ fun createHttpClient(): HttpClient {
             json(
                 json = Json {
                     ignoreUnknownKeys = true
+                    explicitNulls = false
                 }
             )
         }

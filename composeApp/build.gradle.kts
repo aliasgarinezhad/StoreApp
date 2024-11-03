@@ -20,7 +20,6 @@ kotlin {
     }
     
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
@@ -53,7 +52,6 @@ kotlin {
     sourceSets {
         
         androidMain.dependencies {
-            implementation(libs.androidx.activity.compose)
             implementation("androidx.camera:camera-core:1.2.0-alpha01")
             implementation("androidx.camera:camera-camera2:1.2.0-alpha01")
             implementation("androidx.camera:camera-lifecycle:1.2.0-alpha01")
@@ -77,7 +75,7 @@ kotlin {
             implementation(libs.coil.network.ktor)
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha10")
         }
-        nativeMain.dependencies {
+        appleMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
     }

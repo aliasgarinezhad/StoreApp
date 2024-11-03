@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.ImeOptions
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.domil.store.theme.ErrorSnackBar
@@ -46,6 +47,7 @@ import io.domil.store.theme.Item
 import io.domil.store.theme.MyApplicationTheme
 import io.domil.store.theme.Shapes
 import io.domil.store.theme.iconColor
+import kotlinx.serialization.Serializable
 import networking.Product
 import org.jetbrains.compose.resources.painterResource
 import storeapp.composeapp.generated.resources.Res
@@ -54,6 +56,8 @@ import storeapp.composeapp.generated.resources.ic_baseline_color_lens_24
 import storeapp.composeapp.generated.resources.ic_big_barcode_scan
 import storeapp.composeapp.generated.resources.size
 
+@Serializable
+object MainScreen
 
 @Composable
 fun MainPage(
@@ -293,6 +297,7 @@ fun ProductCodeTextField(
             focusManager.clearFocus()
             onImeAction()
         }),
+        singleLine = true,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         colors = TextFieldDefaults.outlinedTextFieldColors(
             unfocusedBorderColor = MaterialTheme.colors.secondary

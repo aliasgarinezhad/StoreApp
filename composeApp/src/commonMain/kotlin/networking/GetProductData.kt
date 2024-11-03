@@ -4,7 +4,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.header
-import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -47,7 +46,8 @@ class GetProductData(
 
         return when (response.status.value) {
             in 200..299 -> {
-                val respone = Json.decodeFromJsonElement<List<Product>>(response.body<JsonObject>()["products"]!!)
+                val respone =
+                    Json.decodeFromJsonElement<List<Product>>(response.body<JsonObject>()["products"]!!)
                 println("response navid ${respone.toList()}")
                 Result.Success(respone)
             }
@@ -85,10 +85,12 @@ class GetProductData(
 
         return when (response.status.value) {
             in 200..299 -> {
-                val respone = Json.decodeFromJsonElement<List<Product>>(response.body<JsonObject>()["products"]!!)
+                val respone =
+                    Json.decodeFromJsonElement<List<Product>>(response.body<JsonObject>()["products"]!!)
                 println("response navid ${respone.toList()}")
                 Result.Success(respone)
             }
+
             401 -> Result.Error(NetworkError.UNAUTHORIZED)
             409 -> Result.Error(NetworkError.CONFLICT)
             408 -> Result.Error(NetworkError.REQUEST_TIMEOUT)

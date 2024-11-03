@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -38,7 +40,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
+import coil3.compose.LocalPlatformContext
+import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.rememberAsyncImagePainter
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import coil3.toUri
 import networking.Product
 import org.jetbrains.compose.resources.painterResource
 import storeapp.composeapp.generated.resources.Res
@@ -112,7 +119,7 @@ fun Item(
 
             AsyncImage(
                 model = uiList[i].ImgUrl,
-                contentDescription = "",
+                contentDescription = "image",
                 modifier = Modifier
                     .padding(end = 4.dp, top = 12.dp, bottom = 12.dp, start = 12.dp)
                     .shadow(0.dp, shape = Shapes.large)
