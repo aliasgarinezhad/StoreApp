@@ -40,8 +40,6 @@ class GetProductData(
             return Result.Error(NetworkError.NO_INTERNET)
         } catch (e: SerializationException) {
             return Result.Error(NetworkError.SERIALIZATION)
-        } finally {
-            httpClient.close()
         }
 
         return when (response.status.value) {
@@ -79,8 +77,6 @@ class GetProductData(
             return Result.Error(NetworkError.NO_INTERNET)
         } catch (e: SerializationException) {
             return Result.Error(NetworkError.SERIALIZATION)
-        } finally {
-            httpClient.close()
         }
 
         return when (response.status.value) {
@@ -102,7 +98,9 @@ class GetProductData(
         }
     }
 
-    suspend fun getScannedProductProperties(productCode: String): Result<List<Product>, NetworkError> {
+    suspend fun getScannedProductProperties(
+        productCode: String
+    ): Result<List<Product>, NetworkError> {
         val bodyMap = mapOf("KBarCodes" to JsonArray(listOf(JsonPrimitive(productCode))))
         val body = JsonObject(bodyMap)
         println("request body = $body")
@@ -141,4 +139,46 @@ class GetProductData(
             }
         }
     }
+
+    suspend fun loginUser(
+        userName: String,
+        password: String
+    ): Result<User, NetworkError> {
+        val response = try {
+            httpClient.post(
+                urlString = "https://rfid-api.avakatan.ir/login"
+            ) {
+                val bodyMap = mutableMapOf(
+                    "username" to JsonPrimitive(userName),
+                    "password" to JsonPrimitive(password)
+                )
+                val body = JsonObject(bodyMap)
+                setBody(body)
+                contentType(ContentType.Application.Json)
+                header("Authorization", "Bearer $token")
+            }
+
+        } catch (e: UnresolvedAddressException) {
+            return Result.Error(NetworkError.NO_INTERNET)
+        } catch (e: SerializationException) {
+            return Result.Error(NetworkError.SERIALIZATION)
+        }
+
+        return when (response.status.value) {
+            in 200..299 -> {
+                val respone = Json.decodeFromJsonElement<User>(response.body<JsonObject>())
+                Result.Success(respone)
+            }
+
+            401 -> Result.Error(NetworkError.UNAUTHORIZED)
+            409 -> Result.Error(NetworkError.CONFLICT)
+            408 -> Result.Error(NetworkError.REQUEST_TIMEOUT)
+            413 -> Result.Error(NetworkError.PAYLOAD_TOO_LARGE)
+            in 500..599 -> Result.Error(NetworkError.SERVER_ERROR)
+            else -> {
+                Result.Error(NetworkError.UNKNOWN)
+            }
+        }
+    }
+
 }
