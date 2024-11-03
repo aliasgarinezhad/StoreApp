@@ -1,7 +1,6 @@
 package io.domil.store.theme
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,7 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -35,17 +34,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import coil3.compose.AsyncImagePainter
-import coil3.compose.LocalPlatformContext
-import coil3.compose.SubcomposeAsyncImage
-import coil3.compose.rememberAsyncImagePainter
-import coil3.request.ImageRequest
-import coil3.request.crossfade
-import coil3.toUri
 import networking.Product
 import org.jetbrains.compose.resources.painterResource
 import storeapp.composeapp.generated.resources.Res
@@ -92,7 +85,7 @@ fun Item(
     i: Int,
     uiList: List<Product>,
     clickable: Boolean = false,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) {
 
     val topPadding = if (i == 0) 16.dp else 12.dp
@@ -116,7 +109,6 @@ fun Item(
     ) {
 
         Box {
-
             AsyncImage(
                 model = uiList[i].ImgUrl,
                 contentDescription = "image",
@@ -134,7 +126,24 @@ fun Item(
                     .fillMaxHeight()
                     .width(70.dp)
             )
+            Box(
+                modifier = Modifier
+                    .padding(top = 6.dp, start = 6.dp)
+                    .background(
+                        shape = RoundedCornerShape(24.dp),
+                        color = discountBackground
+                    )
+                    .size(24.dp)
+                    .testTag("sign")
+            ) {
+                Text(
+                    text = "${uiList[i].SalePercent}%",
+                    modifier = Modifier.align(Alignment.Center),
+                    color = Color.White
+                )
+            }
         }
+
 
         Row(
             modifier = Modifier
@@ -155,7 +164,7 @@ fun Item(
                     textAlign = TextAlign.Right,
                 )
                 Text(
-                    text = uiList[i].productName ?: "not found",
+                    text = "قیمت: " + uiList[i].SalePrice.toString(),
                     style = MaterialTheme.typography.h4,
                     textAlign = TextAlign.Right,
                 )
