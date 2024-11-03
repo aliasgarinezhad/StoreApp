@@ -166,8 +166,10 @@ class GetProductData(
 
         return when (response.status.value) {
             in 200..299 -> {
-                val respone = Json.decodeFromJsonElement<User>(response.body<JsonObject>())
-                Result.Success(respone)
+                println("response = ${response.body<JsonObject>()}")
+                val json = Json{ignoreUnknownKeys = true}
+                val response = json.decodeFromJsonElement<User>(response.body<JsonObject>())
+                Result.Success(data = response)
             }
 
             401 -> Result.Error(NetworkError.UNAUTHORIZED)

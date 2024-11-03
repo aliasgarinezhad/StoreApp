@@ -13,6 +13,7 @@ import io.domil.store.view.MainScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import networking.GetProductData
 import networking.Product
 import networking.createHttpClient
@@ -85,93 +86,19 @@ class AppViewModel {
     }
 
     fun signIn(navHostController: NavHostController) {
-
-        token = "fg"
-        navHostController.navigate(MainScreen)
-        routeScreen.value = MainScreen
-        navHostController.clearBackStack<MainScreen>()
-
-        /*private fun signIn() {
-
-            val memory = PreferenceManager.getDefaultSharedPreferences(this)
-            val editor = memory.edit()
-
-            val logInRequest = Volley.newRequestQueue(this)
-            val url = "https://rfid-api.avakatan.ir/login"
-
-            val jsonRequest = object : JsonObjectRequest(Method.POST, url, null, { response ->
-
-                editor.putString("accessToken", response.getString("accessToken"))
-                editor.putString("username", username)
-                editor.putString("userFullName", response.getString("fullName"))
-                editor.putInt("userLocationCode", response.getInt("locationCode"))
-                editor.putInt(
-                    "userWarehouseCode",
-                    response.getJSONObject("location").getInt("warehouseCode")
-                )
-
-                editor.apply()
-
-                val intent =
-                    Intent(this@UserLoginActivity, ManualRefillActivity::class.java)
-                intent.flags += Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-
-
-            }, {
-                when {
-                    it is NoConnectionError -> {
-                        CoroutineScope(Dispatchers.Default).launch {
-                            state.showSnackbar(
-                                "اینترنت قطع است. شبکه وای فای را بررسی کنید.",
-                                null,
-                                SnackbarDuration.Long
-                            )
-                        }
-                    }
-                    it.networkResponse.statusCode == 401 -> {
-
-                        CoroutineScope(Dispatchers.Default).launch {
-                            state.showSnackbar(
-                                "نام کاربری یا رمز عبور اشتباه است",
-                                null,
-                                SnackbarDuration.Long
-                            )
-                        }
-                    }
-                    else -> {
-                        CoroutineScope(Dispatchers.Default).launch {
-                            state.showSnackbar(
-                                it.toString(),
-                                null,
-                                SnackbarDuration.Long
-                            )
-                        }
-                    }
+        CoroutineScope(Dispatchers.Default).launch {
+            client.loginUser(username, password).onSuccess {
+                token = it.accessToken.toString()
+                storeFilterValue = it.locationCode?.toInt() ?: 0
+                withContext(Dispatchers.Main) {
+                    navHostController.navigate(MainScreen)
+                    routeScreen.value = MainScreen
+                    navHostController.clearBackStack<MainScreen>()
                 }
-
-                editor.putString("accessToken", "")
-                editor.putString("username", "")
-                editor.apply()
-
-            }) {
-
-                override fun getBody(): ByteArray {
-                    val body = JSONObject()
-                    body.put("username", username)
-                    body.put("password", password)
-                    return body.toString().toByteArray()
-                }
-
-                override fun getHeaders(): MutableMap<String, String> {
-                    val params = HashMap<String, String>()
-                    params["Content-Type"] = "application/json;charset=UTF-8"
-                    return params
-                }
+            }.onError {
+                println(it.name)
             }
-            logInRequest.add(jsonRequest)
-
-        */
+        }
     }
 
     fun onUsernameValueChanges(value: String) {

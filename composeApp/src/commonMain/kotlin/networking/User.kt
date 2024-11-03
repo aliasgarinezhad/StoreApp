@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class User(
-    var token: String ?,
+    var accessToken: String?,
     var username: String ?,
-    var userFullName: String ?,
+    var fullName: String?,
     var locationCode: Int ?
 )
