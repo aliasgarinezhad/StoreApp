@@ -9,6 +9,8 @@ fun main() {
     ComposeViewport(document.body!!) {
         App({ _, _ ->
 
+        },{
+
         })
     }
 }

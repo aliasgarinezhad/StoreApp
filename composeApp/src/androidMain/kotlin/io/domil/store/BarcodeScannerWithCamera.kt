@@ -1,7 +1,5 @@
 package io.domil.store
 
-import android.annotation.SuppressLint
-import android.media.ToneGenerator
 import android.util.Size
 import androidx.activity.ComponentActivity
 import androidx.annotation.OptIn
@@ -14,20 +12,14 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
-import io.domil.store.theme.MyApplicationTheme
-import kotlinx.serialization.Serializable
 import java.util.concurrent.Executors
 
 @OptIn(ExperimentalGetImage::class)

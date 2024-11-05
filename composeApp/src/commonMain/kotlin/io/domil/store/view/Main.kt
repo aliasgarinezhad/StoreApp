@@ -77,6 +77,7 @@ fun MainPage(
     onTextValueChange: (value: String) -> Unit,
     onImeAction: () -> Unit,
     barcodeScannerComposable: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit,
+    barcodeScannerComposableIOS: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit,
     onScanSuccess: (barcodes: String) -> Unit
 ) {
     MyApplicationTheme {
@@ -98,6 +99,7 @@ fun MainPage(
                         onImeAction = onImeAction,
                         textFieldValue = textFieldValue,
                         barcodeScannerComposable = barcodeScannerComposable,
+                        barcodeScannerComposableIOS = barcodeScannerComposableIOS,
                         onScanSuccess = onScanSuccess
                     )
                 },
@@ -149,6 +151,7 @@ fun SearchContent(
     onTextValueChange: (value: String) -> Unit,
     onImeAction: () -> Unit,
     barcodeScannerComposable: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit,
+    barcodeScannerComposableIOS: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit,
     onScanSuccess: (barcodes: String) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
@@ -256,6 +259,10 @@ fun SearchContent(
         if (isCameraOn && getPlatform().name.contains("Android")) {
             barcodeScannerComposable(isCameraOn) { scannedBarcode ->
                 onScanSuccess(scannedBarcode)
+            }
+        }else if (isCameraOn && getPlatform().name.contains("IOS")){
+            barcodeScannerComposableIOS(isCameraOn){
+
             }
         } else {
             if (uiList.isEmpty()) {

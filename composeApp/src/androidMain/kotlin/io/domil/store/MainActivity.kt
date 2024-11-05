@@ -8,7 +8,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.mlkit.vision.barcode.common.Barcode
 import java.io.File
 
 class MainActivity : ComponentActivity() {
@@ -33,7 +32,10 @@ class MainActivity : ComponentActivity() {
         checkPermission()
         clearCash()
 
-        setContent { App(barcodeScannerComposable) }
+        setContent {
+            App(barcodeScannerComposable) { _, _ ->
+            }
+        }
     }
 
     private fun clearCash() {

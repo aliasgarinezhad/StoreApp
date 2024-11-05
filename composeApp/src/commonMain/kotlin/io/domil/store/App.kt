@@ -14,18 +14,27 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
-fun App(barcodeScannerComposable: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit) {
+fun App(
+    barcodeScannerComposable: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit,
+    barcodeScannerComposableIOS: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit
+) {
     val viewModel = AppViewModel()
     val navHostController = rememberNavController()
     viewModel.checkUserAuth()
-    ComposableHost(viewModel, navHostController = navHostController, barcodeScannerComposable = barcodeScannerComposable)
+    ComposableHost(
+        viewModel,
+        navHostController = navHostController,
+        barcodeScannerComposable = barcodeScannerComposable,
+        barcodeScannerComposableIOS = barcodeScannerComposableIOS
+    )
 }
 
 @Composable
 fun ComposableHost(
     viewModel: AppViewModel,
     navHostController: NavHostController,
-    barcodeScannerComposable: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit
+    barcodeScannerComposable: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit,
+    barcodeScannerComposableIOS: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit
 ) {
 
     NavHost(navController = navHostController, startDestination = viewModel.routeScreen.value) {
@@ -59,6 +68,7 @@ fun ComposableHost(
                 textFieldValue = viewModel.productCode,
                 uiList = viewModel.filteredUiList,
                 barcodeScannerComposable = barcodeScannerComposable,
+                barcodeScannerComposableIOS = barcodeScannerComposableIOS,
                 onScanSuccess = {
                     viewModel.baroceScanner(it)
                 }
