@@ -33,8 +33,7 @@ class MainActivity : ComponentActivity() {
         clearCash()
 
         setContent {
-            App(barcodeScannerComposable) { _, _ ->
-            }
+            App()
         }
     }
 

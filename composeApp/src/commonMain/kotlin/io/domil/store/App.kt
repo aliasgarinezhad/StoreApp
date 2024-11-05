@@ -14,18 +14,13 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
-fun App(
-    barcodeScannerComposable: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit,
-    barcodeScannerComposableIOS: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit
-) {
+fun App() {
     val viewModel = AppViewModel()
     val navHostController = rememberNavController()
     viewModel.checkUserAuth()
     ComposableHost(
         viewModel,
         navHostController = navHostController,
-        barcodeScannerComposable = barcodeScannerComposable,
-        barcodeScannerComposableIOS = barcodeScannerComposableIOS
     )
 }
 
@@ -33,8 +28,6 @@ fun App(
 fun ComposableHost(
     viewModel: AppViewModel,
     navHostController: NavHostController,
-    barcodeScannerComposable: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit,
-    barcodeScannerComposableIOS: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit
 ) {
 
     NavHost(navController = navHostController, startDestination = viewModel.routeScreen.value) {
@@ -67,8 +60,6 @@ fun ComposableHost(
                 isCameraOn = viewModel.isCameraOn,
                 textFieldValue = viewModel.productCode,
                 uiList = viewModel.filteredUiList,
-                barcodeScannerComposable = barcodeScannerComposable,
-                barcodeScannerComposableIOS = barcodeScannerComposableIOS,
                 onScanSuccess = {
                     viewModel.baroceScanner(it)
                 }

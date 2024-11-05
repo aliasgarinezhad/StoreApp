@@ -40,7 +40,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import io.domil.store.getPlatform
 import io.domil.store.theme.ErrorSnackBar
 import io.domil.store.theme.FilterDropDownList
 import io.domil.store.theme.Item
@@ -50,6 +49,7 @@ import io.domil.store.theme.iconColor
 import kotlinx.serialization.Serializable
 import networking.Product
 import org.jetbrains.compose.resources.painterResource
+import qrscanner.QrScanner
 import storeapp.composeapp.generated.resources.Res
 import storeapp.composeapp.generated.resources.ic_barcode_scan
 import storeapp.composeapp.generated.resources.ic_baseline_color_lens_24
@@ -76,8 +76,6 @@ fun MainPage(
     textFieldValue: String,
     onTextValueChange: (value: String) -> Unit,
     onImeAction: () -> Unit,
-    barcodeScannerComposable: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit,
-    barcodeScannerComposableIOS: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit,
     onScanSuccess: (barcodes: String) -> Unit
 ) {
     MyApplicationTheme {
@@ -98,8 +96,6 @@ fun MainPage(
                         onTextValueChange = onTextValueChange,
                         onImeAction = onImeAction,
                         textFieldValue = textFieldValue,
-                        barcodeScannerComposable = barcodeScannerComposable,
-                        barcodeScannerComposableIOS = barcodeScannerComposableIOS,
                         onScanSuccess = onScanSuccess
                     )
                 },
@@ -150,8 +146,6 @@ fun SearchContent(
     textFieldValue: String,
     onTextValueChange: (value: String) -> Unit,
     onImeAction: () -> Unit,
-    barcodeScannerComposable: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit,
-    barcodeScannerComposableIOS: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit,
     onScanSuccess: (barcodes: String) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
@@ -256,14 +250,24 @@ fun SearchContent(
             }
         }
 
-        if (isCameraOn && getPlatform().name.contains("Android")) {
+        /*if (isCameraOn && getPlatform().name.contains("Android")) {
             barcodeScannerComposable(isCameraOn) { scannedBarcode ->
                 onScanSuccess(scannedBarcode)
             }
-        }else if (isCameraOn && getPlatform().name.contains("IOS")){
+        } else if (isCameraOn && getPlatform().name.contains("IOS")){
             barcodeScannerComposableIOS(isCameraOn){
 
             }
+        }*/
+        if (isCameraOn) {
+            QrScanner(
+                modifier = Modifier.fillMaxSize(),
+                flashlightOn = false,
+                openImagePicker = false,
+                onCompletion = onScanSuccess,
+                onFailure = {},
+                imagePickerHandler = {}
+            )
         } else {
             if (uiList.isEmpty()) {
                 EmptyList(onScanButtonClick = onScanButtonClick)
