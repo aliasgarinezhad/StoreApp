@@ -5,8 +5,10 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.mlkit.vision.barcode.common.Barcode
 import java.io.File
 
 class MainActivity : ComponentActivity() {
@@ -18,10 +20,20 @@ class MainActivity : ComponentActivity() {
             intent.flags += Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         }*/
+
+        val barcodeScannerComposable: @Composable (
+            enable: Boolean, onScanSuccess: (barcodes: String) -> Unit
+        ) -> Unit = { enable, onScanSuccess ->
+            BarcodeScannerWithCamera(
+                enable = enable,
+                context = this,
+                onScanSuccess = onScanSuccess
+            )
+        }
         checkPermission()
         clearCash()
 
-        setContent { App() }
+        setContent { App(barcodeScannerComposable) }
     }
 
     private fun clearCash() {

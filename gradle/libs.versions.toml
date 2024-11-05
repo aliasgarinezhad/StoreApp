@@ -6,11 +6,16 @@ android-targetSdk = "34"
 androidx-activityCompose = "1.9.3"
 compose-multiplatform = "1.7.0"
 kotlin = "2.0.21"
+kotlinxSerializationJson = "1.7.3"
 ktor = "3.0.0"
 coil3 = "3.0.0-rc02"
+navigationCompose = "2.8.0-alpha10"
+activityKtx = "1.9.3"
+barcodeScanningCommon = "17.0.0"
 
 [libraries]
 
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
@@ -23,6 +28,9 @@ coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3"
 coil-compose-core = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coil3" }
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil3" }
 coil-mp = { module = "io.coil-kt.coil3:coil", version.ref = "coil3" }
+navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
+barcode-scanning-common = { group = "com.google.mlkit", name = "barcode-scanning-common", version.ref = "barcodeScanningCommon" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

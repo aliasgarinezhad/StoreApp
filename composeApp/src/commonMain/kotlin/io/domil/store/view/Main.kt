@@ -38,9 +38,9 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.ImeOptions
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import io.domil.store.getPlatform
 import io.domil.store.theme.ErrorSnackBar
 import io.domil.store.theme.FilterDropDownList
 import io.domil.store.theme.Item
@@ -75,7 +75,9 @@ fun MainPage(
     onSizeFilterValueChange: (value: String) -> Unit,
     textFieldValue: String,
     onTextValueChange: (value: String) -> Unit,
-    onImeAction: () -> Unit
+    onImeAction: () -> Unit,
+    barcodeScannerComposable: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit,
+    onScanSuccess: (barcodes: String) -> Unit
 ) {
     MyApplicationTheme {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
@@ -91,10 +93,12 @@ fun MainPage(
                         uiList = uiList,
                         onColorFilterValueChange = onColorFilterValueChange,
                         onSizeFilterValueChange = onSizeFilterValueChange,
-                        onScanButtonClick = onScanButtonClick,
+                        onScanButtonClick = onBottomBarButtonClick,
                         onTextValueChange = onTextValueChange,
                         onImeAction = onImeAction,
-                        textFieldValue = textFieldValue
+                        textFieldValue = textFieldValue,
+                        barcodeScannerComposable = barcodeScannerComposable,
+                        onScanSuccess = onScanSuccess
                     )
                 },
                 snackbarHost = { ErrorSnackBar(state) },
@@ -144,8 +148,9 @@ fun SearchContent(
     textFieldValue: String,
     onTextValueChange: (value: String) -> Unit,
     onImeAction: () -> Unit,
+    barcodeScannerComposable: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit,
+    onScanSuccess: (barcodes: String) -> Unit
 ) {
-
     Column(modifier = Modifier.fillMaxSize()) {
 
         Column(
@@ -248,18 +253,18 @@ fun SearchContent(
             }
         }
 
-        /*BarcodeScannerWithCamera(isCameraOn, this) { barcodes ->
-            isCameraOn = false
-            productCode = barcodes[0].displayValue.toString()
-            getSimilarProducts()
-        }*/
-
-        if (uiList.isEmpty()) {
-            EmptyList(onScanButtonClick = onScanButtonClick)
+        if (isCameraOn && getPlatform().name.contains("Android")) {
+            barcodeScannerComposable(isCameraOn) { scannedBarcode ->
+                onScanSuccess(scannedBarcode)
+            }
         } else {
-            LazyColumn {
-                items(uiList.size) { i ->
-                    Item(i, uiList = uiList, false)
+            if (uiList.isEmpty()) {
+                EmptyList(onScanButtonClick = onScanButtonClick)
+            } else {
+                LazyColumn {
+                    items(uiList.size) { i ->
+                        Item(i, uiList = uiList, false)
+                    }
                 }
             }
         }
