@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import io.domil.store.getPlatform
 import io.domil.store.theme.ErrorSnackBar
 import io.domil.store.theme.FilterDropDownList
 import io.domil.store.theme.Item
@@ -49,7 +50,6 @@ import io.domil.store.theme.iconColor
 import kotlinx.serialization.Serializable
 import networking.Product
 import org.jetbrains.compose.resources.painterResource
-import qrscanner.QrScanner
 import storeapp.composeapp.generated.resources.Res
 import storeapp.composeapp.generated.resources.ic_barcode_scan
 import storeapp.composeapp.generated.resources.ic_baseline_color_lens_24
@@ -76,7 +76,8 @@ fun MainPage(
     textFieldValue: String,
     onTextValueChange: (value: String) -> Unit,
     onImeAction: () -> Unit,
-    onScanSuccess: (barcodes: String) -> Unit
+    onScanSuccess: (barcodes: String) -> Unit,
+    barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit
 ) {
     MyApplicationTheme {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
@@ -96,7 +97,8 @@ fun MainPage(
                         onTextValueChange = onTextValueChange,
                         onImeAction = onImeAction,
                         textFieldValue = textFieldValue,
-                        onScanSuccess = onScanSuccess
+                        onScanSuccess = onScanSuccess,
+                        barcodeScanner = barcodeScanner
                     )
                 },
                 snackbarHost = { ErrorSnackBar(state) },
@@ -146,7 +148,8 @@ fun SearchContent(
     textFieldValue: String,
     onTextValueChange: (value: String) -> Unit,
     onImeAction: () -> Unit,
-    onScanSuccess: (barcodes: String) -> Unit
+    onScanSuccess: (barcodes: String) -> Unit,
+    barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
 
@@ -250,24 +253,14 @@ fun SearchContent(
             }
         }
 
-        /*if (isCameraOn && getPlatform().name.contains("Android")) {
-            barcodeScannerComposable(isCameraOn) { scannedBarcode ->
-                onScanSuccess(scannedBarcode)
+        if (isCameraOn && getPlatform().name.contains("Android")) {
+            barcodeScanner {
+                onScanSuccess(it)
             }
-        } else if (isCameraOn && getPlatform().name.contains("IOS")){
-            barcodeScannerComposableIOS(isCameraOn){
-
+        } else if (isCameraOn && getPlatform().name.contains("IOS")) {
+            barcodeScanner {
+                onScanSuccess(it)
             }
-        }*/
-        if (isCameraOn) {
-            QrScanner(
-                modifier = Modifier.fillMaxSize(),
-                flashlightOn = false,
-                openImagePicker = false,
-                onCompletion = onScanSuccess,
-                onFailure = {},
-                imagePickerHandler = {}
-            )
         } else {
             if (uiList.isEmpty()) {
                 EmptyList(onScanButtonClick = onScanButtonClick)
@@ -281,6 +274,7 @@ fun SearchContent(
         }
     }
 }
+
 
 @Composable
 fun ProductCodeTextField(

@@ -19,21 +19,15 @@ class MainActivity : ComponentActivity() {
             intent.flags += Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         }*/
-
-        val barcodeScannerComposable: @Composable (
-            enable: Boolean, onScanSuccess: (barcodes: String) -> Unit
-        ) -> Unit = { enable, onScanSuccess ->
-            BarcodeScannerWithCamera(
-                enable = enable,
-                context = this,
-                onScanSuccess = onScanSuccess
-            )
-        }
         checkPermission()
         clearCash()
-
+        val barcodeScannerComposable: @Composable (
+            onScanSuccess: (barcode: String) -> Unit
+        ) -> Unit = { onScanSuccess ->
+            QrScanner(onScanSuccess = onScanSuccess)
+        }
         setContent {
-            App()
+            App(barcodeScannerComposable)
         }
     }
 
