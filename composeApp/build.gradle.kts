@@ -54,6 +54,7 @@ kotlin {
         androidMain.dependencies {
             implementation("network.chaintech:qr-kit:2.0.0")
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.datastore.preferences.core)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -62,7 +63,7 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.kotlinx.serialization.json)
+            api(libs.kotlinx.serialization.json)
             implementation(libs.bundles.ktor)
             implementation(libs.coil.compose.core)
             implementation(libs.coil.compose)
@@ -73,6 +74,7 @@ kotlin {
         }
         appleMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            implementation(libs.datastore.preferences.core)
         }
     }
 }

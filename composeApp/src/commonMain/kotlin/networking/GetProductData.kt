@@ -19,7 +19,7 @@ import util.NetworkError
 import util.Result
 
 class GetProductData(
-    private val token: String,
+    private val user: User,
     private val httpClient: HttpClient
 ) {
 
@@ -33,7 +33,7 @@ class GetProductData(
                 urlString = "https://rfid-api.avakatan.ir/products/similars/localdb?DepartmentInfo_ID=$depId&kbarcode=$barcode"
             ) {
                 contentType(ContentType.Application.Json)
-                header("Authorization", "Bearer $token")
+                header("Authorization", "Bearer ${user.accessToken}")
             }
 
         } catch (e: UnresolvedAddressException) {
@@ -70,7 +70,7 @@ class GetProductData(
                 urlString = "https://rfid-api.avakatan.ir/products/similars/localdb?DepartmentInfo_ID=$depId&&K_Bar_Code=$searhCode"
             ) {
                 contentType(ContentType.Application.Json)
-                header("Authorization", "Bearer $token")
+                header("Authorization", "Bearer ${user.accessToken}")
             }
 
         } catch (e: UnresolvedAddressException) {
@@ -111,7 +111,7 @@ class GetProductData(
             ) {
                 contentType(ContentType.Application.Json)
                 setBody(body)
-                header("Authorization", "Bearer $token")
+                header("Authorization", "Bearer ${user.accessToken}")
             }
 
         } catch (e: UnresolvedAddressException) {
@@ -155,7 +155,7 @@ class GetProductData(
                 val body = JsonObject(bodyMap)
                 setBody(body)
                 contentType(ContentType.Application.Json)
-                header("Authorization", "Bearer $token")
+                header("Authorization", "Bearer ${user.accessToken}")
             }
 
         } catch (e: UnresolvedAddressException) {

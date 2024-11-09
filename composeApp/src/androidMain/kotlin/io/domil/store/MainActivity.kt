@@ -1,6 +1,7 @@
 package io.domil.store
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,18 +9,28 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import networking.User
+import okio.Path.Companion.toPath
 import java.io.File
 
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        /*if (token == "") {
-            val intent = Intent(this, UserLoginActivity::class.java)
-            intent.flags += Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-        }*/
         checkPermission()
+        val dataStore = createDataStore(this)
         clearCash()
         val barcodeScannerComposable: @Composable (
             onScanSuccess: (barcode: String) -> Unit
@@ -27,7 +38,41 @@ class MainActivity : ComponentActivity() {
             QrScanner(onScanSuccess = onScanSuccess)
         }
         setContent {
-            App(barcodeScannerComposable)
+            App(barcodeScannerComposable, saveUserData = { user ->
+                saveUserData(user, dataStore)
+            }, loadUserData = { onDataReceived ->
+                getUserData(dataStore, onDataReceived)
+            })
+        }
+    }
+
+    private fun saveUserData(user: User, dataStore: DataStore<Preferences>) {
+
+        CoroutineScope(Dispatchers.Default).launch {
+            val userKey = stringPreferencesKey("userKey")
+            dataStore.edit {
+                it[userKey] = Json.encodeToString(user)
+            }
+        }
+    }
+
+    private fun getUserData(dataStore: DataStore<Preferences>, onResult: (user: User) -> Unit) {
+
+        CoroutineScope(Dispatchers.Default).launch {
+            val userKey = stringPreferencesKey("userKey")
+            dataStore.data.map {
+                Json.decodeFromString<User>(it[userKey] ?: Json.encodeToString(User()))
+            }.collect {
+                onResult(it)
+            }
+        }
+    }
+
+    private fun createDataStore(context: Context): DataStore<Preferences> {
+
+        return PreferenceDataStoreFactory.createWithPath {
+            val dataStoreFileName = "storeAppLocalMemory.preferences_pb"
+            context.filesDir.resolve(dataStoreFileName).absolutePath.toPath()
         }
     }
 

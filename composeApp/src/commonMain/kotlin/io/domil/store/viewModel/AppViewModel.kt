@@ -16,16 +16,18 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import networking.GetProductData
 import networking.Product
+import networking.User
 import networking.createHttpClient
 import util.onError
 import util.onSuccess
 
-class AppViewModel {
+class AppViewModel(
+    val saveUserData: (user: User) -> Unit,
+    val loadUserData: (onDataReceived: (user: User) -> Unit) -> Unit,
+) {
 
-    private var fullName = ""
-    private var token = ""
-    private var storeFilterValue = 0
-    private var client = GetProductData(token, createHttpClient())
+    private var user = User()
+    private var client = GetProductData(user, createHttpClient())
     private var searchUiList = mutableStateListOf<Product>()
 
     //charge ui parameters
@@ -53,7 +55,7 @@ class AppViewModel {
         private set
     var password by mutableStateOf("")
         private set
-    var routeScreen: MutableState<Any> = mutableStateOf(MainScreen)
+    var routeScreen: MutableState<Any> = mutableStateOf(LoginScreen)
         private set
 
     fun onTextValueChange(value: String) {
@@ -77,24 +79,30 @@ class AppViewModel {
         isCameraOn = true
     }
 
-    fun checkUserAuth() {
-        if (token == "") {
-            routeScreen.value = LoginScreen
-        } else {
-            routeScreen.value = MainScreen
+    fun checkUserAuth(navHostController: NavHostController) {
+        loadUserData {
+            println(it.toString())
+            if (it.username.isNotEmpty()) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    routeScreen.value = MainScreen
+                    navHostController.clearBackStack<MainScreen>()
+                    user = it
+                    username = it.username
+                }
+            }
         }
     }
 
     fun signIn(navHostController: NavHostController) {
         CoroutineScope(Dispatchers.Default).launch {
             client.loginUser(username, password).onSuccess {
-                token = it.accessToken.toString()
-                storeFilterValue = it.locationCode ?: 0
+                user = it
                 withContext(Dispatchers.Main) {
                     navHostController.navigate(MainScreen)
                     routeScreen.value = MainScreen
                     navHostController.clearBackStack<MainScreen>()
                 }
+                saveUserData(it)
             }.onError {
                 println(it.name)
             }
@@ -141,8 +149,6 @@ class AppViewModel {
 
     private fun getSimilarProducts() {
 
-        storeFilterValue = 68
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MDE2IiwibmFtZSI6Itiq2LPYqiBSRklEINiq2LPYqiBSRklEIiwiZGVwSWQiOjY4LCJ3YXJlaG91c2VzIjpbeyJXYXJlSG91c2VfSUQiOjE3MDYsIldhcmVIb3VzZVR5cGVzX0lEIjoxfSx7IldhcmVIb3VzZV9JRCI6MTcwNywiV2FyZUhvdXNlVHlwZXNfSUQiOjJ9LHsiV2FyZUhvdXNlX0lEIjoxOTE4LCJXYXJlSG91c2VUeXBlc19JRCI6Mn0seyJXYXJlSG91c2VfSUQiOjE5MTksIldhcmVIb3VzZVR5cGVzX0lEIjoxfV0sInJvbGVzIjpbInVzZXIiXSwic2NvcGVzIjpbImVycCJdLCJpYXQiOjE3MzAyODA0NDAsImV4cCI6MjMxMDg4ODQ0MCwiYXVkIjoiZXJwIn0.hsvOBrJO4Qsa64pjngdNEl82BcxwLT2Y3PBFNbIaE-s"
         if (productCode == "") {
             CoroutineScope(Dispatchers.Default).launch {
                 state.showSnackbar(
@@ -157,28 +163,32 @@ class AppViewModel {
         CoroutineScope(Dispatchers.Default).launch {
             loading = true
             try {
-                client.getSimilarProductsByBarcode(productCode.trim(), storeFilterValue).onSuccess {
-                    if (it.isNotEmpty()) {
-                        handleResponse(it)
-                    } else {
-                        client.getSimilarProductsBySearchCode(productCode.trim(), storeFilterValue)
+                client.getSimilarProductsByBarcode(productCode.trim(), user.locationCode)
+                    .onSuccess {
+                        if (it.isNotEmpty()) {
+                            handleResponse(it)
+                        } else {
+                            client.getSimilarProductsBySearchCode(
+                                productCode.trim(),
+                                user.locationCode
+                            )
+                                .onSuccess { it1 ->
+                                    handleResponse(it1)
+                                }.onError { e1 ->
+                                    println("Request error1: ${e1.name}")
+                                    client
+                                }
+                        }
+                    }.onError { e2 ->
+                        client.getSimilarProductsBySearchCode(productCode.trim(), user.locationCode)
                             .onSuccess { it1 ->
                                 handleResponse(it1)
                             }.onError { e1 ->
                                 println("Request error1: ${e1.name}")
-                                client
+                                clear()
                             }
+                        println("Request error: $e2")
                     }
-                }.onError { e2 ->
-                    client.getSimilarProductsBySearchCode(productCode.trim(), storeFilterValue)
-                        .onSuccess { it1 ->
-                            handleResponse(it1)
-                        }.onError { e1 ->
-                            println("Request error1: ${e1.name}")
-                            clear()
-                        }
-                    println("Request error: $e2")
-                }
 
             } catch (e: Exception) {
                 println("Request error: $e")
@@ -203,7 +213,7 @@ class AppViewModel {
         }
     }
 
-    fun baroceScanner(scannedBarcode: String){
+    fun baroceScanner(scannedBarcode: String) {
         isCameraOn = false
         productCode = scannedBarcode
         getSimilarProducts()
