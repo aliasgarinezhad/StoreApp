@@ -88,7 +88,7 @@ fun Content(
                 )
             }
         } else {
-        UsernameTextField(
+            UsernameTextField(
             username = username,
             onUsernameValueChanged = onUsernameValueChanged
         )

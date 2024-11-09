@@ -49,7 +49,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun saveUserData(user: User, dataStore: DataStore<Preferences>) {
-
         CoroutineScope(Dispatchers.Default).launch {
             val userKey = stringPreferencesKey("userKey")
             dataStore.edit {
@@ -59,7 +58,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun getUserData(dataStore: DataStore<Preferences>, onResult: (user: User) -> Unit) {
-
         CoroutineScope(Dispatchers.Default).launch {
             val userKey = stringPreferencesKey("userKey")
             dataStore.data.map {

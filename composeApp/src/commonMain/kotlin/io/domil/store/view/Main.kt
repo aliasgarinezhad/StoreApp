@@ -56,6 +56,7 @@ import storeapp.composeapp.generated.resources.ic_baseline_color_lens_24
 import storeapp.composeapp.generated.resources.ic_big_barcode_scan
 import storeapp.composeapp.generated.resources.logout
 import storeapp.composeapp.generated.resources.size
+import storeapp.composeapp.generated.resources.store
 
 @Serializable
 object MainScreen
@@ -79,7 +80,10 @@ fun MainPage(
     onImeAction: () -> Unit,
     onScanSuccess: (barcodes: String) -> Unit,
     barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit,
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
+    storesFilterValue: String,
+    storesFilterValues: List<String>,
+    onStoreFilterValueChange: (value: String) -> Unit
 ) {
     MyApplicationTheme {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
@@ -101,7 +105,10 @@ fun MainPage(
                         textFieldValue = textFieldValue,
                         onScanSuccess = onScanSuccess,
                         barcodeScanner = barcodeScanner,
-                        onLogoutClick = onLogoutClick
+                        onLogoutClick = onLogoutClick,
+                        storesFilterValues = storesFilterValues,
+                        storesFilterValue = storesFilterValue,
+                        onStoreFilterValueChange = onStoreFilterValueChange
                     )
                 },
                 snackbarHost = { ErrorSnackBar(state) },
@@ -142,6 +149,9 @@ fun SearchContent(
     colorFilterValues: List<String>,
     sizeFilterValue: String,
     sizeFilterValues: List<String>,
+    storesFilterValues: List<String>,
+    storesFilterValue: String,
+    onStoreFilterValueChange: (value: String) -> Unit,
     isCameraOn: Boolean,
     loading: Boolean,
     uiList: List<Product>,
@@ -156,7 +166,21 @@ fun SearchContent(
     barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-
+        if (loading) {
+            Row(
+                modifier = Modifier
+                    .padding(32.dp)
+                    .fillMaxWidth(), horizontalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator(color = MaterialTheme.colors.primary)
+                Text(
+                    text = "در حال بارگذاری",
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                        .align(Alignment.CenterVertically)
+                )
+            }
+        }
         Column(
             modifier = Modifier
                 .padding(bottom = 0.dp)
@@ -249,20 +273,34 @@ fun SearchContent(
                     values = sizeFilterValues
                 )
             }
-        }
-
-        if (loading) {
             Row(
-                modifier = Modifier
-                    .padding(32.dp)
-                    .fillMaxWidth(), horizontalArrangement = Arrangement.Center
+                modifier = Modifier.fillMaxWidth(),
             ) {
-                CircularProgressIndicator(color = MaterialTheme.colors.primary)
-                Text(
-                    text = "در حال بارگذاری",
+                FilterDropDownList(
                     modifier = Modifier
-                        .padding(start = 16.dp)
-                        .align(Alignment.CenterVertically)
+                        .padding(start = 16.dp, bottom = 16.dp),
+                    icon = {
+                        Icon(
+                            painter = painterResource(Res.drawable.store),
+                            contentDescription = "",
+                            tint = iconColor,
+                            modifier = Modifier
+                                .size(28.dp)
+                                .align(Alignment.CenterVertically)
+                                .padding(start = 6.dp)
+                        )
+                    },
+                    text = {
+                        Text(
+                            text = storesFilterValue,
+                            style = MaterialTheme.typography.body2,
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .padding(start = 6.dp)
+                        )
+                    },
+                    onClick = onStoreFilterValueChange,
+                    values = storesFilterValues
                 )
             }
         }

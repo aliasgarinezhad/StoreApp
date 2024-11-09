@@ -31,7 +31,7 @@ class AppViewModel(
     private var searchUiList = mutableStateListOf<Product>()
 
     //charge ui parameters
-    var loading by mutableStateOf(false)
+    var loading by mutableStateOf(true)
         private set
     var state = SnackbarHostState()
         private set
@@ -45,10 +45,15 @@ class AppViewModel(
         private set
     var sizeFilterValues = mutableStateListOf("همه سایز ها")
         private set
+    var storeFilterValues = mutableMapOf<String, String>()
+        private set
+    var storeFilterValue by mutableStateOf("")
+        private set
     var colorFilterValue by mutableStateOf("همه رنگ ها")
         private set
     var sizeFilterValue by mutableStateOf("همه سایز ها")
         private set
+
     var isCameraOn by mutableStateOf(false)
         private set
     var username by mutableStateOf("")
@@ -70,6 +75,12 @@ class AppViewModel(
         colorFilterValue = value
     }
 
+    fun onStoreFilterValueChange(value: String) {
+        storeFilterValue = value
+        user.locationCode = storeFilterValues[value]?.toInt() ?: 0
+        saveUserData(user)
+    }
+
     fun onImeAction() {
         isCameraOn = false
         getSimilarProducts()
@@ -80,6 +91,7 @@ class AppViewModel(
     }
 
     fun checkUserAuth(navHostController: NavHostController) {
+        loading = true
         loadUserData {
             println(it.toString())
             if (it.username.isNotEmpty()) {
@@ -88,6 +100,14 @@ class AppViewModel(
                     navHostController.clearBackStack<MainScreen>()
                     user = it
                     username = it.username
+                    storeFilterValues.clear()
+                    it.warehouses.forEach {
+                        storeFilterValues.put(it.WareHouseTitle, it.DepartmentInfo_ID)
+                    }
+                    storeFilterValue =
+                        storeFilterValues.entries.find { it.value == user.locationCode.toString() }?.key
+                            ?: ""
+                    loading = false
                 }
             }
         }
@@ -97,6 +117,7 @@ class AppViewModel(
         loading = true
         user = User()
         saveUserData(user)
+        storeFilterValues.clear()
         navHostController.navigate(LoginScreen)
         routeScreen.value = LoginScreen
         navHostController.clearBackStack<LoginScreen>()
@@ -214,8 +235,6 @@ class AppViewModel(
                     }
 
             } catch (e: Exception) {
-                println("Request error: $e")
-                // You could also attempt a retry here if needed
             } finally {
                 loading = false
             }
@@ -225,7 +244,6 @@ class AppViewModel(
     private fun handleResponse(response: List<Product>) {
         if (response.isEmpty()) {
             clear()
-            println("request body = 1st body is empty")
         } else {
             clear()
             searchUiList.apply {
