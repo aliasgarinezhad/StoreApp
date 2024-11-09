@@ -36,18 +36,18 @@ class GetProductData(
                 header("Authorization", "Bearer ${user.accessToken}")
             }
 
-        } catch (e: UnresolvedAddressException) {
+        } catch (_: UnresolvedAddressException) {
             return Result.Error(NetworkError.NO_INTERNET)
-        } catch (e: SerializationException) {
+        } catch (_: SerializationException) {
             return Result.Error(NetworkError.SERIALIZATION)
         }
 
         return when (response.status.value) {
             in 200..299 -> {
-                val respone =
+                val response =
                     Json.decodeFromJsonElement<List<Product>>(response.body<JsonObject>()["products"]!!)
-                println("response navid ${respone.toList()}")
-                Result.Success(respone)
+                println("response navid ${response.toList()}")
+                Result.Success(response)
             }
 
             401 -> Result.Error(NetworkError.UNAUTHORIZED)
@@ -62,20 +62,20 @@ class GetProductData(
     }
 
     suspend fun getSimilarProductsBySearchCode(
-        searhCode: String,
+        searchCode: String,
         depId: Int
     ): Result<List<Product>, NetworkError> {
         val response = try {
             httpClient.get(
-                urlString = "https://rfid-api.avakatan.ir/products/similars/localdb?DepartmentInfo_ID=$depId&&K_Bar_Code=$searhCode"
+                urlString = "https://rfid-api.avakatan.ir/products/similars/localdb?DepartmentInfo_ID=$depId&&K_Bar_Code=$searchCode"
             ) {
                 contentType(ContentType.Application.Json)
                 header("Authorization", "Bearer ${user.accessToken}")
             }
 
-        } catch (e: UnresolvedAddressException) {
+        } catch (_: UnresolvedAddressException) {
             return Result.Error(NetworkError.NO_INTERNET)
-        } catch (e: SerializationException) {
+        } catch (_: SerializationException) {
             return Result.Error(NetworkError.SERIALIZATION)
         }
 
@@ -114,9 +114,9 @@ class GetProductData(
                 header("Authorization", "Bearer ${user.accessToken}")
             }
 
-        } catch (e: UnresolvedAddressException) {
+        } catch (_: UnresolvedAddressException) {
             return Result.Error(NetworkError.NO_INTERNET)
-        } catch (e: SerializationException) {
+        } catch (_: SerializationException) {
             return Result.Error(NetworkError.SERIALIZATION)
         } finally {
             httpClient.close()
@@ -124,9 +124,9 @@ class GetProductData(
 
         return when (response.status.value) {
             in 200..299 -> {
-                val respone =
+                val response =
                     Json.decodeFromJsonElement<List<Product>>(response.body<JsonObject>()["KBarCodes"]!!)
-                Result.Success(respone)
+                Result.Success(response)
             }
 
             401 -> Result.Error(NetworkError.UNAUTHORIZED)
@@ -158,9 +158,9 @@ class GetProductData(
                 header("Authorization", "Bearer ${user.accessToken}")
             }
 
-        } catch (e: UnresolvedAddressException) {
+        } catch (_: UnresolvedAddressException) {
             return Result.Error(NetworkError.NO_INTERNET)
-        } catch (e: SerializationException) {
+        } catch (_: SerializationException) {
             return Result.Error(NetworkError.SERIALIZATION)
         }
 

@@ -111,7 +111,7 @@ fun MainPage(
 
 @Composable
 fun BarcodeScanButton(onBottomBarButtonClick: () -> Unit) {
-    Box(modifier = Modifier.fillMaxWidth()) {
+    Box(modifier = Modifier.fillMaxWidth().padding(start = 16.dp)) {
         Button(
             modifier = Modifier
                 .align(BottomStart)

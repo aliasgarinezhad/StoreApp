@@ -46,7 +46,8 @@ fun ComposableHost(
                 onSignInButtonClick = { viewModel.signIn(navHostController = navHostController) },
                 onPasswordValueChanged = { viewModel.onPasswordValueChanges(it) },
                 onUsernameValueChanged = { viewModel.onUsernameValueChanges(it) },
-                state = viewModel.state
+                state = viewModel.state,
+                loading = viewModel.loading
             )
         }
 
@@ -68,7 +69,7 @@ fun ComposableHost(
                 textFieldValue = viewModel.productCode,
                 uiList = viewModel.filteredUiList,
                 onScanSuccess = {
-                    viewModel.baroceScanner(it)
+                    viewModel.barcodeScanner(it)
                 }, barcodeScanner = barcodeScanner
             )
         }

@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
@@ -30,7 +31,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkPermission()
-        val dataStore = createDataStore(this)
         clearCash()
         val barcodeScannerComposable: @Composable (
             onScanSuccess: (barcode: String) -> Unit
@@ -38,6 +38,8 @@ class MainActivity : ComponentActivity() {
             QrScanner(onScanSuccess = onScanSuccess)
         }
         setContent {
+            val dataStore = remember { createDataStore(this) }
+
             App(barcodeScannerComposable, saveUserData = { user ->
                 saveUserData(user, dataStore)
             }, loadUserData = { onDataReceived ->

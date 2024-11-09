@@ -1,6 +1,5 @@
 package io.domil.store.viewModel
 
-import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -96,16 +95,26 @@ class AppViewModel(
 
     fun signIn(navHostController: NavHostController) {
         CoroutineScope(Dispatchers.Default).launch {
-            client.loginUser(username, password).onSuccess {
-                user = it
-                withContext(Dispatchers.Main) {
-                    navHostController.navigate(MainScreen)
-                    routeScreen.value = MainScreen
-                    navHostController.clearBackStack<MainScreen>()
+            if (username.isEmpty() || password.isEmpty()) {
+                showLog("لطفا تمامی مقادیر را وارد کنید", state)
+            } else {
+                loading = true
+                client.loginUser(username, password).onSuccess {
+                    user = it
+                    withContext(Dispatchers.Main) {
+                        navHostController.navigate(MainScreen)
+                        routeScreen.value = MainScreen
+                        navHostController.clearBackStack<MainScreen>()
+                    }
+                    saveUserData(it)
+                }.onError {
+                    if (it.name == "UNAUTHORIZED") {
+                        showLog("نام کاربری یا رمزعبور اشتباه است", state)
+                    } else {
+                        showLog(it.toString(), state)
+                    }
                 }
-                saveUserData(it)
-            }.onError {
-                showLog(it.toString(),state)
+                loading = false
             }
         }
     }
@@ -149,15 +158,8 @@ class AppViewModel(
     }
 
     private fun getSimilarProducts() {
-
         if (productCode == "") {
-            CoroutineScope(Dispatchers.Default).launch {
-                state.showSnackbar(
-                    "لطفا کد محصول را وارد کنید.",
-                    null,
-                    SnackbarDuration.Long
-                )
-            }
+            showLog("لطفا کد محصول را وارد کنید.", state)
             return
         }
 
@@ -174,16 +176,26 @@ class AppViewModel(
                                 user.locationCode
                             )
                                 .onSuccess { it1 ->
-                                    handleResponse(it1)
-                                }.onError { e1 ->
-                                    println("Request error1: ${e1.name}")
-                                    client
+                                    if (it1.isEmpty()) {
+                                        showLog(
+                                            "این کد فرعی در هیچ موجودی در فروشگاه شما ندارد",
+                                            state
+                                        )
+                                    } else {
+                                        handleResponse(it1)
+                                    }
+                                }.onError {
+                                    showLog(it.name, state)
                                 }
                         }
                     }.onError { e2 ->
                         client.getSimilarProductsBySearchCode(productCode.trim(), user.locationCode)
                             .onSuccess { it1 ->
-                                handleResponse(it1)
+                                if (it1.isEmpty()) {
+                                    showLog("این کد فرعی در هیچ موجودی در فروشگاه شما ندارد", state)
+                                } else {
+                                    handleResponse(it1)
+                                }
                             }.onError { e1 ->
                                 println("Request error1: ${e1.name}")
                                 clear()
@@ -214,7 +226,7 @@ class AppViewModel(
         }
     }
 
-    fun baroceScanner(scannedBarcode: String) {
+    fun barcodeScanner(scannedBarcode: String) {
         isCameraOn = false
         productCode = scannedBarcode
         getSimilarProducts()
