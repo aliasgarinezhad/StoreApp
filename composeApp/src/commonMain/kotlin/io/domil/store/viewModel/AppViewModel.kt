@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import io.domil.store.view.LoginScreen
 import io.domil.store.view.MainScreen
+import io.domil.store.view.showLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -104,7 +105,7 @@ class AppViewModel(
                 }
                 saveUserData(it)
             }.onError {
-                println(it.name)
+                showLog(it.toString(),state)
             }
         }
     }
@@ -194,7 +195,7 @@ class AppViewModel(
                 println("Request error: $e")
                 // You could also attempt a retry here if needed
             } finally {
-                loading = false // Ensure loading is set to false in all cases
+                loading = false
             }
         }
     }
