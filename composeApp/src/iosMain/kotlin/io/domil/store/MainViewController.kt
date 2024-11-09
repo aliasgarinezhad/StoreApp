@@ -26,8 +26,8 @@ fun MainViewController() = ComposeUIViewController {
     val dataStore = remember { createDataStore() }
 
     App(
-        barcodeScanner = { _ ->
-
+        barcodeScanner = { onScanSuccess ->
+            QrScanner(onScanSuccess = onScanSuccess)
         },
         saveUserData = { user ->
             saveUserData(user, dataStore)

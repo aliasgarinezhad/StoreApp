@@ -70,11 +70,11 @@ kotlin {
             implementation(libs.coil.mp)
             implementation(libs.coil.network.ktor)
             implementation(libs.navigation.compose)
-
         }
         appleMain.dependencies {
             implementation(libs.ktor.client.darwin)
             implementation(libs.datastore.preferences.core)
+            implementation("network.chaintech:qr-kit:2.0.0")
         }
     }
 }
