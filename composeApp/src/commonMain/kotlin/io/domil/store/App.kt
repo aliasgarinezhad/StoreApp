@@ -10,15 +10,24 @@ import io.domil.store.view.LoginScreen
 import io.domil.store.view.MainPage
 import io.domil.store.view.MainScreen
 import io.domil.store.viewModel.AppViewModel
+import networking.User
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
-fun App(barcodeScannerComposable: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit) {
-    val viewModel = AppViewModel()
+fun App(
+    barcodeScannerComposable: @Composable (enable: Boolean, onScanSuccess: (barcodes: String) -> Unit) -> Unit,
+    saveUserData: (user: User) -> Unit,
+    loadUserData: (onDataReceived: (user: User) -> Unit) -> Unit,
+) {
+    val viewModel = AppViewModel(saveUserData = saveUserData, loadUserData = loadUserData)
     val navHostController = rememberNavController()
-    viewModel.checkUserAuth()
-    ComposableHost(viewModel, navHostController = navHostController, barcodeScannerComposable = barcodeScannerComposable)
+    viewModel.checkUserAuth(navHostController)
+    ComposableHost(
+        viewModel,
+        navHostController = navHostController,
+        barcodeScannerComposable = barcodeScannerComposable
+    )
 }
 
 @Composable

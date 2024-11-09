@@ -5,6 +5,7 @@ android-minSdk = "24"
 android-targetSdk = "34"
 androidx-activityCompose = "1.9.3"
 compose-multiplatform = "1.7.0"
+datastorePreferencesCore = "1.1.1"
 kotlin = "2.0.21"
 kotlinxSerializationJson = "1.7.3"
 ktor = "3.0.0"
@@ -15,6 +16,7 @@ barcodeScanningCommon = "17.0.0"
 
 [libraries]
 
+datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastorePreferencesCore" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }

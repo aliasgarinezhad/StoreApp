@@ -59,6 +59,7 @@ kotlin {
             implementation("androidx.camera:camera-extensions:1.2.0-alpha01")
             implementation("com.google.mlkit:barcode-scanning:17.0.2")
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.datastore.preferences.core)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -67,7 +68,7 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.kotlinx.serialization.json)
+            api(libs.kotlinx.serialization.json)
             implementation(libs.bundles.ktor)
             implementation(libs.coil.compose.core)
             implementation(libs.coil.compose)
@@ -77,6 +78,7 @@ kotlin {
         }
         appleMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            implementation(libs.datastore.preferences.core)
         }
     }
 }
