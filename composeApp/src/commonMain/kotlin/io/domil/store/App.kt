@@ -70,7 +70,9 @@ fun ComposableHost(
                 uiList = viewModel.filteredUiList,
                 onScanSuccess = {
                     viewModel.barcodeScanner(it)
-                }, barcodeScanner = barcodeScanner
+                },
+                barcodeScanner = barcodeScanner,
+                onLogoutClick = { viewModel.onLogoutClick(navHostController) }
             )
         }
     }

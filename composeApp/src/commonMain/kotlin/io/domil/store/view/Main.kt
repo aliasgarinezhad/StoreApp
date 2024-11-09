@@ -54,6 +54,7 @@ import storeapp.composeapp.generated.resources.Res
 import storeapp.composeapp.generated.resources.ic_barcode_scan
 import storeapp.composeapp.generated.resources.ic_baseline_color_lens_24
 import storeapp.composeapp.generated.resources.ic_big_barcode_scan
+import storeapp.composeapp.generated.resources.logout
 import storeapp.composeapp.generated.resources.size
 
 @Serializable
@@ -77,7 +78,8 @@ fun MainPage(
     onTextValueChange: (value: String) -> Unit,
     onImeAction: () -> Unit,
     onScanSuccess: (barcodes: String) -> Unit,
-    barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit
+    barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit,
+    onLogoutClick: () -> Unit
 ) {
     MyApplicationTheme {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
@@ -98,7 +100,8 @@ fun MainPage(
                         onImeAction = onImeAction,
                         textFieldValue = textFieldValue,
                         onScanSuccess = onScanSuccess,
-                        barcodeScanner = barcodeScanner
+                        barcodeScanner = barcodeScanner,
+                        onLogoutClick = onLogoutClick
                     )
                 },
                 snackbarHost = { ErrorSnackBar(state) },
@@ -148,6 +151,7 @@ fun SearchContent(
     textFieldValue: String,
     onTextValueChange: (value: String) -> Unit,
     onImeAction: () -> Unit,
+    onLogoutClick: () -> Unit,
     onScanSuccess: (barcodes: String) -> Unit,
     barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit
 ) {
@@ -163,10 +167,21 @@ fun SearchContent(
                 )
                 .fillMaxWidth(),
         ) {
-
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
+                Icon(
+                    painter = painterResource(Res.drawable.logout),
+                    contentDescription = "",
+                    tint = Color.Unspecified,
+                    modifier = Modifier
+                        .clickable {
+                            onLogoutClick()
+                        }
+                        .size(40.dp)
+                        .align(Alignment.CenterVertically)
+                        .padding(start = 10.dp)
+                )
                 ProductCodeTextField(
                     modifier = Modifier
                         .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 14.dp)
@@ -181,7 +196,6 @@ fun SearchContent(
             Row(
                 modifier = Modifier.fillMaxWidth(),
             ) {
-
                 FilterDropDownList(
                     modifier = Modifier
                         .padding(start = 16.dp, bottom = 16.dp),

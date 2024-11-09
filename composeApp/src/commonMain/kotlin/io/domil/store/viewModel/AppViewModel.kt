@@ -93,6 +93,16 @@ class AppViewModel(
         }
     }
 
+    fun onLogoutClick(navHostController: NavHostController) {
+        loading = true
+        user = User()
+        saveUserData(user)
+        navHostController.navigate(LoginScreen)
+        routeScreen.value = LoginScreen
+        navHostController.clearBackStack<LoginScreen>()
+        loading = false
+    }
+
     fun signIn(navHostController: NavHostController) {
         CoroutineScope(Dispatchers.Default).launch {
             if (username.isEmpty() || password.isEmpty()) {
