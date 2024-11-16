@@ -47,7 +47,8 @@ fun ComposableHost(
                 onPasswordValueChanged = { viewModel.onPasswordValueChanges(it) },
                 onUsernameValueChanged = { viewModel.onUsernameValueChanges(it) },
                 state = viewModel.state,
-                loading = viewModel.loading
+                loading = viewModel.loading,
+
             )
         }
 
@@ -75,7 +76,9 @@ fun ComposableHost(
                     viewModel.barcodeScanner(it)
                 },
                 barcodeScanner = barcodeScanner,
-                onLogoutClick = { viewModel.onLogoutClick(navHostController) }
+                onLogoutClick = { viewModel.onLogoutClick(navHostController) },
+                isFullScreenImage = viewModel.isFullScreenImage,
+                changeImageFullScreen = {viewModel.changeFullScreenState()}
             )
         }
     }

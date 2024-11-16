@@ -31,7 +31,9 @@ class AppViewModel(
     private var searchUiList = mutableStateListOf<Product>()
 
     //charge ui parameters
-    var loading by mutableStateOf(true)
+    var loading by mutableStateOf(false)
+        private set
+    var isFullScreenImage by mutableStateOf(false)
         private set
     var state = SnackbarHostState()
         private set
@@ -63,6 +65,9 @@ class AppViewModel(
     var routeScreen: MutableState<Any> = mutableStateOf(LoginScreen)
         private set
 
+    fun changeFullScreenState() {
+        isFullScreenImage = !isFullScreenImage
+    }
     fun onTextValueChange(value: String) {
         productCode = value
     }
@@ -87,11 +92,10 @@ class AppViewModel(
     }
 
     fun openCamera() {
-        isCameraOn = true
+        isCameraOn = !isCameraOn
     }
 
     fun checkUserAuth(navHostController: NavHostController) {
-        loading = true
         loadUserData {
             println(it.toString())
             if (it.username.isNotEmpty()) {
@@ -107,7 +111,6 @@ class AppViewModel(
                     storeFilterValue =
                         storeFilterValues.entries.find { it.value == user.locationCode.toString() }?.key
                             ?: ""
-                    loading = false
                 }
             }
         }

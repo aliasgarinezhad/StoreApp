@@ -1,22 +1,24 @@
 package io.domil.store.view
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.FabPosition
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
@@ -34,16 +36,19 @@ import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import coil3.compose.rememberAsyncImagePainter
 import io.domil.store.getPlatform
 import io.domil.store.theme.ErrorSnackBar
 import io.domil.store.theme.FilterDropDownList
-import io.domil.store.theme.Item
+import io.domil.store.theme.FullScreenImage
 import io.domil.store.theme.MyApplicationTheme
 import io.domil.store.theme.Shapes
 import io.domil.store.theme.iconColor
@@ -51,11 +56,10 @@ import kotlinx.serialization.Serializable
 import networking.Product
 import org.jetbrains.compose.resources.painterResource
 import storeapp.composeapp.generated.resources.Res
+import storeapp.composeapp.generated.resources.barcode_scan_icon
 import storeapp.composeapp.generated.resources.ic_barcode_scan
-import storeapp.composeapp.generated.resources.ic_baseline_color_lens_24
 import storeapp.composeapp.generated.resources.ic_big_barcode_scan
-import storeapp.composeapp.generated.resources.logout
-import storeapp.composeapp.generated.resources.size
+import storeapp.composeapp.generated.resources.ic_person
 import storeapp.composeapp.generated.resources.store
 
 @Serializable
@@ -83,7 +87,9 @@ fun MainPage(
     onLogoutClick: () -> Unit,
     storesFilterValue: String,
     storesFilterValues: List<String>,
-    onStoreFilterValueChange: (value: String) -> Unit
+    onStoreFilterValueChange: (value: String) -> Unit,
+    isFullScreenImage: Boolean,
+    changeImageFullScreen: () -> Unit
 ) {
     MyApplicationTheme {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
@@ -108,12 +114,12 @@ fun MainPage(
                         onLogoutClick = onLogoutClick,
                         storesFilterValues = storesFilterValues,
                         storesFilterValue = storesFilterValue,
-                        onStoreFilterValueChange = onStoreFilterValueChange
+                        onStoreFilterValueChange = onStoreFilterValueChange,
+                        isFullScreenImage = isFullScreenImage,
+                        changeImageFullScreen = changeImageFullScreen
                     )
                 },
-                snackbarHost = { ErrorSnackBar(state) },
-                floatingActionButton = { BarcodeScanButton(onBottomBarButtonClick = onBottomBarButtonClick) },
-                floatingActionButtonPosition = FabPosition.End,
+                snackbarHost = { ErrorSnackBar(state) }
             )
         }
     }
@@ -163,7 +169,9 @@ fun SearchContent(
     onImeAction: () -> Unit,
     onLogoutClick: () -> Unit,
     onScanSuccess: (barcodes: String) -> Unit,
-    barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit
+    barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit,
+    isFullScreenImage: Boolean,
+    changeImageFullScreen: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         if (loading) {
@@ -190,22 +198,11 @@ fun SearchContent(
                     shape = MaterialTheme.shapes.large
                 )
                 .fillMaxWidth(),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Icon(
-                    painter = painterResource(Res.drawable.logout),
-                    contentDescription = "",
-                    tint = Color.Unspecified,
-                    modifier = Modifier
-                        .clickable {
-                            onLogoutClick()
-                        }
-                        .size(40.dp)
-                        .align(Alignment.CenterVertically)
-                        .padding(start = 10.dp)
-                )
                 ProductCodeTextField(
                     modifier = Modifier
                         .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 14.dp)
@@ -215,64 +212,33 @@ fun SearchContent(
                     onTextValueChange = onTextValueChange,
                     textFieldValue = textFieldValue
                 )
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                FilterDropDownList(
+                Icon(
+                    painter = painterResource(Res.drawable.barcode_scan_icon),
+                    contentDescription = "",
+                    tint = Color.Black,
                     modifier = Modifier
-                        .padding(start = 16.dp, bottom = 16.dp),
-                    icon = {
-                        Icon(
-                            painter = painterResource(Res.drawable.ic_baseline_color_lens_24),
-                            contentDescription = "",
-                            tint = iconColor,
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                                .padding(start = 4.dp)
-                        )
-                    },
-                    text = {
-                        Text(
-                            style = MaterialTheme.typography.body2,
-                            text = colorFilterValue,
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                                .padding(start = 4.dp)
-                        )
-                    },
-                    onClick = onColorFilterValueChange,
-                    values = colorFilterValues
+                        .clickable {
+                            onScanButtonClick()
+                        }
+                        .size(40.dp)
+                        .align(Alignment.CenterVertically)
+                        .padding(start = 10.dp, end = 10.dp)
                 )
 
-                FilterDropDownList(
+                Icon(
+                    painter = painterResource(Res.drawable.ic_person),
+                    contentDescription = "",
+                    tint = Color.Black,
                     modifier = Modifier
-                        .padding(start = 16.dp, bottom = 16.dp),
-                    icon = {
-                        Icon(
-                            painter = painterResource(Res.drawable.size),
-                            contentDescription = "",
-                            tint = iconColor,
-                            modifier = Modifier
-                                .size(28.dp)
-                                .align(Alignment.CenterVertically)
-                                .padding(start = 6.dp)
-                        )
-                    },
-                    text = {
-                        Text(
-                            text = sizeFilterValue,
-                            style = MaterialTheme.typography.body2,
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                                .padding(start = 6.dp)
-                        )
-                    },
-                    onClick = onSizeFilterValueChange,
-                    values = sizeFilterValues
+                        .clickable {
+                            onLogoutClick()
+                        }
+                        .size(40.dp)
+                        .align(Alignment.CenterVertically)
+                        .padding(start = 10.dp, end = 10.dp)
                 )
             }
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
             ) {
@@ -317,16 +283,53 @@ fun SearchContent(
             if (uiList.isEmpty()) {
                 EmptyList(onScanButtonClick = onScanButtonClick)
             } else {
-                LazyColumn {
-                    items(uiList.size) { i ->
-                        Item(i, uiList = uiList, false)
+                if (isFullScreenImage) {
+                    val imageList = uiList.map { it.ImgUrl.toString() }
+                    var currentImage = uiList[0].ImgUrl.toString()
+                    FullScreenImage(currentImage, changeImageFullScreen, imageList) {
+                        currentImage = it
+                    }
+                } else {
+                    AsyncImage(
+                        modifier = Modifier.weight(2f).fillMaxWidth().clickable {
+                            changeImageFullScreen()
+                        },
+                        model = uiList[0].ImgUrl,
+                        contentDescription = "",
+                    )
+                    Row(
+                        modifier = Modifier.weight(.3f)
+                            .padding(start = 30.dp, end = 30.dp),
+                        verticalAlignment = Alignment.Bottom,
+                    ) {
+                        LazyHorizontalGrid(
+                            rows = GridCells.Fixed(1),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .width(65.dp),
+                            contentPadding = PaddingValues(8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            val images = uiList.map { it.ImgUrl.toString() }
+                            items(images.size) { index ->
+                                Image(
+                                    painter = rememberAsyncImagePainter(images[index]),
+                                    contentDescription = images[index],
+                                    modifier = Modifier
+                                        .size(60.dp)
+                                        .clickable {
+
+                                        },
+                                    contentScale = ContentScale.Fit
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
     }
 }
-
 
 @Composable
 fun ProductCodeTextField(

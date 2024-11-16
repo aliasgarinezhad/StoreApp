@@ -1,12 +1,15 @@
 package io.domil.store.theme
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +19,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
@@ -28,22 +33,32 @@ import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.compose.rememberAsyncImagePainter
 import networking.Product
 import org.jetbrains.compose.resources.painterResource
 import storeapp.composeapp.generated.resources.Res
 import storeapp.composeapp.generated.resources.ic_baseline_arrow_drop_down_24
 import storeapp.composeapp.generated.resources.ic_baseline_arrow_drop_up_24
+import kotlin.math.max
+import kotlin.math.min
 
 @Composable
 fun ErrorSnackBar(state: SnackbarHostState) {
@@ -275,3 +290,90 @@ fun FilterDropDownList(
         }
     }
 }
+
+@Composable
+fun FullScreenImage(
+    url: String,
+    onImageClick: () -> Unit,
+    imageLists: List<String>,
+    onListImageClick: (image: String) -> Unit
+) {
+
+    var scale by remember { mutableFloatStateOf(1f) }
+    var offsetX by remember { mutableFloatStateOf(0f) }
+    var offsetY by remember { mutableFloatStateOf(0f) }
+    var rotationState by remember { mutableFloatStateOf(0f) }
+    var imageSize by remember { mutableStateOf(IntSize.Zero) }
+    var containerSize by remember { mutableStateOf(IntSize.Zero) }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .onGloballyPositioned { layoutCoordinates ->
+                containerSize = layoutCoordinates.size // Get the size of the container
+            }
+            .pointerInput(Unit) {
+                detectTransformGestures { _, pan, zoom, rotation ->
+                    val newScale = scale * zoom
+                    scale = max(1f, min(newScale, 4f))
+                    rotationState += rotation
+
+                    // Calculate the maximum offset for each direction
+                    val maxX = (imageSize.width * scale - containerSize.width) / 2f
+                    val maxY = (imageSize.height * scale - containerSize.height) / 2f
+
+                    // Apply panning with constraints
+                    offsetX = max(-maxX, min(maxX, offsetX + pan.x))
+                    offsetY = max(-maxY, min(maxY, offsetY + pan.y))
+                }
+            }
+    ) {
+        Image(
+            painter = rememberAsyncImagePainter(model = url),
+            contentDescription = "",
+            modifier = Modifier
+                .onGloballyPositioned { layoutCoordinates ->
+                    imageSize = layoutCoordinates.size // Get the size of the image
+                }
+                .graphicsLayer(
+                    scaleX = scale,
+                    scaleY = scale,
+                    translationX = offsetX,
+                    translationY = offsetY,
+                    rotationZ = rotationState
+                )
+                .fillMaxSize()
+                .clickable {
+                    onImageClick()
+                },  // Initial size of the image
+            contentScale = ContentScale.Crop
+        )
+        ZoomableImageGrid(images = imageLists, onImageClick = onListImageClick)
+    }
+}
+
+@Composable
+fun ZoomableImageGrid(images: List<String>, onImageClick: (image: String) -> Unit) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(1),
+        modifier = Modifier
+            .fillMaxHeight()
+            .width(65.dp),
+        contentPadding = PaddingValues(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(images.size) { index ->
+            Image(
+                painter = rememberAsyncImagePainter(images[index]),
+                contentDescription = images[index],
+                modifier = Modifier
+                    .size(60.dp)
+                    .clickable {
+                        onImageClick(images[index])
+                    },
+                contentScale = ContentScale.Fit
+            )
+        }
+    }
+}
+
