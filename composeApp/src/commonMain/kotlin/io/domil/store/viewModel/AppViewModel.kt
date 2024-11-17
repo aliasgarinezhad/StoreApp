@@ -29,11 +29,13 @@ class AppViewModel(
     private var user = User()
     private var client = GetProductData(user, createHttpClient())
     private var searchUiList = mutableStateListOf<Product>()
-
+    var imgUrls = mutableListOf<String>()
     //charge ui parameters
     var loading by mutableStateOf(false)
         private set
     var isFullScreenImage by mutableStateOf(false)
+        private set
+    var isAccountDialogOpen by mutableStateOf(false)
         private set
     var state = SnackbarHostState()
         private set
@@ -43,17 +45,13 @@ class AppViewModel(
         private set
     var filteredUiList = mutableStateListOf<Product>()
         private set
-    var colorFilterValues = mutableStateListOf("همه رنگ ها")
-        private set
-    var sizeFilterValues = mutableStateListOf("همه سایز ها")
-        private set
     var storeFilterValues = mutableMapOf<String, String>()
         private set
     var storeFilterValue by mutableStateOf("")
         private set
-    var colorFilterValue by mutableStateOf("همه رنگ ها")
+    var colorFilterValue by mutableStateOf("")
         private set
-    var sizeFilterValue by mutableStateOf("همه سایز ها")
+    var sizeFilterValue by mutableStateOf("")
         private set
 
     var isCameraOn by mutableStateOf(false)
@@ -65,9 +63,14 @@ class AppViewModel(
     var routeScreen: MutableState<Any> = mutableStateOf(LoginScreen)
         private set
 
+    var uilistColorFiltered = mutableMapOf<String, String>()
+
     fun changeFullScreenState() {
         isFullScreenImage = !isFullScreenImage
+        println("kbarcode: ${filteredUiList[0].KBarCode}")
+        getImgAlbum(filteredUiList[0].KBarCode)
     }
+
     fun onTextValueChange(value: String) {
         productCode = value
     }
@@ -77,7 +80,14 @@ class AppViewModel(
     }
 
     fun onColorFilterValueChange(value: String) {
+        println("filteredFirst"+value)
         colorFilterValue = value
+        println("filtered2"+colorFilterValue)
+        filterUiList()
+    }
+
+    fun onAccountBtnClick(){
+        isAccountDialogOpen = !isAccountDialogOpen
     }
 
     fun onStoreFilterValueChange(value: String) {
@@ -163,32 +173,32 @@ class AppViewModel(
 
     private fun filterUiList() {
 
-        val sizeFilterOutput = if (sizeFilterValue == "همه سایز ها") {
-            searchUiList
-        } else {
-            searchUiList.filter {
-                it.Size == sizeFilterValue
+        searchUiList.forEach {
+            if (!uilistColorFiltered.keys.toMutableList().contains(it.Color)) {
+                uilistColorFiltered[it.Color] = it.ImgUrl
             }
         }
 
-        val colorFilterOutput = if (colorFilterValue == "همه رنگ ها") {
-            sizeFilterOutput
-        } else {
-            sizeFilterOutput.filter {
-                it.Color == colorFilterValue
-            }
+        println("filteredcolorValue: $colorFilterValue")
+        if (colorFilterValue == "") {
+            colorFilterValue = uilistColorFiltered.keys.toList()[0]
         }
+        println("filteredcolorValue: $colorFilterValue")
         filteredUiList.clear()
-        filteredUiList.addAll(colorFilterOutput)
-
+        searchUiList.forEach {
+            if (it.Color == colorFilterValue){
+                filteredUiList.add(it)
+            }
+        }
+        println("filtered: ${filteredUiList.toList()}")
     }
 
     private fun clear() {
         searchUiList.clear()
         filteredUiList.clear()
-        colorFilterValues = mutableStateListOf("همه رنگ ها")
-        sizeFilterValues = mutableStateListOf("همه سایز ها")
         productCode = ""
+        colorFilterValue = ""
+        sizeFilterValue = ""
     }
 
     private fun getSimilarProducts() {
@@ -242,6 +252,28 @@ class AppViewModel(
                 loading = false
             }
         }
+    }
+
+    private fun getImgAlbum(barcode: String){
+        CoroutineScope(Dispatchers.Default).launch {
+            loading = true
+            try {
+                client.getImageAlbumUrl(barcode.trim())
+                    .onSuccess {
+                        if (it.isNotEmpty()) {
+                            imgUrls.addAll(it)
+                        }
+                    }.onError {
+                        println("errorIs: $it")
+                        showLog("مشکلی در دریافت عکس ها پیش آمده است",state)
+                    }
+
+            } catch (e: Exception) {
+            } finally {
+                loading = false
+            }
+        }
+
     }
 
     private fun handleResponse(response: List<Product>) {

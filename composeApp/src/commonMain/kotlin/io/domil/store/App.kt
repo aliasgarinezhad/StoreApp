@@ -56,9 +56,7 @@ fun ComposableHost(
             MainPage(
                 state = viewModel.state,
                 sizeFilterValue = viewModel.sizeFilterValue,
-                sizeFilterValues = viewModel.sizeFilterValues,
                 colorFilterValue = viewModel.colorFilterValue,
-                colorFilterValues = viewModel.colorFilterValues,
                 storesFilterValue = viewModel.storeFilterValue,
                 storesFilterValues = viewModel.storeFilterValues.keys.toMutableList(),
                 onStoreFilterValueChange = { viewModel.onStoreFilterValueChange(it) },
@@ -78,7 +76,12 @@ fun ComposableHost(
                 barcodeScanner = barcodeScanner,
                 onLogoutClick = { viewModel.onLogoutClick(navHostController) },
                 isFullScreenImage = viewModel.isFullScreenImage,
-                changeImageFullScreen = {viewModel.changeFullScreenState()}
+                changeImageFullScreen = {viewModel.changeFullScreenState()},
+                colorFilterList = viewModel.uilistColorFiltered,
+                filteredUiList = viewModel.filteredUiList,
+                onAccountBtnClick = { viewModel.onAccountBtnClick() },
+                isAccountDialogOpen = viewModel.isAccountDialogOpen,
+                imgAlbumUrl = viewModel.imgUrls
             )
         }
     }

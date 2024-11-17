@@ -71,6 +71,7 @@ class GetProductData(
             ) {
                 contentType(ContentType.Application.Json)
                 header("Authorization", "Bearer ${user.accessToken}")
+                println("Bearer ${user.accessToken}")
             }
 
         } catch (_: UnresolvedAddressException) {
@@ -85,6 +86,45 @@ class GetProductData(
                     Json.decodeFromJsonElement<List<Product>>(response.body<JsonObject>()["products"]!!)
                 println("response navid ${respone.toList()}")
                 Result.Success(respone)
+            }
+
+            401 -> Result.Error(NetworkError.UNAUTHORIZED)
+            409 -> Result.Error(NetworkError.CONFLICT)
+            408 -> Result.Error(NetworkError.REQUEST_TIMEOUT)
+            413 -> Result.Error(NetworkError.PAYLOAD_TOO_LARGE)
+            in 500..599 -> Result.Error(NetworkError.SERVER_ERROR)
+            else -> {
+                Result.Error(NetworkError.UNKNOWN)
+            }
+        }
+    }
+
+    suspend fun getImageAlbumUrl(
+        barcode: String,
+    ): Result<List<String>, NetworkError> {
+        val response = try {
+            httpClient.get(
+                urlString = "https://rfid-api.avakatan.ir/products/gallery?KBarCode=$barcode"
+            ) {
+                contentType(ContentType.Application.Json)
+                println("token: "+ user.accessToken)
+                header("Authorization", "Bearer ${user.accessToken}")
+            }
+
+        } catch (_: UnresolvedAddressException) {
+            return Result.Error(NetworkError.NO_INTERNET)
+        } catch (_: SerializationException) {
+            return Result.Error(NetworkError.SERIALIZATION)
+        }
+
+        return when (response.status.value) {
+            in 200..299 -> {
+                // Parse the response body
+                val responseBody: String = response.body() // Response as a raw string
+                val imageUrls: List<String> = Json.decodeFromString(responseBody)
+
+                println("Parsed response: $imageUrls")
+                Result.Success(imageUrls)
             }
 
             401 -> Result.Error(NetworkError.UNAUTHORIZED)
