@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import io.domil.store.theme.BigButton
 import io.domil.store.theme.ErrorSnackBar
 import io.domil.store.theme.MyApplicationTheme
 import kotlinx.serialization.Serializable
@@ -96,17 +97,13 @@ fun Content(
             password = password,
             onPasswordValueChanged = onPasswordValueChanged
         )
-        Button(
+        BigButton(
+            text = "ورود به حساب کاربری",
             onClick = {
                 focus.clearFocus()
                 onSignInButtonClick()
             },
-            modifier = Modifier
-                .padding(top = 20.dp)
-                .align(Alignment.CenterHorizontally)
-        ) {
-            Text(text = "ورود به حساب کاربری")
-        }
+        )
     }
 }
 }
@@ -120,7 +117,7 @@ fun UsernameTextField(
     OutlinedTextField(
         value = username, onValueChange = { onUsernameValueChanged(it) },
         modifier = Modifier
-            .padding(top = 10.dp, start = 10.dp, end = 10.dp)
+            .padding(top = 32.dp, start = 16.dp, end = 16.dp)
             .fillMaxWidth(),
         label = { Text(text = "نام کاربری") },
         keyboardOptions = KeyboardOptions.Default.copy(
@@ -138,7 +135,7 @@ fun PasswordTextField(
     OutlinedTextField(
         value = password, onValueChange = { onPasswordValueChanged(it) },
         modifier = Modifier
-            .padding(top = 10.dp, start = 10.dp, end = 10.dp)
+            .padding(top = 8.dp, start = 16.dp, end = 16.dp, bottom = 24.dp)
             .fillMaxWidth(),
         label = { Text(text = "رمز عبور") },
         keyboardOptions = KeyboardOptions.Default.copy(

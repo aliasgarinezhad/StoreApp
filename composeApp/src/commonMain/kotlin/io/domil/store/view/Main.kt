@@ -8,29 +8,29 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -38,8 +38,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomStart
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
@@ -56,8 +59,8 @@ import io.domil.store.getPlatform
 import io.domil.store.theme.ErrorSnackBar
 import io.domil.store.theme.FilterDropDownList
 import io.domil.store.theme.FullScreenImage
-import io.domil.store.theme.Jeanswest
 import io.domil.store.theme.MyApplicationTheme
+import io.domil.store.theme.MyTypography
 import io.domil.store.theme.Shapes
 import io.domil.store.theme.iconColor
 import kotlinx.serialization.Serializable
@@ -67,7 +70,6 @@ import storeapp.composeapp.generated.resources.Res
 import storeapp.composeapp.generated.resources.barcode_scan_icon
 import storeapp.composeapp.generated.resources.ic_barcode_scan
 import storeapp.composeapp.generated.resources.ic_big_barcode_scan
-import storeapp.composeapp.generated.resources.ic_person
 import storeapp.composeapp.generated.resources.store
 
 @Serializable
@@ -205,251 +207,247 @@ fun SearchContent(
                         .align(Alignment.CenterVertically)
                 )
             }
-        }
-        if (isAccountDialogOpen) {
-            AlertDialog(
-                onDismissRequest = {
-                    onAccountBtnClick()
-                },
-                buttons = {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp, vertical = 24.dp),
-                    ) {
-
-                        Text(
-                            "خروج یا انتخاب فروشگاه",
-                            style = MaterialTheme.typography.body2
-                        )
-
-                        Row {
-                            FilterDropDownList(
-                                modifier = Modifier
-                                    .padding(start = 16.dp, bottom = 16.dp, top = 16.dp),
-                                icon = {
-                                    Icon(
-                                        painter = painterResource(Res.drawable.store),
-                                        contentDescription = "",
-                                        tint = iconColor,
-                                        modifier = Modifier
-                                            .size(28.dp)
-                                            .align(Alignment.CenterVertically)
-                                            .padding(start = 6.dp)
-                                    )
-                                },
-                                text = {
-                                    Text(
-                                        text = storesFilterValue,
-                                        style = MaterialTheme.typography.body2,
-                                        modifier = Modifier
-                                            .align(Alignment.CenterVertically)
-                                            .padding(start = 6.dp)
-                                    )
-                                },
-                                onClick = onStoreFilterValueChange,
-                                values = storesFilterValues
-                            )
-                        }
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End,
-                        ) {
-//                            Button(
-//                                onClick = {
-//                                    onAccountBtnClick()
-//                                }, modifier = Modifier
-//                                    .padding(top = 24.dp)
-//                                    .align(Alignment.CenterVertically)
-//                                    .testTag("alertBtn"),
-//                            ) {
-//                                Text(text = "انصراف")
-//                            }
-
-                            Button(
-                                onClick = {
-                                    onLogoutClick()
-                                },
-                                modifier = Modifier
-                                    .padding(top = 24.dp)
-                                    .align(Alignment.CenterVertically)
-                                    .testTag("alertBtn"),
-                            ) {
-                                Text(text = "خروج")
-                            }
-
-                            Button(
-                                onClick = {
-                                    onAccountBtnClick()
-                                }, modifier = Modifier
-                                    .padding(top = 24.dp)
-                                    .align(Alignment.CenterVertically)
-                                    .testTag("alertBtn")
-                            ) {
-                                Text(text = "تایید")
-                            }
-                        }
-                    }
-                }
-            )
-        }
-        Column(
-            modifier = Modifier
-                .padding(bottom = 0.dp)
-                .shadow(elevation = 6.dp, shape = MaterialTheme.shapes.large)
-                .background(
-                    color = MaterialTheme.colors.onPrimary,
-                    shape = MaterialTheme.shapes.large
-                )
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                ProductCodeTextField(
-                    modifier = Modifier
-                        .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 14.dp)
-                        .weight(1F)
-                        .fillMaxWidth(),
-                    onImeAction = onImeAction,
-                    onTextValueChange = onTextValueChange,
-                    textFieldValue = textFieldValue
-                )
-                Icon(
-                    painter = painterResource(Res.drawable.barcode_scan_icon),
-                    contentDescription = "",
-                    tint = Color.Black,
-                    modifier = Modifier
-                        .clickable {
-                            onScanButtonClick()
-                        }
-                        .size(40.dp)
-                        .align(Alignment.CenterVertically)
-                        .padding(start = 10.dp, end = 10.dp)
-                )
-
-                Icon(
-                    painter = painterResource(Res.drawable.ic_person),
-                    contentDescription = "",
-                    tint = Color.Black,
-                    modifier = Modifier
-                        .clickable {
-                            onAccountBtnClick()
-                        }
-                        .size(40.dp)
-                        .align(Alignment.CenterVertically)
-                        .padding(start = 10.dp, end = 10.dp)
-                )
-            }
-        }
-
-        if (isCameraOn && getPlatform().name.contains("Android")) {
-            barcodeScanner {
-                onScanSuccess(it)
-            }
-        } else if (isCameraOn && getPlatform().name.contains("IOS")) {
-            barcodeScanner {
-                onScanSuccess(it)
-            }
         } else {
-            if (uiList.isEmpty()) {
-                EmptyList(onScanButtonClick = onScanButtonClick)
-            } else {
-                if (isFullScreenImage) {
-                    var currentImage = uiList[0].ImgUrl
-                    FullScreenImage(currentImage, changeImageFullScreen, imgAlbumUrl) {
-                        currentImage = it
-                    }
-                } else {
-                    AsyncImage(
-                        modifier = Modifier.weight(2.5f).fillMaxWidth().clickable {
-                            changeImageFullScreen()
-                        }.padding(10.dp),
-                        model = filteredUiList[0].ImgUrl,
-                        contentDescription = "",
-                        contentScale = ContentScale.FillHeight
-                    )
-                    Row(modifier = Modifier.weight(1.3f).fillMaxWidth().padding(3.dp)) {
-                        Column(modifier = Modifier.weight(1.5f).fillMaxHeight(), verticalArrangement = Arrangement.SpaceBetween) {
-                            Text(
-                                text = "سایز",
-                                style = MaterialTheme.typography.body2,
-                                modifier = Modifier
-                                    .align(CenterHorizontally)
-                            )
-                            Text(
-                                text = "فروشگاه",
-                                style = MaterialTheme.typography.body2,
-                                modifier = Modifier
-                                    .align(CenterHorizontally)
-                            )
-                            Text(
-                                text = "دپو",
-                                style = MaterialTheme.typography.body2,
-                                modifier = Modifier
-                                    .align(CenterHorizontally)
-                            )
-                        }
-                        Column(modifier = Modifier.weight(5f)) {
-                            LazyRow(
-                                horizontalArrangement = Arrangement.spacedBy(19.dp)
+            if (isAccountDialogOpen) {
+                AlertDialog(
+                    onDismissRequest = {
+                        onAccountBtnClick()
+                    },
+                    buttons = {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 24.dp, bottom = 16.dp, start = 24.dp, end = 24.dp),
+                        ) {
 
-                            ) {
-                                items(filteredUiList.size) { i ->
-                                    sizeAndCountItem(i, filteredUiList)
-                                    if (i != filteredUiList.lastIndex) {
-                                        Divider(
+                            Text(
+                                "تنظیمات حساب کاربری",
+                                modifier = Modifier.fillMaxWidth().align(CenterHorizontally),
+                                style = MaterialTheme.typography.h1
+                            )
+
+                            Row(horizontalArrangement = Arrangement.Center) {
+
+//                                Text(
+//                                    "انتخاب فروشگاه",
+//                                    modifier = Modifier.padding(start = 16.dp, end = 16.dp).align(
+//                                        CenterVertically
+//                                    )
+//                                )
+
+                                FilterDropDownList(
+                                    modifier = Modifier
+                                        .padding(bottom = 24.dp, top = 24.dp),
+                                    icon = {
+                                        Icon(
+                                            painter = painterResource(Res.drawable.store),
+                                            contentDescription = "",
+                                            tint = iconColor,
                                             modifier = Modifier
-                                                .fillMaxHeight()
-                                                .width(1.dp)
-                                            ,
-                                            color = Color.Gray
+                                                .size(28.dp)
+                                                .align(Alignment.CenterVertically)
+                                                .padding(start = 6.dp)
                                         )
-                                    }
+                                    },
+                                    text = {
+                                        Text(
+                                            text = storesFilterValue,
+                                            style = MaterialTheme.typography.body2,
+                                            modifier = Modifier
+                                                .align(Alignment.CenterVertically)
+                                                .padding(start = 6.dp)
+                                        )
+                                    },
+                                    onClick = onStoreFilterValueChange,
+                                    values = storesFilterValues
+                                )
+                            }
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            ) {
 
+                                OutlinedButton(
+                                    onClick = {
+                                        onLogoutClick()
+                                    },
+                                    modifier = Modifier
+                                        .testTag("alertBtn"),
+                                ) {
+                                    Text(text = "خروج از حساب")
+                                }
+
+                                Button(
+                                    onClick = {
+                                        onAccountBtnClick()
+                                    }, modifier = Modifier
+                                        .testTag("alertBtn")
+                                ) {
+                                    Text(text = "ذخیره")
                                 }
                             }
                         }
                     }
-
-
-                    //BottomBar choice color
-                    Row(
-                        modifier = Modifier.weight(1f)
-                            .padding(start = 30.dp, end = 30.dp),
-                        verticalAlignment = Alignment.Bottom,
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .padding(bottom = 0.dp)
+                    .shadow(elevation = 6.dp, shape = MaterialTheme.shapes.large)
+                    .background(
+                        color = MaterialTheme.colors.onPrimary,
+                        shape = MaterialTheme.shapes.large
+                    )
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    ProductCodeTextField(
+                        modifier = Modifier
+                            .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 14.dp)
+                            .weight(1F)
+                            .fillMaxWidth(),
+                        onImeAction = onImeAction,
+                        onTextValueChange = onTextValueChange,
+                        textFieldValue = textFieldValue
+                    )
+                    IconButton(
+                        onClick = {
+                            onScanButtonClick()
+                        },
+                        modifier = Modifier
+                            //.padding(start = 4.dp)
+                            .size(32.dp)
+                            .align(Alignment.CenterVertically)
                     ) {
-                        LazyHorizontalGrid(
-                            rows = GridCells.Fixed(1),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .width(65.dp),
-                            contentPadding = PaddingValues(8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        Icon(
+                            painter = painterResource(Res.drawable.barcode_scan_icon),
+                            contentDescription = "",
+                        )
+                    }
+
+                    IconButton(
+                        onClick = {
+                            onAccountBtnClick()
+                        },
+                        modifier = Modifier
+                            .padding(start = 32.dp, end = 16.dp)
+                            .size(32.dp)
+                            .align(Alignment.CenterVertically)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Person,
+                            contentDescription = "",
+                        )
+                    }
+                }
+            }
+
+            if (isCameraOn && getPlatform().name.contains("Android")) {
+                barcodeScanner {
+                    onScanSuccess(it)
+                }
+            } else if (isCameraOn && getPlatform().name.contains("IOS")) {
+                barcodeScanner {
+                    onScanSuccess(it)
+                }
+            } else {
+                if (uiList.isEmpty()) {
+                    EmptyList(onScanButtonClick = onScanButtonClick)
+                } else {
+                    if (isFullScreenImage) {
+                        var currentImage = uiList[0].ImgUrl
+                        FullScreenImage(currentImage, changeImageFullScreen, imgAlbumUrl) {
+                            currentImage = it
+                        }
+                    } else {
+
+                        Text(
+                            text = uiList[0].SalePrice.toString().reversed().chunked(3)
+                                .joinToString(",").reversed(),
+                            style = MaterialTheme.typography.h1,
+                            modifier = Modifier.padding(start = 20.dp),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = Color.Black
+                        )
+
+                        AsyncImage(
+                            modifier = Modifier.weight(2.5f).fillMaxWidth()/*.clickable {
+                                changeImageFullScreen()
+                            }*/.padding(top = 16.dp, end = 16.dp, start = 16.dp, bottom = 16.dp),
+                            model = filteredUiList[0].ImgUrl,
+                            contentDescription = "",
+                            contentScale = ContentScale.FillHeight
+                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                                .background(color = Color.White, RoundedCornerShape(0.dp))
+                                .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
                         ) {
-                            items(colorFilterList.keys.size) { index ->
-                                Box(
-                                    modifier = Modifier.clickable {
-                                        onColorFilterValueChange(colorFilterList.keys.toList()[index])
+                            Column(modifier = Modifier.padding(end = 16.dp)) {
+                                Text(
+                                    text = "سایز",
+                                    style = MaterialTheme.typography.body2,
+                                    modifier = Modifier
+                                        .padding(vertical = 8.dp)
+                                )
+                                Text(
+                                    text = "سطح",
+                                    style = MaterialTheme.typography.body2,
+                                    modifier = Modifier
+                                        .padding(vertical = 8.dp)
+                                )
+                                Text(
+                                    text = "دپو",
+                                    style = MaterialTheme.typography.body2,
+                                    modifier = Modifier
+                                        .padding(vertical = 8.dp)
+                                )
+                            }
+                            Column {
+                                LazyRow {
+                                    items(filteredUiList.size) { i ->
+                                        sizeAndCountItem(i, filteredUiList)
                                     }
-                                ) {
-                                    Image(
-                                        painter = rememberAsyncImagePainter(colorFilterList.values.toList()[index]),
-                                        contentDescription = "",
-                                        modifier = Modifier
-                                            .size(60.dp)
-                                            .clickable {
-                                                onColorFilterValueChange(colorFilterList.keys.toList()[index])
-                                            },
-                                        contentScale = ContentScale.Fit
-                                    )
-                                    Text(
-                                        text = colorFilterList.keys.toList()[index],
-                                        color = Color.Black,
-                                        fontSize = 14.sp,
-                                        modifier = Modifier.align(Alignment.BottomCenter),
-                                    )
+                                }
+                            }
+                        }
+
+                        //BottomBar choice color
+                        Row(
+                            modifier = Modifier
+                                .padding(start = 32.dp, end = 32.dp, top = 16.dp),
+                            verticalAlignment = Alignment.Bottom,
+                        ) {
+                            LazyRow(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .width(65.dp),
+                                contentPadding = PaddingValues(8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                items(colorFilterList.keys.size) { index ->
+                                    Column(
+                                        modifier = Modifier.clickable {
+                                            onColorFilterValueChange(colorFilterList.keys.toList()[index])
+                                        }.background(color = Color.White, RoundedCornerShape(0.dp))
+                                    ) {
+                                        Image(
+                                            painter = rememberAsyncImagePainter(colorFilterList.values.toList()[index]),
+                                            contentDescription = "",
+                                            modifier = Modifier
+                                                .size(60.dp),
+                                            contentScale = ContentScale.Fit
+                                        )
+                                        Text(
+                                            text = colorFilterList.keys.toList()[index],
+                                            style = MyTypography().body1,
+                                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -547,29 +545,38 @@ fun sizeAndCountItem(
     list: List<Product>
 ) {
     Column(
-        modifier = Modifier.fillMaxHeight().padding(end = 16.dp),
-        Arrangement.SpaceBetween
+        modifier = if (i != list.size - 1) {
+            Modifier
+                .drawBehind {
+                    drawLine(
+                        color = Color.Black,
+                        start = Offset(0f, 0f),
+                        end = Offset(0f, size.height),
+                        strokeWidth = 1.dp.toPx()
+                    )
+                }.padding(end = 16.dp, start = 16.dp)
+        } else {
+            Modifier.padding(end = 16.dp, start = 16.dp)
+        },
     ) {
         Text(
             text = list[i].Size,
             color = Color.Black,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.align(CenterHorizontally)
+            style = MyTypography().h1,
+            modifier = Modifier
+                .padding(vertical = 8.dp)
         )
         Text(
             text = list[i].dbCountStore.toString(),
-            color = Jeanswest,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.align(CenterHorizontally)
+            style = MyTypography().h3,
+            modifier = Modifier
+                .padding(vertical = 8.dp)
         )
         Text(
             text = list[i].dbCountDepo.toString(),
-            color = Jeanswest,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.align(CenterHorizontally)
+            style = MyTypography().h3,
+            modifier = Modifier
+                .padding(vertical = 8.dp)
         )
     }
 }

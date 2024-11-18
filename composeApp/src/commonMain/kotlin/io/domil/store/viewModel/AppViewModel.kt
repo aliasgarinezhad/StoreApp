@@ -116,7 +116,7 @@ class AppViewModel(
                     username = it.username
                     storeFilterValues.clear()
                     it.warehouses.forEach {
-                        storeFilterValues.put(it.WareHouseTitle, it.DepartmentInfo_ID)
+                        storeFilterValues[it.WareHouseTitle] = it.DepartmentInfo_ID
                     }
                     storeFilterValue =
                         storeFilterValues.entries.find { it.value == user.locationCode.toString() }?.key
@@ -134,6 +134,7 @@ class AppViewModel(
         navHostController.navigate(LoginScreen)
         routeScreen.value = LoginScreen
         navHostController.clearBackStack<LoginScreen>()
+        isAccountDialogOpen = !isAccountDialogOpen
         loading = false
     }
 

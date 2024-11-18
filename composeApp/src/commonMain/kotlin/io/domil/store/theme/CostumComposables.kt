@@ -22,6 +22,8 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -92,6 +94,31 @@ fun ErrorSnackBar(state: SnackbarHostState) {
                 )
             }
         })
+    }
+}
+
+
+@Composable
+fun BigButton(
+    modifier: Modifier = Modifier,
+    text: String, onClick: () -> Unit,
+) {
+    Button(
+        modifier = modifier
+            .padding(start = 24.dp, end = 24.dp, bottom = 24.dp)
+            .fillMaxWidth()
+            .height(48.dp),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = Jeanswest,
+            disabledBackgroundColor = DisableButtonColor,
+            disabledContentColor = Color.White
+        ),
+        onClick = onClick
+    ) {
+        Text(
+            text = text,
+            style = MyTypography().h2
+        )
     }
 }
 

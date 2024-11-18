@@ -25,8 +25,12 @@ fun MyTypography() = Typography(
         color = Color(0xFF272727),
     ),
     h1 = TextStyle(
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
+    ),
+    h2 = TextStyle(
+        fontWeight = FontWeight.Normal,
+        fontSize = 15.sp
     ),
     h3 = TextStyle(
         fontWeight = FontWeight.Normal,
