@@ -89,7 +89,7 @@ fun showLog(
         state.showSnackbar(
             data,
             action.toString(),
-            if (action == SnackBarActions.WARNING) SnackbarDuration.Indefinite else SnackbarDuration.Long
+            if (action == SnackBarActions.WARNING) SnackbarDuration.Indefinite else SnackbarDuration.Short
         )
     }
 }

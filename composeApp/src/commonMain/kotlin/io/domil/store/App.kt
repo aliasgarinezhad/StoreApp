@@ -16,17 +16,15 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 fun App(
+    viewModel: AppViewModel,
     barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit,
-    saveUserData: (user: User) -> Unit,
-    loadUserData: (onDataReceived: (user: User) -> Unit) -> Unit,
 ) {
-    val viewModel = AppViewModel(saveUserData = saveUserData, loadUserData = loadUserData)
+
     val navHostController = rememberNavController()
-    viewModel.checkUserAuth(navHostController)
     ComposableHost(
         viewModel,
         navHostController = navHostController,
-        barcodeScanner = barcodeScanner
+        barcodeScanner = barcodeScanner,
     )
 }
 
@@ -34,7 +32,7 @@ fun App(
 fun ComposableHost(
     viewModel: AppViewModel,
     navHostController: NavHostController,
-    barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit
+    barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit,
 ) {
 
     NavHost(navController = navHostController, startDestination = viewModel.routeScreen.value) {
@@ -48,40 +46,40 @@ fun ComposableHost(
                 onUsernameValueChanged = { viewModel.onUsernameValueChanges(it) },
                 state = viewModel.state,
                 loading = viewModel.loading,
-
             )
         }
 
         composable<MainScreen> {
             MainPage(
                 state = viewModel.state,
-                sizeFilterValue = viewModel.sizeFilterValue,
+                isCameraOn = viewModel.isCameraOn,
                 colorFilterValue = viewModel.colorFilterValue,
-                storesFilterValue = viewModel.storeFilterValue,
-                storesFilterValues = viewModel.storeFilterValues.keys.toMutableList(),
-                onStoreFilterValueChange = { viewModel.onStoreFilterValueChange(it) },
-                onImeAction = { viewModel.onImeAction() },
-                onScanButtonClick = { viewModel.openCamera() },
-                onTextValueChange = { viewModel.onTextValueChange(it) },
-                onSizeFilterValueChange = { viewModel.onSizeFilterValueChange(it) },
-                onColorFilterValueChange = { viewModel.onColorFilterValueChange(it) },
+                sizeFilterValue = viewModel.sizeFilterValue,
                 onBottomBarButtonClick = { viewModel.openCamera() },
                 loading = viewModel.loading,
-                isCameraOn = viewModel.isCameraOn,
-                textFieldValue = viewModel.productCode,
                 uiList = viewModel.filteredUiList,
+                onScanButtonClick = { viewModel.openCamera() },
+                onColorFilterValueChange = { viewModel.onColorFilterValueChange(it) },
+                onSizeFilterValueChange = { viewModel.onSizeFilterValueChange(it) },
+                textFieldValue = viewModel.productCode,
+                onTextValueChange = { viewModel.onTextValueChange(it) },
+                onImeAction = { viewModel.onImeAction() },
                 onScanSuccess = {
                     viewModel.barcodeScanner(it)
                 },
                 barcodeScanner = barcodeScanner,
                 onLogoutClick = { viewModel.onLogoutClick(navHostController) },
+                storesFilterValue = viewModel.storeFilterValue,
+                storesFilterValues = viewModel.storeFilterValues.keys.toMutableList(),
+                onStoreFilterValueChange = { viewModel.onStoreFilterValueChange(it) },
                 isFullScreenImage = viewModel.isFullScreenImage,
-                changeImageFullScreen = {viewModel.changeFullScreenState()},
-                colorFilterList = viewModel.uilistColorFiltered,
+                changeImageFullScreen = { viewModel.changeFullScreenState() },
+                colorFilterList = viewModel.uiListColorFiltered,
                 filteredUiList = viewModel.filteredUiList,
                 onAccountBtnClick = { viewModel.onAccountBtnClick() },
                 isAccountDialogOpen = viewModel.isAccountDialogOpen,
-                imgAlbumUrl = viewModel.imgUrls
+                imgAlbumUrl = viewModel.imgUrls,
+                colorFilterLazyRowState = viewModel.colorFilterLazyRowState.value
             )
         }
     }
