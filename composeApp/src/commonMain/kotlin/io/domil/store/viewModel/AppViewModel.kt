@@ -1,5 +1,6 @@
 package io.domil.store.viewModel
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -11,7 +12,9 @@ import io.domil.store.view.LoginScreen
 import io.domil.store.view.MainScreen
 import io.domil.store.view.showLog
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import networking.GetProductData
@@ -23,13 +26,15 @@ import util.onSuccess
 
 class AppViewModel(
     val saveUserData: (user: User) -> Unit,
-    val loadUserData: (onDataReceived: (user: User) -> Unit) -> Unit,
+    val webPageRequestBarcode: String,
+    val savedUser: User,
 ) {
 
     private var user = User()
     private var client = GetProductData(user, createHttpClient())
     private var searchUiList = mutableStateListOf<Product>()
     var imgUrls = mutableListOf<String>()
+
     //charge ui parameters
     var loading by mutableStateOf(false)
         private set
@@ -63,7 +68,44 @@ class AppViewModel(
     var routeScreen: MutableState<Any> = mutableStateOf(LoginScreen)
         private set
 
-    var uilistColorFiltered = mutableMapOf<String, String>()
+    var uiListColorFiltered = mutableMapOf<String, String>()
+    private var loadDataRan = false
+    private var itemBarcode = ""
+
+    private val sizes = listOf("S", "M", "L", "XL", "XXL", "XXXL")
+    var colorFilterLazyRowState = mutableStateOf(LazyListState())
+
+
+    init {
+
+        loading = true
+
+        println(savedUser.toString())
+        if (savedUser.username.isNotEmpty()) {
+            println("signed in")
+            user = savedUser
+            storeFilterValues.clear()
+            savedUser.warehouses.forEach {
+                storeFilterValues[it.WareHouseTitle] = it.DepartmentInfo_ID
+            }
+            storeFilterValue =
+                storeFilterValues.entries.find { it.value == user.locationCode.toString() }?.key
+                    ?: ""
+
+            if (webPageRequestBarcode.isNotEmpty()) {
+                onScanResult(webPageRequestBarcode)
+            }
+            routeScreen.value = MainScreen
+            loading = false
+
+        } else {
+            println("not signed in")
+            CoroutineScope(Main).launch {
+                loading = false
+            }
+        }
+        loadDataRan = true
+    }
 
     fun changeFullScreenState() {
         isFullScreenImage = !isFullScreenImage
@@ -80,13 +122,13 @@ class AppViewModel(
     }
 
     fun onColorFilterValueChange(value: String) {
-        println("filteredFirst"+value)
+        println("filteredFirst" + value)
         colorFilterValue = value
-        println("filtered2"+colorFilterValue)
+        println("filtered2" + colorFilterValue)
         filterUiList()
     }
 
-    fun onAccountBtnClick(){
+    fun onAccountBtnClick() {
         isAccountDialogOpen = !isAccountDialogOpen
     }
 
@@ -94,6 +136,30 @@ class AppViewModel(
         storeFilterValue = value
         user.locationCode = storeFilterValues[value]?.toInt() ?: 0
         saveUserData(user)
+        clear()
+    }
+
+    private fun clear() {
+        itemBarcode = ""
+        searchUiList.clear()
+        filteredUiList.clear()
+        productCode = ""
+        colorFilterValue = ""
+        sizeFilterValue = ""
+        uiListColorFiltered.clear()
+    }
+
+    private suspend fun delayScreen() {
+
+        withContext(Main) {
+            loading = true
+        }
+        CoroutineScope(Default).launch {
+            delay(500)
+            withContext(Main) {
+                loading = false
+            }
+        }
     }
 
     fun onImeAction() {
@@ -105,29 +171,9 @@ class AppViewModel(
         isCameraOn = !isCameraOn
     }
 
-    fun checkUserAuth(navHostController: NavHostController) {
-        loadUserData {
-            println(it.toString())
-            if (it.username.isNotEmpty()) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    routeScreen.value = MainScreen
-                    navHostController.clearBackStack<MainScreen>()
-                    user = it
-                    username = it.username
-                    storeFilterValues.clear()
-                    it.warehouses.forEach {
-                        storeFilterValues[it.WareHouseTitle] = it.DepartmentInfo_ID
-                    }
-                    storeFilterValue =
-                        storeFilterValues.entries.find { it.value == user.locationCode.toString() }?.key
-                            ?: ""
-                }
-            }
-        }
-    }
-
     fun onLogoutClick(navHostController: NavHostController) {
         loading = true
+        clear()
         user = User()
         saveUserData(user)
         storeFilterValues.clear()
@@ -139,27 +185,37 @@ class AppViewModel(
     }
 
     fun signIn(navHostController: NavHostController) {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Default).launch {
             if (username.isEmpty() || password.isEmpty()) {
                 showLog("لطفا تمامی مقادیر را وارد کنید", state)
             } else {
                 loading = true
                 client.loginUser(username, password).onSuccess {
                     user = it
-                    withContext(Dispatchers.Main) {
+                    storeFilterValues.clear()
+                    it.warehouses.forEach { warehouse ->
+                        storeFilterValues[warehouse.WareHouseTitle] = warehouse.DepartmentInfo_ID
+                    }
+                    storeFilterValue =
+                        storeFilterValues.entries.find { it.value == user.locationCode.toString() }?.key
+                            ?: ""
+                    saveUserData(it)
+                    withContext(Main) {
                         navHostController.navigate(MainScreen)
                         routeScreen.value = MainScreen
                         navHostController.clearBackStack<MainScreen>()
+                        delayScreen()
                     }
-                    saveUserData(it)
                 }.onError {
                     if (it.name == "UNAUTHORIZED") {
                         showLog("نام کاربری یا رمزعبور اشتباه است", state)
                     } else {
                         showLog(it.toString(), state)
                     }
+                    withContext(Main) {
+                        loading = false
+                    }
                 }
-                loading = false
             }
         }
     }
@@ -175,31 +231,44 @@ class AppViewModel(
     private fun filterUiList() {
 
         searchUiList.forEach {
-            if (!uilistColorFiltered.keys.toMutableList().contains(it.Color)) {
-                uilistColorFiltered[it.Color] = it.ImgUrl
+            if (!uiListColorFiltered.keys.toMutableList().contains(it.Color)) {
+                uiListColorFiltered[it.Color] = it.ImgUrl
             }
         }
 
         println("filteredcolorValue: $colorFilterValue")
         if (colorFilterValue == "") {
-            colorFilterValue = uilistColorFiltered.keys.toList()[0]
+            colorFilterValue = if (itemBarcode.isNotEmpty()) {
+                val color = uiListColorFiltered.keys.find {
+                    it in itemBarcode
+                }
+                if (color != null) {
+                    CoroutineScope(Main).launch {
+                        colorFilterLazyRowState.value.requestScrollToItem(
+                            uiListColorFiltered.keys.indexOf(
+                                color
+                            ), scrollOffset = -120
+                        )
+                    }
+                    color
+                } else {
+                    uiListColorFiltered.keys.toList()[0]
+                }
+            } else {
+                uiListColorFiltered.keys.toList()[0]
+            }
         }
         println("filteredcolorValue: $colorFilterValue")
         filteredUiList.clear()
         searchUiList.forEach {
-            if (it.Color == colorFilterValue){
+            if (it.Color == colorFilterValue) {
                 filteredUiList.add(it)
             }
         }
+        filteredUiList.sortBy {
+            sizes.indexOf(it.Size)
+        }
         println("filtered: ${filteredUiList.toList()}")
-    }
-
-    private fun clear() {
-        searchUiList.clear()
-        filteredUiList.clear()
-        productCode = ""
-        colorFilterValue = ""
-        sizeFilterValue = ""
     }
 
     private fun getSimilarProducts() {
@@ -208,38 +277,38 @@ class AppViewModel(
             return
         }
 
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Default).launch {
             loading = true
             try {
                 client.getSimilarProductsByBarcode(productCode.trim(), user.locationCode)
                     .onSuccess {
                         if (it.isNotEmpty()) {
-                            handleResponse(it)
+                            handleResponse(it, productCode)
                         } else {
                             client.getSimilarProductsBySearchCode(
-                                productCode.trim(),
-                                user.locationCode
-                            )
-                                .onSuccess { it1 ->
-                                    if (it1.isEmpty()) {
-                                        showLog(
-                                            "این کد فرعی در هیچ موجودی در فروشگاه شما ندارد",
-                                            state
-                                        )
-                                    } else {
-                                        handleResponse(it1)
-                                    }
-                                }.onError {
-                                    showLog(it.name, state)
+                                productCode.trim(), user.locationCode
+                            ).onSuccess { it1 ->
+                                if (it1.isEmpty()) {
+                                    clear()
+                                    showLog(
+                                        "این کد فرعی هیچ موجودی در فروشگاه شما ندارد", state
+                                    )
+                                } else {
+                                    handleResponse(it1, "")
                                 }
+                            }.onError {
+                                clear()
+                                showLog(it.name, state)
+                            }
                         }
                     }.onError { e2 ->
                         client.getSimilarProductsBySearchCode(productCode.trim(), user.locationCode)
                             .onSuccess { it1 ->
                                 if (it1.isEmpty()) {
-                                    showLog("این کد فرعی در هیچ موجودی در فروشگاه شما ندارد", state)
+                                    showLog("این کد فرعی هیچ موجودی در فروشگاه شما ندارد", state)
+                                    clear()
                                 } else {
-                                    handleResponse(it1)
+                                    handleResponse(it1, "")
                                 }
                             }.onError { e1 ->
                                 println("Request error1: ${e1.name}")
@@ -255,19 +324,18 @@ class AppViewModel(
         }
     }
 
-    private fun getImgAlbum(barcode: String){
-        CoroutineScope(Dispatchers.Default).launch {
+    private fun getImgAlbum(barcode: String) {
+        CoroutineScope(Default).launch {
             loading = true
             try {
-                client.getImageAlbumUrl(barcode.trim())
-                    .onSuccess {
-                        if (it.isNotEmpty()) {
-                            imgUrls.addAll(it)
-                        }
-                    }.onError {
-                        println("errorIs: $it")
-                        showLog("مشکلی در دریافت عکس ها پیش آمده است",state)
+                client.getImageAlbumUrl(barcode.trim()).onSuccess {
+                    if (it.isNotEmpty()) {
+                        imgUrls.addAll(it)
                     }
+                }.onError {
+                    println("errorIs: $it")
+                    showLog("مشکلی در دریافت عکس ها پیش آمده است", state)
+                }
 
             } catch (e: Exception) {
             } finally {
@@ -277,7 +345,7 @@ class AppViewModel(
 
     }
 
-    private fun handleResponse(response: List<Product>) {
+    private fun handleResponse(response: List<Product>, searchCode: String) {
         if (response.isEmpty()) {
             clear()
         } else {
@@ -286,12 +354,21 @@ class AppViewModel(
                 clear()
                 addAll(response)
             }
+            productCode = response[0].K_Bar_Code
+            if (searchCode.isNotEmpty()) {
+                itemBarcode = searchCode
+            }
             filterUiList()
         }
     }
 
     fun barcodeScanner(scannedBarcode: String) {
         isCameraOn = false
+        productCode = scannedBarcode
+        getSimilarProducts()
+    }
+
+    private fun onScanResult(scannedBarcode: String) {
         productCode = scannedBarcode
         getSimilarProducts()
     }
