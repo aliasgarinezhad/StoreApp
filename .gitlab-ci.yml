@@ -1,0 +1,43 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  DOCKER_REGISTRY: $DOCKER_REGISTRY_URL
+  DOCKER_IMAGE_NAME: ${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}:${CI_COMMIT_SHORT_SHA}
+  DOCKER_IMAGE_LATEST: ${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}:latest
+
+build_prod:
+  stage: build
+  only:
+    - master
+  tags:
+    - build-server
+  script:
+    - sed -i "s|CONTAINER_PORT|$CONTAINER_PORT|g" Dockerfile
+    - sed -i "s|CONTAINER_PORT|$CONTAINER_PORT|g" docker-compose.yaml
+    - sed -i "s|HOST_PORT|$HOST_PORT|g" docker-compose.yaml
+    - docker build -t $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME .
+    - docker tag $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME $DOCKER_REGISTRY/$DOCKER_IMAGE_LATEST
+    - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY
+    - docker push $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME
+    - docker push $DOCKER_REGISTRY/$DOCKER_IMAGE_LATEST    
+  environment:
+    name: Production    
+
+deploy_prod:
+  stage: deploy
+  only:
+    - master
+  tags:
+    - jw_vendor_prod
+  script:
+    - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY
+    - docker pull $DOCKER_REGISTRY/$DOCKER_IMAGE_LATEST
+    - docker compose --profile vendor_prod up -d
+  environment:
+    name: Production   
+  when: manual  
+
+
+
