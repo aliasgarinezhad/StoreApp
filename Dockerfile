@@ -8,6 +8,7 @@ WORKDIR /app
 COPY gradle/ gradle/
 COPY gradlew settings.gradle.kts build.gradle.kts /app/
 
+
 # Download dependencies to speed up subsequent builds
 RUN ./gradlew wasmJsBrowserDistribution --no-daemon --stacktrace --info || true
 
@@ -25,6 +26,8 @@ WORKDIR /var/www/html
 
 # Copy the built files from the build stage
 COPY --from=build-stage /app/composeApp/build/dist/wasmJs/productionExecutable ./vendor_app
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
+COPY nginx/vendor_app.conf /etc/nginx/conf.d/vendor_app.conf
 
 # Expose default Nginx port
 EXPOSE CONTAINER_PORT
