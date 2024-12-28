@@ -28,6 +28,7 @@ WORKDIR /var/www/html
 COPY --from=build-stage /app/composeApp/build/dist/wasmJs/productionExecutable ./vendor_app
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 COPY nginx/vendor_app.conf /etc/nginx/conf.d/vendor_app.conf
+RUN rm -rf /etc/nginx/conf.d/default.conf
 
 # Expose default Nginx port
 EXPOSE CONTAINER_PORT
