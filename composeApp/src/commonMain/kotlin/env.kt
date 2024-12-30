@@ -1,0 +1,1 @@
+const val severAddress = "DEFAULT_SEVER_ADDRESS"

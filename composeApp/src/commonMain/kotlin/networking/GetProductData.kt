@@ -15,6 +15,7 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromJsonElement
+import severAddress
 import util.NetworkError
 import util.Result
 
@@ -28,9 +29,10 @@ class GetProductData(
         depId: Int
     ): Result<List<Product>, NetworkError> {
 
+
         val response = try {
             httpClient.get(
-                urlString = "https://rfid-api.avakatan.ir/products/similars/localdb?DepartmentInfo_ID=$depId&kbarcode=$barcode"
+                urlString = "$severAddress/products/similars/localdb?DepartmentInfo_ID=$depId&kbarcode=$barcode"
             ) {
                 contentType(ContentType.Application.Json)
                 header("Authorization", "Bearer ${user.accessToken}")
@@ -67,7 +69,7 @@ class GetProductData(
     ): Result<List<Product>, NetworkError> {
         val response = try {
             httpClient.get(
-                urlString = "https://rfid-api.avakatan.ir/products/similars/localdb?DepartmentInfo_ID=$depId&&K_Bar_Code=$searchCode"
+                urlString = "$severAddress/products/similars/localdb?DepartmentInfo_ID=$depId&&K_Bar_Code=$searchCode"
             ) {
                 contentType(ContentType.Application.Json)
                 header("Authorization", "Bearer ${user.accessToken}")
@@ -104,7 +106,7 @@ class GetProductData(
     ): Result<List<String>, NetworkError> {
         val response = try {
             httpClient.get(
-                urlString = "https://rfid-api.avakatan.ir/products/gallery?KBarCode=$barcode"
+                urlString = "$severAddress/products/gallery?KBarCode=$barcode"
             ) {
                 contentType(ContentType.Application.Json)
                 println("token: "+ user.accessToken)
@@ -147,7 +149,7 @@ class GetProductData(
 
         val response = try {
             httpClient.post(
-                urlString = "https://rfid-api.avakatan.ir/products/v4"
+                urlString = "$severAddress/products/v4"
             ) {
                 contentType(ContentType.Application.Json)
                 setBody(body)
@@ -186,7 +188,7 @@ class GetProductData(
     ): Result<User, NetworkError> {
         val response = try {
             httpClient.post(
-                urlString = "https://rfid-api.avakatan.ir/login"
+                urlString = "$severAddress/login"
             ) {
                 val bodyMap = mutableMapOf(
                     "username" to JsonPrimitive(userName),
