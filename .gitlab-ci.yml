@@ -18,6 +18,7 @@ build_dev:
     - sed -i "s|CONTAINER_PORT|$CONTAINER_PORT|g" Dockerfile
     - sed -i "s|CONTAINER_PORT|$CONTAINER_PORT|g" docker-compose.yaml
     - sed -i "s|HOST_PORT_DEV|$HOST_PORT_DEV|g" docker-compose.yaml
+    - sed -i "s|HOST_PORT_PROD|$HOST_PORT_PROD|g" docker-compose.yaml
     - sed -i "s|proxy_host_default|$PROXY_HOST|g" gradle.properties
     - sed -i "s|proxy_port_default|$PROXY_PORT|g" gradle.properties
     - sed -i "s|CONTAINER_PORT|$CONTAINER_PORT|g" ./nginx/vendor_app.conf
@@ -40,6 +41,7 @@ deploy_dev:
     - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY
     - docker pull $DOCKER_REGISTRY/$DOCKER_IMAGE_LATEST
     - sed -i "s|HOST_PORT_DEV|$HOST_PORT_DEV|g" docker-compose.yaml
+    - sed -i "s|HOST_PORT_PROD|$HOST_PORT_PROD|g" docker-compose.yaml
     - sed -i "s|CONTAINER_PORT|$CONTAINER_PORT|g" docker-compose.yaml
     - docker compose --profile vendor_dev up -d
   environment:
@@ -54,6 +56,7 @@ build_prod:
   script:
     - sed -i "s|CONTAINER_PORT|$CONTAINER_PORT|g" Dockerfile
     - sed -i "s|CONTAINER_PORT|$CONTAINER_PORT|g" docker-compose.yaml
+    - sed -i "s|HOST_PORT_DEV|$HOST_PORT_DEV|g" docker-compose.yaml
     - sed -i "s|HOST_PORT_PROD|$HOST_PORT_PROD|g" docker-compose.yaml
     - sed -i "s|proxy_host_default|$PROXY_HOST|g" gradle.properties
     - sed -i "s|proxy_port_default|$PROXY_PORT|g" gradle.properties
@@ -76,6 +79,7 @@ deploy_prod:
   script:
     - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY
     - docker pull $DOCKER_REGISTRY/$DOCKER_IMAGE_LATEST
+    - sed -i "s|HOST_PORT_DEV|$HOST_PORT_DEV|g" docker-compose.yaml
     - sed -i "s|HOST_PORT_PROD|$HOST_PORT_PROD|g" docker-compose.yaml
     - sed -i "s|CONTAINER_PORT|$CONTAINER_PORT|g" docker-compose.yaml
     - docker compose --profile vendor_prod up -d
