@@ -3,10 +3,7 @@ services:
     image:  repo.avakatan.ir/store-app-multiplatform_develop:latest
     container_name: vendor_app_dev
     ports:
-      - "HOST_PORT:CONTAINER_PORT"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/conf.d:/etc/nginx/conf.d 
+      - "HOST_PORT_DEV:CONTAINER_PORT"
     restart: unless-stopped
     profiles:
       - vendor_dev
@@ -15,10 +12,7 @@ services:
     image:  repo.avakatan.ir/store-app-multiplatform_master:latest
     container_name: vendor_app_prod
     ports:
-      - "HOST_PORT:CONTAINER_PORT"
-    # volumes:
-    #   - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-    #   - ./nginx/conf.d:/etc/nginx/conf.d
+      - "HOST_PORT_PROD:CONTAINER_PORT"
     restart: unless-stopped
     profiles:
       - vendor_prod
