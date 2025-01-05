@@ -1,14 +1,54 @@
 stages:
-  - build
-  - deploy
-
+  - build_dev
+  - deploy_dev
+  - build_prod
+  - deploy_prod
 variables:
   DOCKER_REGISTRY: $DOCKER_REGISTRY_URL
   DOCKER_IMAGE_NAME: ${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}:${CI_COMMIT_SHORT_SHA}
   DOCKER_IMAGE_LATEST: ${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}:latest
 
+build_dev:
+  stage: build_dev
+  only:
+    - develop
+  tags:
+    - build-server
+  script:
+    - sed -i "s|CONTAINER_PORT|$CONTAINER_PORT|g" Dockerfile
+    - sed -i "s|CONTAINER_PORT|$CONTAINER_PORT|g" docker-compose.yaml
+    - sed -i "s|HOST_PORT_DEV|$HOST_PORT_DEV|g" docker-compose.yaml
+    - sed -i "s|HOST_PORT_PROD|$HOST_PORT_PROD|g" docker-compose.yaml
+    - sed -i "s|proxy_host_default|$PROXY_HOST|g" gradle.properties
+    - sed -i "s|proxy_port_default|$PROXY_PORT|g" gradle.properties
+    - sed -i "s|CONTAINER_PORT|$CONTAINER_PORT|g" ./nginx/vendor_app.conf
+    - sed -i "s|DEFAULT_SEVER_ADDRESS|$RFID_API_DEV|g" ./composeApp/src/commonMain/kotlin/env.kt
+    - docker build -t $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME .
+    - docker tag $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME $DOCKER_REGISTRY/$DOCKER_IMAGE_LATEST
+    - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY
+    - docker push $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME
+    - docker push $DOCKER_REGISTRY/$DOCKER_IMAGE_LATEST    
+  environment:
+    name: Develop    
+
+deploy_dev:
+  stage: deploy_dev
+  only:
+    - develop
+  tags:
+    - jw_vendor_dev
+  script:
+    - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY
+    - docker pull $DOCKER_REGISTRY/$DOCKER_IMAGE_LATEST
+    - sed -i "s|HOST_PORT_DEV|$HOST_PORT_DEV|g" docker-compose.yaml
+    - sed -i "s|HOST_PORT_PROD|$HOST_PORT_PROD|g" docker-compose.yaml
+    - sed -i "s|CONTAINER_PORT|$CONTAINER_PORT|g" docker-compose.yaml
+    - docker compose --profile vendor_dev up -d
+  environment:
+    name: Develop   
+ 
 build_prod:
-  stage: build
+  stage: build_prod
   only:
     - master
   tags:
@@ -16,10 +56,12 @@ build_prod:
   script:
     - sed -i "s|CONTAINER_PORT|$CONTAINER_PORT|g" Dockerfile
     - sed -i "s|CONTAINER_PORT|$CONTAINER_PORT|g" docker-compose.yaml
-    - sed -i "s|HOST_PORT|$HOST_PORT|g" docker-compose.yaml
+    - sed -i "s|HOST_PORT_DEV|$HOST_PORT_DEV|g" docker-compose.yaml
+    - sed -i "s|HOST_PORT_PROD|$HOST_PORT_PROD|g" docker-compose.yaml
     - sed -i "s|proxy_host_default|$PROXY_HOST|g" gradle.properties
     - sed -i "s|proxy_port_default|$PROXY_PORT|g" gradle.properties
     - sed -i "s|CONTAINER_PORT|$CONTAINER_PORT|g" ./nginx/vendor_app.conf
+    - sed -i "s|DEFAULT_SEVER_ADDRESS|$RFID_API_PROD|g" ./composeApp/src/commonMain/kotlin/env.kt
     - docker build -t $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME .
     - docker tag $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME $DOCKER_REGISTRY/$DOCKER_IMAGE_LATEST
     - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY
@@ -29,7 +71,7 @@ build_prod:
     name: Production    
 
 deploy_prod:
-  stage: deploy
+  stage: deploy_prod
   only:
     - master
   tags:
@@ -37,12 +79,10 @@ deploy_prod:
   script:
     - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY
     - docker pull $DOCKER_REGISTRY/$DOCKER_IMAGE_LATEST
-    - sed -i "s|HOST_PORT|$HOST_PORT|g" docker-compose.yaml
+    - sed -i "s|HOST_PORT_DEV|$HOST_PORT_DEV|g" docker-compose.yaml
+    - sed -i "s|HOST_PORT_PROD|$HOST_PORT_PROD|g" docker-compose.yaml
     - sed -i "s|CONTAINER_PORT|$CONTAINER_PORT|g" docker-compose.yaml
     - docker compose --profile vendor_prod up -d
   environment:
     name: Production   
   when: manual  
-
-
-
