@@ -19,7 +19,7 @@ kotlin {
         }
     }
     
-    listOf(
+    /*listOf(
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
@@ -27,7 +27,7 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
         }
-    }
+    }*/
     
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
@@ -71,11 +71,11 @@ kotlin {
             implementation(libs.coil.network.ktor)
             implementation(libs.navigation.compose)
         }
-        appleMain.dependencies {
+        /*appleMain.dependencies {
             implementation(libs.ktor.client.darwin)
             implementation(libs.datastore.preferences.core)
             implementation("network.chaintech:qr-kit:2.0.0")
-        }
+        }*/
     }
 }
 
