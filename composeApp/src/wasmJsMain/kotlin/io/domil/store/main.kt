@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
+import barcodeScannerPageAddress
 import io.domil.store.viewModel.AppViewModel
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -48,7 +49,7 @@ fun main() {
 }
 
 private fun openScanner() {
-    window.open("https://api5.ir/barcode-scanner/barcode-scanner.html", target = "_self")
+    window.open(barcodeScannerPageAddress, target = "_self")
 }
 
 fun saveUserData(user: User) {
