@@ -1,0 +1,274 @@
+<!doctype html>
+<!-- saved from url=(0027)https://demo.strich.io/home -->
+<html lang="en" data-critters-container="">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <title>JavaScript Barcode Scanner Demo</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="description" content="JavaScript Barcode Scanning" />
+
+    <!-- request client hints and delegate them to STRICH license service for detailed usage stats -->
+    <meta
+      http-equiv="Accept-CH"
+      content="Sec-CH-UA, Sec-CH-UA-Model, Sec-CH-UA-Mobile, Sec-CH-UA-Form-Factor, Sec-CH-UA-Platform, Sec-CH-UA-Platform-Version"
+    />
+    <meta name="theme-color" content="#0F2A42" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <meta name="msapplication-TileColor" content="#245B92" />
+
+    <link
+      rel="stylesheet"
+      href="./js/styles-CZC7SVNT.css"
+      media="all"
+      onload="this.media=&#39;all&#39;"
+    />
+    <noscript>
+      <link rel="stylesheet" href="styles-CZC7SVNT.css" />
+    </noscript>
+
+    <style>
+      @font-face {
+        font-family: Yekan;
+        src: url(../fonts//yekan/woff/YekanBakhFaNum-Regular.woff);
+      }
+      header,
+      img,
+      .permission-hint,
+      .home-text,
+      .home-symbologies,
+      .home-settings {
+        display: none;
+      }
+      button {
+        font-family: Yekan !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <app-root _nghost-ng-c1536842746="" ng-version="18.0.0"
+      ><router-outlet _ngcontent-ng-c1536842746=""></router-outlet
+      ><app-home _nghost-ng-c59593672="">
+        <main _ngcontent-ng-c59593672="">
+          <section _ngcontent-ng-c59593672="" class="home-symbologies">
+            <div _ngcontent-ng-c59593672="" class="symbologies-row">
+              <div
+                _ngcontent-ng-c59593672=""
+                class="symbology-container oned selected"
+              >
+                <div _ngcontent-ng-c59593672="" class="symbology-description">
+                  <div _ngcontent-ng-c59593672="" class="symbology-header">
+                    1D INDUSTRIAL
+                  </div>
+                  <div _ngcontent-ng-c59593672="" class="symbology-detail">
+                    Code 128, Code 39, Code 93, Codabar, ITF
+                  </div>
+                </div>
+                <img
+                  _ngcontent-ng-c59593672=""
+                  src="./js/sym_code_128.svg"
+                  width="auto"
+                  height="56"
+                  alt="1D industrial barcodes"
+                  class="symbology-image oned"
+                />
+              </div>
+              <div _ngcontent-ng-c59593672="" class="symbology-container oned">
+                <div _ngcontent-ng-c59593672="" class="symbology-description">
+                  <div _ngcontent-ng-c59593672="" class="symbology-header">
+                    1D RETAIL
+                  </div>
+                  <div _ngcontent-ng-c59593672="" class="symbology-detail">
+                    EAN/UPC, ITF, GS1 DataBar
+                  </div>
+                </div>
+                <img
+                  _ngcontent-ng-c59593672=""
+                  src="./js/sym_ean_13.svg"
+                  width="auto"
+                  height="56"
+                  alt="1D retail barcodes"
+                  class="symbology-image oned"
+                />
+              </div>
+            </div>
+            <div _ngcontent-ng-c59593672="" class="symbologies-row">
+              <div _ngcontent-ng-c59593672="" class="symbology-container twod">
+                <div _ngcontent-ng-c59593672="" class="symbology-description">
+                  <div _ngcontent-ng-c59593672="" class="symbology-header">
+                    QR
+                  </div>
+                  <div _ngcontent-ng-c59593672="" class="symbology-detail">
+                    QR codes
+                  </div>
+                </div>
+                <img
+                  _ngcontent-ng-c59593672=""
+                  src="./js/sym_qr.svg"
+                  width="56"
+                  height="56"
+                  alt="QR Code sample"
+                  class="symbology-image"
+                />
+              </div>
+              <div _ngcontent-ng-c59593672="" class="symbology-container twod">
+                <div _ngcontent-ng-c59593672="" class="symbology-description">
+                  <div _ngcontent-ng-c59593672="" class="symbology-header">
+                    AZTEC
+                  </div>
+                  <div _ngcontent-ng-c59593672="" class="symbology-detail">
+                    Aztec codes
+                  </div>
+                </div>
+                <img
+                  _ngcontent-ng-c59593672=""
+                  src="./js/sym_aztec.svg"
+                  width="56"
+                  height="56"
+                  alt="Aztec Code sample"
+                  class="symbology-image"
+                />
+              </div>
+              <div _ngcontent-ng-c59593672="" class="symbology-container twod">
+                <div _ngcontent-ng-c59593672="" class="symbology-description">
+                  <div _ngcontent-ng-c59593672="" class="symbology-header">
+                    DATA MATRIX
+                  </div>
+                  <div _ngcontent-ng-c59593672="" class="symbology-detail">
+                    ECC200
+                  </div>
+                </div>
+                <img
+                  _ngcontent-ng-c59593672=""
+                  src="./js/sym_data_matrix.svg"
+                  width="56"
+                  height="56"
+                  alt="Data Matrix sample"
+                  class="symbology-image"
+                />
+              </div>
+              <div _ngcontent-ng-c59593672="" class="symbology-container twod">
+                <div _ngcontent-ng-c59593672="" class="symbology-description">
+                  <div _ngcontent-ng-c59593672="" class="symbology-header">
+                    PDF417
+                  </div>
+                  <div _ngcontent-ng-c59593672="" class="symbology-detail">
+                    ISO 15438
+                  </div>
+                </div>
+                <img
+                  _ngcontent-ng-c59593672=""
+                  src="./js/sym_pdf417.svg"
+                  width="56"
+                  height="56"
+                  alt="PDF 417 sample"
+                  class="symbology-image"
+                />
+              </div>
+            </div>
+            <div _ngcontent-ng-c59593672="" class="symbologies-row">
+              <div _ngcontent-ng-c59593672="" class="symbology-container-wide">
+                <img
+                  _ngcontent-ng-c59593672=""
+                  ngsrc="/assets/sym_all.webp"
+                  width="159"
+                  height="92"
+                  alt="All symbologies"
+                  style="width: 80px; height: 46px"
+                  loading="lazy"
+                  fetchpriority="auto"
+                  ng-img="true"
+                  src="./js/sym_all.webp"
+                />
+                <div _ngcontent-ng-c59593672="">
+                  <div _ngcontent-ng-c59593672="" class="symbology-header">
+                    ALL CODE TYPES
+                  </div>
+                  <p _ngcontent-ng-c59593672="" class="symbology-detail">
+                    Enable recognition of all supported 1D and 2D symbologies<br
+                      _ngcontent-ng-c59593672=""
+                    />
+                    (Warning: this is inefficient).
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+          <div _ngcontent-ng-c59593672="" class="flex-spacer"></div>
+          <section _ngcontent-ng-c59593672="" class="home-settings">
+            <div _ngcontent-ng-c59593672="" class="settings-bar">
+              <div _ngcontent-ng-c59593672="" class="settings-toggle enabled">
+                HI-RES
+              </div>
+              <div _ngcontent-ng-c59593672="" class="settings-toggle">
+                INVERTED
+              </div>
+              <div _ngcontent-ng-c59593672="" class="settings-toggle enabled">
+                FILTER DUP
+              </div>
+            </div>
+            <div _ngcontent-ng-c59593672="" class="settings-bar">
+              <div _ngcontent-ng-c59593672="" class="settings-toggle enabled">
+                HAPTIC FEEDBACK
+              </div>
+              <div _ngcontent-ng-c59593672="" class="settings-toggle enabled">
+                AUDIO FEEDBACK
+              </div>
+            </div>
+          </section>
+          <section _ngcontent-ng-c59593672="" class="home-actions">
+            <p _ngcontent-ng-c59593672="" class="permission-hint">
+              Camera access is required, current state: granted
+            </p>
+            <button _ngcontent-ng-c59593672="" class="btn-primary">
+              برای اسکن بارکد کلیک کنید
+            </button>
+          </section>
+          <dialog _ngcontent-ng-c59593672="" id="no-camera-dialog">
+            <div _ngcontent-ng-c59593672="" class="dialog-content">
+              <p _ngcontent-ng-c59593672="">
+                Your device does not appear to have a camera suitable for
+                barcode scanning.
+              </p>
+              <p _ngcontent-ng-c59593672="">
+                STRICH is optimized for smartphones and requires a camera.
+              </p>
+              <form _ngcontent-ng-c59593672="" method="dialog">
+                <button _ngcontent-ng-c59593672="">OK</button>
+              </form>
+            </div>
+          </dialog>
+        </main>
+      </app-home></app-root
+    >
+    <noscript
+      >Please enable JavaScript to continue using this application.</noscript
+    >
+    <script src="./js/main.js" type="module"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+      const observer = new MutationObserver(() => {
+      const scanButton = document.querySelector("button.btn-primary.start");
+        if (scanButton) {
+          // console.log("Button found and dispatched click!");
+          const clickEvent = new MouseEvent("click", {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+          });
+          scanButton.dispatchEvent(clickEvent);
+          observer.disconnect();
+        } else {
+          // console.log("Waiting for the button...");
+        }
+      });
+    observer.observe(document.body, { childList: true, subtree: true });
+    });
+    </script>
+  </body>
+</html>
