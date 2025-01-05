@@ -26,6 +26,9 @@ WORKDIR /var/www/html
 
 # Copy the built files from the build stage
 COPY --from=build-stage /app/composeApp/build/dist/wasmJs/productionExecutable ./vendor_app
+RUN mkdir -p ./vendor_app/js
+COPY nginx/js ./vendor_app/js
+COPY nginx/barcode-scanner.html ./vendor_app
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 COPY nginx/vendor_app.conf /etc/nginx/conf.d/vendor_app.conf
 RUN rm -rf /etc/nginx/conf.d/default.conf
