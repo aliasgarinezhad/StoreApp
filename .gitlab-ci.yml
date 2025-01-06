@@ -23,6 +23,7 @@ build_dev:
     - sed -i "s|proxy_port_default|$PROXY_PORT|g" gradle.properties
     - sed -i "s|CONTAINER_PORT|$CONTAINER_PORT|g" ./nginx/vendor_app.conf
     - sed -i "s|DEFAULT_SEVER_ADDRESS|$RFID_API_DEV|g" ./composeApp/src/commonMain/kotlin/env.kt
+    - sed -i "s|DEFAULT_BARCODE_SCANNER_SERVER_ADDRESS|$BARCODE_SCANNER_ADDRESS_DEV|g" ./composeApp/src/commonMain/kotlin/env.kt
     - docker build -t $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME .
     - docker tag $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME $DOCKER_REGISTRY/$DOCKER_IMAGE_LATEST
     - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY
@@ -62,6 +63,7 @@ build_prod:
     - sed -i "s|proxy_port_default|$PROXY_PORT|g" gradle.properties
     - sed -i "s|CONTAINER_PORT|$CONTAINER_PORT|g" ./nginx/vendor_app.conf
     - sed -i "s|DEFAULT_SEVER_ADDRESS|$RFID_API_PROD|g" ./composeApp/src/commonMain/kotlin/env.kt
+    - sed -i "s|DEFAULT_BARCODE_SCANNER_SERVER_ADDRESS|$BARCODE_SCANNER_ADDRESS_PROD|g" ./composeApp/src/commonMain/kotlin/env.kt
     - docker build -t $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME .
     - docker tag $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME $DOCKER_REGISTRY/$DOCKER_IMAGE_LATEST
     - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY
