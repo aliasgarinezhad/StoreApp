@@ -32,7 +32,7 @@ class GetProductData(
 
         val response = try {
             httpClient.get(
-                urlString = "$severAddress/products/similars/localdb?DepartmentInfo_ID=$depId&kbarcode=$barcode"
+                urlString = "$severAddress/products/similars/localdb/v2?DepartmentInfo_ID=$depId&kbarcode=$barcode"
             ) {
                 contentType(ContentType.Application.Json)
                 header("Authorization", "Bearer ${user.accessToken}")

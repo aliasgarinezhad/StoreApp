@@ -226,7 +226,7 @@ fun Item(
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Text(
-                    text = "فروشگاه: " + uiList[i].dbCountStore,
+                    text = "فروشگاه: " + uiList[i].StoreMojodi,
                     style = MaterialTheme.typography.h3,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
@@ -239,7 +239,7 @@ fun Item(
                         .width(66.dp)
                 )
                 Text(
-                    text = "انبار: " + uiList[i].dbCountDepo.toString(),
+                    text = "انبار: " + uiList[i].DepoMojodi.toString(),
                     style = MaterialTheme.typography.h3,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
