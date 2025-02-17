@@ -543,12 +543,12 @@ fun sizeAndCountItem(
             modifier = Modifier.padding(vertical = 8.dp)
         )
         Text(
-            text = list[i].dbCountStore.toString(),
+            text = list[i].StoreMojodi.toString(),
             style = MyTypography().h3,
             modifier = Modifier.padding(vertical = 8.dp)
         )
         Text(
-            text = list[i].dbCountDepo.toString(),
+            text = list[i].DepoMojodi.toString(),
             style = MyTypography().h3,
             modifier = Modifier.padding(vertical = 8.dp)
         )
