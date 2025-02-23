@@ -17,6 +17,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 fun App(
     viewModel: AppViewModel,
+    factoryViewModel: FactoryViewModel = FactoryViewModel(),
+    isFactoryAppRequested: Boolean = false,
     barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit,
 ) {
 
@@ -80,6 +82,27 @@ fun ComposableHost(
                 isAccountDialogOpen = viewModel.isAccountDialogOpen,
                 imgAlbumUrl = viewModel.imgUrls,
                 colorFilterLazyRowState = viewModel.colorFilterLazyRowState.value
+            )
+        }
+    }
+}
+
+@Composable
+fun FactoryApp(
+    viewModel: FactoryViewModel,
+    navHostController: NavHostController,
+) {
+    NavHost(navController = navHostController, startDestination = LoginScreen) {
+        composable<LoginScreen> {
+
+            LoginPage(
+                username = viewModel.username,
+                password = viewModel.password,
+                onSignInButtonClick = { viewModel.signIn(navHostController = navHostController) },
+                onPasswordValueChanged = { viewModel.onPasswordValueChanges(it) },
+                onUsernameValueChanged = { viewModel.onUsernameValueChanges(it) },
+                state = viewModel.state,
+                loading = viewModel.loading,
             )
         }
     }

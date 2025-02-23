@@ -20,6 +20,7 @@ import org.w3c.dom.set
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
 
+    val isFactoryAppRequested = window.location.href.contains("factory")
     val barcode = window.location.href.substringAfter("keyword=", "")
     val user = getUserData()
 
