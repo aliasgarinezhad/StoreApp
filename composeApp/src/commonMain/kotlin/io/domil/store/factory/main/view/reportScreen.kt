@@ -1,4 +1,4 @@
-package io.domil.store.factory.view
+package io.domil.store.factory.main.view
 
 import androidx.compose.runtime.Composable
 import kotlinx.serialization.Serializable

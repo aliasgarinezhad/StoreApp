@@ -5,20 +5,24 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import io.domil.store.factory.view.FeatureListScreen
+import io.domil.store.factory.addTaskFeature.view.SelectTaskScreen
+import io.domil.store.factory.addTaskFeature.view.ShowProductionLinesList
+import io.domil.store.factory.addTaskFeature.viewModel.FactoryAddTaskViewModel
+import io.domil.store.factory.main.view.FactoryApp
+import io.domil.store.factory.main.view.FeatureListScreen
+import io.domil.store.factory.main.viewModel.FactoryMainViewModel
 import io.domil.store.view.LoginPage
 import io.domil.store.view.LoginScreen
 import io.domil.store.view.MainPage
 import io.domil.store.view.MainScreen
 import io.domil.store.viewModel.AppViewModel
-import io.domil.store.factory.viewModel.FactoryViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-@Preview
 fun App(
     viewModel: AppViewModel,
-    factoryViewModel: FactoryViewModel = FactoryViewModel(),
+    factoryMainViewModel: FactoryMainViewModel,
+    factoryAddTaskViewModel: FactoryAddTaskViewModel,
     isFactoryAppRequested: Boolean = false,
     barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit,
 ) {
@@ -26,7 +30,8 @@ fun App(
     val navHostController = rememberNavController()
     if (isFactoryAppRequested) {
         FactoryApp(
-            viewModel = factoryViewModel,
+            factoryMainViewModel = factoryMainViewModel,
+            factoryAddTaskViewModel = factoryAddTaskViewModel,
             navHostController = navHostController
         )
     } else {
@@ -37,14 +42,28 @@ fun App(
         )
     }
 
-    if (factoryViewModel.screenChangePending) {
+    if (factoryMainViewModel.screenChangePending || factoryAddTaskViewModel.screenChangePending) {
 
-        if (factoryViewModel.destinationScreen == FeatureListScreen && factoryViewModel.currentScreen == LoginScreen) {
+        println("screenChangePending")
+        if (factoryMainViewModel.destinationScreen == FeatureListScreen && factoryMainViewModel.currentScreen == LoginScreen) {
             navHostController.navigate(FeatureListScreen)
-            factoryViewModel.onScreenChanged()
-        } else if (factoryViewModel.destinationScreen == LoginScreen && factoryViewModel.currentScreen == FeatureListScreen) {
+            factoryMainViewModel.onScreenChanged()
+        } else if (factoryMainViewModel.destinationScreen == LoginScreen && factoryMainViewModel.currentScreen == FeatureListScreen) {
             navHostController.popBackStack()
-            factoryViewModel.onScreenChanged()
+            factoryMainViewModel.onScreenChanged()
+        } else if (factoryMainViewModel.destinationScreen == ShowProductionLinesList && factoryMainViewModel.currentScreen == FeatureListScreen) {
+            navHostController.navigate(ShowProductionLinesList)
+            factoryMainViewModel.onScreenChanged()
+        } else if (factoryAddTaskViewModel.destinationScreen == FeatureListScreen && factoryAddTaskViewModel.currentScreen == ShowProductionLinesList) {
+            navHostController.popBackStack()
+            factoryMainViewModel.onScreenChanged()
+        } else if (factoryAddTaskViewModel.destinationScreen == SelectTaskScreen && factoryAddTaskViewModel.currentScreen == ShowProductionLinesList) {
+            println("SelectTaskScreen")
+            navHostController.navigate(SelectTaskScreen)
+            factoryAddTaskViewModel.onScreenChanged()
+        } else if (factoryAddTaskViewModel.destinationScreen == ShowProductionLinesList && factoryAddTaskViewModel.currentScreen == SelectTaskScreen) {
+            navHostController.popBackStack()
+            factoryAddTaskViewModel.onScreenChanged()
         }
     }
 }
@@ -103,37 +122,6 @@ fun ComposableHost(
                 colorFilterLazyRowState = viewModel.colorFilterLazyRowState.value
             )
         }
-
     }
 }
 
-@Composable
-fun FactoryApp(
-    viewModel: FactoryViewModel,
-    navHostController: NavHostController,
-) {
-    NavHost(navController = navHostController, startDestination = LoginScreen) {
-        composable<LoginScreen> {
-
-            LoginPage(
-                username = viewModel.username,
-                password = viewModel.password,
-                onSignInButtonClick = { viewModel.signIn(navHostController = navHostController) },
-                onPasswordValueChanged = { viewModel.onPasswordValueChanges(it) },
-                onUsernameValueChanged = { viewModel.onUsernameValueChanges(it) },
-                state = viewModel.state,
-                loading = viewModel.loading,
-            )
-        }
-
-        composable<FeatureListScreen> {
-
-            FeatureListScreen(
-                changeScreen = { viewModel.changeScreen(it) },
-                state = viewModel.state,
-                loading = viewModel.loading,
-                featuresList = viewModel.featureList
-            )
-        }
-    }
-}

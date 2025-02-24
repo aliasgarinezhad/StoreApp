@@ -1,4 +1,4 @@
-package io.domil.store.factory.model
+package io.domil.store.factory.main.model
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

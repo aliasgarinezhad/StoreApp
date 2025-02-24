@@ -1,4 +1,4 @@
-package io.domil.store.factory.view
+package io.domil.store.factory.main.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,7 +27,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import io.domil.store.factory.model.Feature
+import io.domil.store.factory.main.model.Feature
 import io.domil.store.theme.MyApplicationTheme
 import io.domil.store.view.ErrorSnackBar
 import io.domil.store.view.LoadingIndicator
@@ -41,7 +41,7 @@ fun FeatureListScreen(
     state: SnackbarHostState,
     loading: Boolean,
     featuresList: List<Feature>,
-    changeScreen: (screen: Any) -> Unit
+    onFeatureIconClick: (screen: Any) -> Unit
 ) {
 
     MyApplicationTheme {
@@ -51,7 +51,7 @@ fun FeatureListScreen(
                     MainContent(
                         loading = loading,
                         featuresList = featuresList,
-                        changeScreen = changeScreen
+                        onFeatureIconClick = onFeatureIconClick
                     )
                 },
                 snackbarHost = { ErrorSnackBar(state) },
@@ -64,7 +64,7 @@ fun FeatureListScreen(
 fun MainContent(
     loading: Boolean,
     featuresList: List<Feature>,
-    changeScreen: (screen: Any) -> Unit
+    onFeatureIconClick: (screen: Any) -> Unit
 ) {
 
     Column {
@@ -95,7 +95,7 @@ fun MainContent(
                                     title = it.title,
                                     icon = it.icon,
                                 ) {
-                                    changeScreen(it.routeScreen)
+                                    onFeatureIconClick(it.routeScreen)
                                 }
                             }
                         }
@@ -117,7 +117,7 @@ fun MainContent(
                                     title = it.title,
                                     icon = it.icon,
                                 ) {
-                                    changeScreen(it.routeScreen)
+                                    onFeatureIconClick(it.routeScreen)
                                 }
                             }
 

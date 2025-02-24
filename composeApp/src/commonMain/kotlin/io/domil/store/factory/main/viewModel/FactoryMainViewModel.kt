@@ -1,16 +1,14 @@
-package io.domil.store.factory.viewModel
+package io.domil.store.factory.main.viewModel
 
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.navigation.NavHostController
-import io.domil.store.factory.useCase.features
-import io.domil.store.factory.view.FeatureListScreen
+import io.domil.store.factory.main.useCase.features
+import io.domil.store.factory.main.view.FeatureListScreen
 import io.domil.store.view.LoginScreen
-import io.domil.store.view.MainScreen
 
-class FactoryViewModel {
+class FactoryMainViewModel {
 
     //charge ui parameters
     var loading by mutableStateOf(false)
@@ -23,12 +21,12 @@ class FactoryViewModel {
         private set
     val featureList = features
 
-    var destinationScreen: Any = mutableStateOf(LoginScreen)
+    var destinationScreen: Any = LoginScreen
     var currentScreen: Any = LoginScreen
     var screenChangePending by mutableStateOf(false)
         private set
 
-    fun signIn(navHostController: NavHostController) {
+    fun signIn() {
 
         changeScreen(FeatureListScreen)
 
@@ -65,6 +63,10 @@ class FactoryViewModel {
                 }
             }
         }*/
+    }
+
+    fun onFeatureIconClick(screen: Any) {
+        changeScreen(screen)
     }
 
     fun changeScreen(screen: Any) {
