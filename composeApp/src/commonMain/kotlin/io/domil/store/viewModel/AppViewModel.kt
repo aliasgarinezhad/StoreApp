@@ -21,8 +21,8 @@ import io.domil.store.networking.GetProductData
 import io.domil.store.networking.Product
 import io.domil.store.networking.User
 import io.domil.store.networking.createHttpClient
-import io.domil.store.util.onError
-import io.domil.store.util.onSuccess
+import io.domil.store.tools.onError
+import io.domil.store.tools.onSuccess
 
 class AppViewModel(
     val saveUserData: (user: User) -> Unit,

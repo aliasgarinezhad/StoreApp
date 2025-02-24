@@ -16,8 +16,8 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromJsonElement
 import severAddress
-import io.domil.store.util.NetworkError
-import io.domil.store.util.Result
+import io.domil.store.tools.NetworkError
+import io.domil.store.tools.Result
 
 class GetProductData(
     private val user: User,

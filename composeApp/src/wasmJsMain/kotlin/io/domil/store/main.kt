@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
 import barcodeScannerPageAddress
+import io.domil.store.factory.viewModel.FactoryViewModel
 import io.domil.store.viewModel.AppViewModel
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -41,7 +42,9 @@ fun main() {
 
         App(
             barcodeScanner = barcodeScannerComposable,
-            viewModel = viewModel
+            viewModel = viewModel,
+            factoryViewModel = FactoryViewModel(),
+            isFactoryAppRequested = true
         )
     }
 }

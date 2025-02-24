@@ -22,7 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
@@ -137,7 +137,7 @@ fun MainContent(
 }
 
 @Composable
-fun OpenActivityButton(title: String, icon: Painter, onClick: () -> Unit) {
+fun OpenActivityButton(title: String, icon: ImageVector, onClick: () -> Unit) {
 
     val iconSize = 48.dp
     val textSize = 64.dp
@@ -152,7 +152,7 @@ fun OpenActivityButton(title: String, icon: Painter, onClick: () -> Unit) {
     ) {
 
         Icon(
-            painter = icon,
+            imageVector = icon,
             tint = MaterialTheme.colors.onPrimary,
             contentDescription = "",
             modifier = Modifier
