@@ -44,7 +44,7 @@ fun main() {
             barcodeScanner = barcodeScannerComposable,
             viewModel = viewModel,
             factoryViewModel = FactoryViewModel(),
-            isFactoryAppRequested = true
+            isFactoryAppRequested = isFactoryAppRequested
         )
     }
 }

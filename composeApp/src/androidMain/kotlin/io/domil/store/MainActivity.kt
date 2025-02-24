@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import io.domil.store.networking.User
