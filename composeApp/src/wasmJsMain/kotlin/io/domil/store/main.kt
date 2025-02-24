@@ -1,9 +1,6 @@
 package io.domil.store
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
 import barcodeScannerPageAddress
@@ -12,7 +9,7 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import networking.User
+import io.domil.store.networking.User
 import org.w3c.dom.get
 import org.w3c.dom.set
 

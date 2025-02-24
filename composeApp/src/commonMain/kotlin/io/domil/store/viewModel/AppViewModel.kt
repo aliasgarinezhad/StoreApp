@@ -17,12 +17,12 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import networking.GetProductData
-import networking.Product
-import networking.User
-import networking.createHttpClient
-import util.onError
-import util.onSuccess
+import io.domil.store.networking.GetProductData
+import io.domil.store.networking.Product
+import io.domil.store.networking.User
+import io.domil.store.networking.createHttpClient
+import io.domil.store.util.onError
+import io.domil.store.util.onSuccess
 
 class AppViewModel(
     val saveUserData: (user: User) -> Unit,

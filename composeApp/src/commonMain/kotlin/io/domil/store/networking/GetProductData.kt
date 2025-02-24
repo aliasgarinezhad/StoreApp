@@ -1,4 +1,4 @@
-package networking
+package io.domil.store.networking
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -16,8 +16,8 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromJsonElement
 import severAddress
-import util.NetworkError
-import util.Result
+import io.domil.store.util.NetworkError
+import io.domil.store.util.Result
 
 class GetProductData(
     private val user: User,

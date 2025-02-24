@@ -19,16 +19,6 @@ kotlin {
         }
     }
     
-    /*listOf(
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            baseName = "ComposeApp"
-            isStatic = true
-        }
-    }*/
-    
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         moduleName = "composeApp"
@@ -52,9 +42,7 @@ kotlin {
     sourceSets {
         
         androidMain.dependencies {
-            implementation("network.chaintech:qr-kit:2.0.0")
             implementation(libs.ktor.client.okhttp)
-            implementation(libs.datastore.preferences.core)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -71,11 +59,6 @@ kotlin {
             implementation(libs.coil.network.ktor)
             implementation(libs.navigation.compose)
         }
-        /*appleMain.dependencies {
-            implementation(libs.ktor.client.darwin)
-            implementation(libs.datastore.preferences.core)
-            implementation("network.chaintech:qr-kit:2.0.0")
-        }*/
     }
 }
 

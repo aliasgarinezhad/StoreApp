@@ -1,4 +1,4 @@
-package util
+package io.domil.store.util
 
 enum class NetworkError : Error {
     REQUEST_TIMEOUT,

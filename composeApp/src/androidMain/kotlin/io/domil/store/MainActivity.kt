@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import networking.User
+import io.domil.store.networking.User
 import okio.Path.Companion.toPath
 import java.io.File
 

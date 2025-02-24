@@ -5,12 +5,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import io.domil.store.factory.view.FeatureListScreen
 import io.domil.store.view.LoginPage
 import io.domil.store.view.LoginScreen
 import io.domil.store.view.MainPage
 import io.domil.store.view.MainScreen
 import io.domil.store.viewModel.AppViewModel
-import networking.User
+import io.domil.store.factory.viewModel.FactoryViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -23,11 +24,29 @@ fun App(
 ) {
 
     val navHostController = rememberNavController()
-    ComposableHost(
-        viewModel,
-        navHostController = navHostController,
-        barcodeScanner = barcodeScanner,
-    )
+    if (isFactoryAppRequested) {
+        FactoryApp(
+            viewModel = factoryViewModel,
+            navHostController = navHostController
+        )
+    } else {
+        ComposableHost(
+            viewModel,
+            navHostController = navHostController,
+            barcodeScanner = barcodeScanner,
+        )
+    }
+
+    if (factoryViewModel.screenChangePending) {
+
+        if (factoryViewModel.destinationScreen == FeatureListScreen && factoryViewModel.currentScreen == LoginScreen) {
+            navHostController.navigate(FeatureListScreen)
+            factoryViewModel.onScreenChanged()
+        } else if (factoryViewModel.destinationScreen == LoginScreen && factoryViewModel.currentScreen == FeatureListScreen) {
+            navHostController.popBackStack()
+            factoryViewModel.onScreenChanged()
+        }
+    }
 }
 
 @Composable
@@ -84,6 +103,7 @@ fun ComposableHost(
                 colorFilterLazyRowState = viewModel.colorFilterLazyRowState.value
             )
         }
+
     }
 }
 
@@ -103,6 +123,16 @@ fun FactoryApp(
                 onUsernameValueChanged = { viewModel.onUsernameValueChanges(it) },
                 state = viewModel.state,
                 loading = viewModel.loading,
+            )
+        }
+
+        composable<FeatureListScreen> {
+
+            FeatureListScreen(
+                changeScreen = { viewModel.changeScreen(it) },
+                state = viewModel.state,
+                loading = viewModel.loading,
+                featuresList = viewModel.featureList
             )
         }
     }
