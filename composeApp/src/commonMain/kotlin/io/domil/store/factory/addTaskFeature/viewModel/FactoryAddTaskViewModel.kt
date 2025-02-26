@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import io.domil.store.factory.addTaskFeature.model.ProductionLine
+import io.domil.store.factory.addTaskFeature.view.EnterDateAndNumberScreen
 import io.domil.store.factory.addTaskFeature.view.SelectTaskScreen
 import io.domil.store.factory.addTaskFeature.view.ShowProductionLinesList
 
@@ -61,6 +62,6 @@ class FactoryAddTaskViewModel {
     }
 
     fun onTaskClick(task: String) {
-
+        changeScreen(EnterDateAndNumberScreen)
     }
 }

@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import io.domil.store.factory.addTaskFeature.view.EnterDateAndNumberScreen
 import io.domil.store.factory.addTaskFeature.view.SelectTaskScreen
 import io.domil.store.factory.addTaskFeature.view.ShowProductionLinesList
 import io.domil.store.factory.addTaskFeature.viewModel.FactoryAddTaskViewModel
@@ -62,6 +63,13 @@ fun App(
             navHostController.navigate(SelectTaskScreen)
             factoryAddTaskViewModel.onScreenChanged()
         } else if (factoryAddTaskViewModel.destinationScreen == ShowProductionLinesList && factoryAddTaskViewModel.currentScreen == SelectTaskScreen) {
+            navHostController.popBackStack()
+            factoryAddTaskViewModel.onScreenChanged()
+        } else if (factoryAddTaskViewModel.destinationScreen == EnterDateAndNumberScreen && factoryAddTaskViewModel.currentScreen == SelectTaskScreen) {
+            println("EnterDateAndNumberScreen")
+            navHostController.navigate(EnterDateAndNumberScreen)
+            factoryAddTaskViewModel.onScreenChanged()
+        } else if (factoryAddTaskViewModel.destinationScreen == SelectTaskScreen && factoryAddTaskViewModel.currentScreen == EnterDateAndNumberScreen) {
             navHostController.popBackStack()
             factoryAddTaskViewModel.onScreenChanged()
         }

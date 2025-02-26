@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import io.domil.store.factory.addTaskFeature.view.EnterDateAndNumberScreen
 import io.domil.store.factory.addTaskFeature.view.ShowProductionLinesList
 import io.domil.store.factory.addTaskFeature.view.SelectTaskScreen
 import io.domil.store.factory.addTaskFeature.viewModel.FactoryAddTaskViewModel
@@ -57,6 +58,15 @@ fun FactoryApp(
                 productionLine = factoryAddTaskViewModel.productionLine,
                 onClick = { factoryAddTaskViewModel.onTaskClick(it) },
                 state = factoryAddTaskViewModel.state
+            )
+        }
+
+        composable<EnterDateAndNumberScreen> {
+            EnterDateAndNumberScreen(
+                loading = factoryAddTaskViewModel.loading,
+                productionLine = factoryAddTaskViewModel.productionLine,
+                //onClick = { factoryAddTaskViewModel.onTaskClick(it) },
+                state = factoryAddTaskViewModel.state,
             )
         }
     }
