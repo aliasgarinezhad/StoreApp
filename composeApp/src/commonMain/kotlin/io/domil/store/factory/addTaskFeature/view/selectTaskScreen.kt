@@ -1,6 +1,7 @@
 package io.domil.store.factory.addTaskFeature.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -72,6 +73,7 @@ private fun Content(
                         )
                         .padding(top = 8.dp, bottom = 8.dp, start = 8.dp)
                         .fillMaxWidth()
+                        .clickable { onClick(task) }
                 )
             }
             Spacer(
