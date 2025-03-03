@@ -1,13 +1,14 @@
-package io.domil.store.factory.main.view
+package io.domil.store.factory
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import io.domil.store.factory.addTaskFeature.view.EnterDateAndNumberScreen
-import io.domil.store.factory.addTaskFeature.view.ShowProductionLinesList
+import io.domil.store.factory.addTaskFeature.view.ShowProductionLinesScreen
 import io.domil.store.factory.addTaskFeature.view.SelectTaskScreen
 import io.domil.store.factory.addTaskFeature.viewModel.FactoryAddTaskViewModel
+import io.domil.store.factory.main.view.FeatureListScreen
 import io.domil.store.factory.main.viewModel.FactoryMainViewModel
 import io.domil.store.view.LoginPage
 import io.domil.store.view.LoginScreen
@@ -43,10 +44,10 @@ fun FactoryApp(
             )
         }
 
-        composable<ShowProductionLinesList> {
-            ShowProductionLinesList(
+        composable<ShowProductionLinesScreen> {
+            ShowProductionLinesScreen(
                 loading = factoryAddTaskViewModel.loading,
-                productionLines = factoryAddTaskViewModel.productionLines,
+                products = factoryAddTaskViewModel.products,
                 onClick = { factoryAddTaskViewModel.onProductLineClick(it) },
                 state = factoryAddTaskViewModel.state
             )
@@ -55,7 +56,7 @@ fun FactoryApp(
         composable<SelectTaskScreen> {
             SelectTaskScreen(
                 loading = factoryAddTaskViewModel.loading,
-                productionLine = factoryAddTaskViewModel.productionLine,
+                product = factoryAddTaskViewModel.userTask.product,
                 onClick = { factoryAddTaskViewModel.onTaskClick(it) },
                 state = factoryAddTaskViewModel.state
             )
@@ -64,8 +65,8 @@ fun FactoryApp(
         composable<EnterDateAndNumberScreen> {
             EnterDateAndNumberScreen(
                 loading = factoryAddTaskViewModel.loading,
-                productionLine = factoryAddTaskViewModel.productionLine,
-                //onClick = { factoryAddTaskViewModel.onTaskClick(it) },
+                product = factoryAddTaskViewModel.userTask.product,
+                onClick = { factoryAddTaskViewModel.onAddTaskButtonClick() },
                 state = factoryAddTaskViewModel.state,
             )
         }

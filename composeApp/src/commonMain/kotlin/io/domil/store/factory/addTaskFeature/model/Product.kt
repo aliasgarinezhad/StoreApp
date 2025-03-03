@@ -2,7 +2,7 @@ package io.domil.store.factory.addTaskFeature.model
 
 import androidx.compose.ui.graphics.Color
 
-data class ProductionLine(
+data class Product(
     val name: String = "تی شرت",
     val style: String = "41531052",
     val color: String = "2010",

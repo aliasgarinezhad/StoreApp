@@ -30,7 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.domil.store.factory.addTaskFeature.model.ProductionLine
+import io.domil.store.factory.addTaskFeature.model.Product
 import io.domil.store.theme.BorderLight
 import io.domil.store.theme.Jeanswest
 import io.domil.store.theme.MyApplicationTheme
@@ -41,13 +41,13 @@ import io.domil.store.view.LoadingIndicator
 import kotlinx.serialization.Serializable
 
 @Serializable
-object ShowProductionLinesList
+object ShowProductionLinesScreen
 
 @Composable
-fun ShowProductionLinesList(
+fun ShowProductionLinesScreen(
     loading: Boolean,
-    productionLines: List<ProductionLine>,
-    onClick: (productionLine: ProductionLine) -> Unit,
+    products: List<Product>,
+    onClick: (product: Product) -> Unit,
     state: SnackbarHostState
 ) {
 
@@ -57,7 +57,7 @@ fun ShowProductionLinesList(
                 content = {
                     Content(
                         loading = loading,
-                        productionLines = productionLines,
+                        products = products,
                         onClick = onClick
                     )
                 },
@@ -70,19 +70,19 @@ fun ShowProductionLinesList(
 @Composable
 private fun Content(
     loading: Boolean,
-    productionLines: List<ProductionLine>,
-    onClick: (productionLine: ProductionLine) -> Unit
+    products: List<Product>,
+    onClick: (product: Product) -> Unit
 ) {
 
     if (loading) {
         LoadingIndicator()
     } else {
         LazyColumn {
-            item(productionLines.size) {
-                productionLines.forEachIndexed { index, productLine ->
+            item(products.size) {
+                products.forEachIndexed { index, productLine ->
                     ProductLineItem(
-                        productionLine = productLine,
-                        enableBottomPadding = index == productionLines.size - 1,
+                        product = productLine,
+                        enableBottomPadding = index == products.size - 1,
                         onClick = onClick,
                         enableTopPadding = index == 0,
                     )
@@ -94,10 +94,10 @@ private fun Content(
 
 @Composable
 private fun ProductLineItem(
-    productionLine: ProductionLine,
+    product: Product,
     enableBottomPadding: Boolean = false,
     enableTopPadding: Boolean = false,
-    onClick: (productionLine: ProductionLine) -> Unit = {},
+    onClick: (product: Product) -> Unit = {},
 ) {
 
     val topPadding = if (enableTopPadding) 16.dp else 12.dp
@@ -121,14 +121,14 @@ private fun ProductLineItem(
             .height(100.dp)
             .testTag("items")
             .clickable {
-                onClick(productionLine)
+                onClick(product)
             }
     ) {
 
         Box(
             modifier = Modifier.padding(end = 4.dp, top = 12.dp, bottom = 12.dp, start = 12.dp)
                 .background(
-                    color = productionLine.uiColor,
+                    color = product.uiColor,
                     shape = Shapes.large
                 )
                 .border(
@@ -153,13 +153,13 @@ private fun ProductLineItem(
             ) {
 
                 Text(
-                    text = productionLine.style,
+                    text = product.style,
                     style = MaterialTheme.typography.body2,
                     textAlign = TextAlign.Right,
                     fontSize = 12.sp
                 )
                 Text(
-                    text = productionLine.name,
+                    text = product.name,
                     style = MaterialTheme.typography.h4,
                     textAlign = TextAlign.Right,
                 )
@@ -179,7 +179,7 @@ private fun ProductLineItem(
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Text(
-                    text = productionLine.color,
+                    text = product.color,
                     style = MaterialTheme.typography.h3,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
@@ -192,7 +192,7 @@ private fun ProductLineItem(
                         .width(66.dp)
                 )
                 Text(
-                    text = productionLine.line,
+                    text = product.line,
                     style = MaterialTheme.typography.h3,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)

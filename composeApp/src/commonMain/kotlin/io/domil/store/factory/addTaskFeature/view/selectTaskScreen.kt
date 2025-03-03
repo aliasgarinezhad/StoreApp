@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import io.domil.store.factory.addTaskFeature.model.ProductionLine
+import io.domil.store.factory.addTaskFeature.model.Product
 import io.domil.store.theme.MyApplicationTheme
 import io.domil.store.theme.Shapes
 import io.domil.store.view.ErrorSnackBar
@@ -30,7 +30,7 @@ object SelectTaskScreen
 
 @Composable
 fun SelectTaskScreen(
-    productionLine: ProductionLine,
+    product: Product,
     loading: Boolean,
     state: SnackbarHostState,
     onClick: (task: String) -> Unit,
@@ -41,7 +41,7 @@ fun SelectTaskScreen(
                 content = {
                     Content(
                         loading = loading,
-                        productionLine = productionLine,
+                        product = product,
                         onClick = onClick
                     )
                 },
@@ -54,12 +54,12 @@ fun SelectTaskScreen(
 @Composable
 private fun Content(
     loading: Boolean,
-    productionLine: ProductionLine,
+    product: Product,
     onClick: (task: String) -> Unit,
 ) {
     LazyColumn(modifier = Modifier.padding(top = 16.dp)) {
-        item(productionLine.tasks.size) {
-            productionLine.tasks.forEach { task ->
+        item(product.tasks.size) {
+            product.tasks.forEach { task ->
                 Text(
                     text = task,
                     style = MaterialTheme.typography.body1,

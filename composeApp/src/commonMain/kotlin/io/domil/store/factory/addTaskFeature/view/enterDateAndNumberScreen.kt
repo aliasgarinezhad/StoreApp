@@ -32,7 +32,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.domil.store.factory.addTaskFeature.model.ProductionLine
+import io.domil.store.factory.addTaskFeature.model.Product
 import kotlinx.serialization.Serializable
 import rememberPickerState
 
@@ -42,8 +42,9 @@ object EnterDateAndNumberScreen
 @Composable
 fun EnterDateAndNumberScreen(
     loading: Boolean,
-    productionLine: ProductionLine,
-    state: SnackbarHostState
+    product: Product,
+    state: SnackbarHostState,
+    onClick: () -> Unit
 ) {
     // Define hour and minute values for the pickers
     val hourValues = (0..23).map { it.toString() }

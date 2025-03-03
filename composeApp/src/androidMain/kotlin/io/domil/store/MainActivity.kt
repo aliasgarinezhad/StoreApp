@@ -18,8 +18,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         checkPermission()
         clearCash()
-        setContent {
-        }
+        setContent {}
     }
 
     private fun clearCash() {

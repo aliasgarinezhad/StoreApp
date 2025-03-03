@@ -29,47 +29,14 @@ class FactoryMainViewModel {
     fun signIn() {
 
         changeScreen(FeatureListScreen)
-
-        /*CoroutineScope(Default).launch {
-            if (username.isEmpty() || password.isEmpty()) {
-                showLog("لطفا تمامی مقادیر را وارد کنید", state)
-            } else {
-                loading = true
-                client.loginUser(username, password).onSuccess {
-                    user = it
-                    storeFilterValues.clear()
-                    it.warehouses.forEach { warehouse ->
-                        storeFilterValues[warehouse.WareHouseTitle] = warehouse.DepartmentInfo_ID
-                    }
-                    storeFilterValue =
-                        storeFilterValues.entries.find { it.value == user.locationCode.toString() }?.key
-                            ?: ""
-                    saveUserData(it)
-                    withContext(Main) {
-                        navHostController.navigate(MainScreen)
-                        routeScreen.value = MainScreen
-                        navHostController.clearBackStack<MainScreen>()
-                        delayScreen()
-                    }
-                }.onError {
-                    if (it.name == "UNAUTHORIZED") {
-                        showLog("نام کاربری یا رمزعبور اشتباه است", state)
-                    } else {
-                        showLog(it.toString(), state)
-                    }
-                    withContext(Main) {
-                        loading = false
-                    }
-                }
-            }
-        }*/
+        //TODO
     }
 
     fun onFeatureIconClick(screen: Any) {
         changeScreen(screen)
     }
 
-    fun changeScreen(screen: Any) {
+    private fun changeScreen(screen: Any) {
         destinationScreen = screen
         screenChangePending = true
     }
