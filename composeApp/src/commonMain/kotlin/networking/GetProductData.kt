@@ -109,7 +109,7 @@ class GetProductData(
                 urlString = "$severAddress/products/gallery?KBarCode=$barcode"
             ) {
                 contentType(ContentType.Application.Json)
-                println("token: "+ user.accessToken)
+                println("token: " + user.accessToken)
                 header("Authorization", "Bearer ${user.accessToken}")
             }
 
@@ -209,7 +209,7 @@ class GetProductData(
         return when (response.status.value) {
             in 200..299 -> {
                 println("response = ${response.body<JsonObject>()}")
-                val json = Json{ignoreUnknownKeys = true}
+                val json = Json { ignoreUnknownKeys = true }
                 val response = json.decodeFromJsonElement<User>(response.body<JsonObject>())
                 Result.Success(data = response)
             }
