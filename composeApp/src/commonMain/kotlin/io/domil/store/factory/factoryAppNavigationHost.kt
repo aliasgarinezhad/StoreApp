@@ -5,8 +5,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import io.domil.store.factory.addTaskFeature.view.EnterDateAndNumberScreen
-import io.domil.store.factory.addTaskFeature.view.ShowProductionLinesScreen
 import io.domil.store.factory.addTaskFeature.view.SelectTaskScreen
+import io.domil.store.factory.addTaskFeature.view.ShowProductionLinesScreen
 import io.domil.store.factory.addTaskFeature.viewModel.FactoryAddTaskViewModel
 import io.domil.store.factory.main.view.FeatureListScreen
 import io.domil.store.factory.main.viewModel.FactoryMainViewModel
@@ -68,6 +68,25 @@ fun FactoryApp(
                 product = factoryAddTaskViewModel.userTask.product,
                 onClick = { factoryAddTaskViewModel.onAddTaskButtonClick() },
                 state = factoryAddTaskViewModel.state,
+                onSizeSelected = {
+                    factoryAddTaskViewModel.onSizeChanged(it)
+                },
+                onTextFieldChanged = {
+                    factoryAddTaskViewModel.onNumberChanged(it.toInt())
+                },
+                onStartHourChanged = {
+                    factoryAddTaskViewModel.onStartHourChanged(it.toInt())
+                },
+                onStartMinuteChanged = {
+                    factoryAddTaskViewModel.onStartMinuteChanged(it.toInt())
+                },
+                onEndHourChanged = {
+                    factoryAddTaskViewModel.onEndHourChanged(it.toInt())
+                },
+                onEndMinuteChanged = {
+                    factoryAddTaskViewModel.onEndMinuteChanged(it.toInt())
+                },
+                userTask = factoryAddTaskViewModel.userTask,
             )
         }
     }

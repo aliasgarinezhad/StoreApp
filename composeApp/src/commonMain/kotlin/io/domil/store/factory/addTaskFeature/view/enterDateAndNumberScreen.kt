@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.KeyboardOptions
@@ -25,10 +26,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -42,7 +41,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
@@ -54,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.domil.store.factory.addTaskFeature.model.Product
 import io.domil.store.factory.addTaskFeature.model.UserTask
+import io.domil.store.theme.BigButton
 import io.domil.store.theme.BottomBar
 import io.domil.store.theme.Jeanswest
 import io.domil.store.theme.MyApplicationTheme
@@ -99,7 +98,7 @@ fun EnterDateAndNumberScreen(
     MyApplicationTheme {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
             Scaffold(
-                content =  {
+                content = {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -112,7 +111,7 @@ fun EnterDateAndNumberScreen(
                             text = "ساعت شروع",
                             style = MaterialTheme.typography.h6,
                             modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.End
+                            textAlign = TextAlign.Start
                         )
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -120,40 +119,44 @@ fun EnterDateAndNumberScreen(
                         ) {
                             // Column for Hour Picker with caption
                             Column(
-                                modifier = Modifier.weight(1f),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                                          modifier = Modifier.width(128.dp).padding(start = 32.dp),
+                                horizontalAlignment = Alignment.Start
                             ) {
                                 Text(
                                     text = "ساعت",
                                     style = MaterialTheme.typography.caption,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.align(Alignment.CenterHorizontally)
                                 )
                                 Picker(
                                     items = hourValues,
                                     state = startHourPickerState,
-                                    visibleItemsCount = 5,
-                                    modifier = Modifier.fillMaxWidth(),
+                                    visibleItemsCount = 3,
                                     textModifier = Modifier.padding(8.dp),
-                                    textStyle = TextStyle(fontSize = 24.sp)
+                                    textStyle = TextStyle(fontSize = 18.sp),
+                                    onValueChange = { onStartHourChanged(it) },
+                                    dividerColor = MaterialTheme.colors.primary
                                 )
                             }
                             // Column for Minute Picker with caption
                             Column(
-                                modifier = Modifier.weight(1f),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                                          modifier = Modifier.width(128.dp).padding(start = 32.dp),
+                                horizontalAlignment = Alignment.Start
                             ) {
                                 Text(
                                     text = "دقیقه",
                                     style = MaterialTheme.typography.caption,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.align(Alignment.CenterHorizontally)
                                 )
                                 Picker(
                                     items = minuteValues,
                                     state = startMinutePickerState,
-                                    visibleItemsCount = 5,
-                                    modifier = Modifier.fillMaxWidth(),
+                                    visibleItemsCount = 3,
                                     textModifier = Modifier.padding(8.dp),
-                                    textStyle = TextStyle(fontSize = 24.sp)
+                                    textStyle = TextStyle(fontSize = 18.sp),
+                                    onValueChange = { onStartMinuteChanged(it) },
+                                    dividerColor = MaterialTheme.colors.primary
                                 )
                             }
                         }
@@ -163,7 +166,7 @@ fun EnterDateAndNumberScreen(
                             text = "ساعت پایان",
                             style = MaterialTheme.typography.h6,
                             modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.End
+                            textAlign = TextAlign.Start
                         )
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -171,52 +174,57 @@ fun EnterDateAndNumberScreen(
                         ) {
                             // Column for Hour Picker with caption
                             Column(
-                                modifier = Modifier.weight(1f),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                                          modifier = Modifier.width(128.dp).padding(start = 32.dp),
+                                horizontalAlignment = Alignment.Start
                             ) {
                                 Text(
                                     text = "ساعت",
                                     style = MaterialTheme.typography.caption,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.align(Alignment.CenterHorizontally)
                                 )
                                 Picker(
                                     items = hourValues,
                                     state = endHourPickerState,
-                                    visibleItemsCount = 5,
-                                    modifier = Modifier.fillMaxWidth(),
+                                    visibleItemsCount = 3,
                                     textModifier = Modifier.padding(8.dp),
-                                    textStyle = TextStyle(fontSize = 24.sp)
+                                    textStyle = TextStyle(fontSize = 18.sp),
+                                    onValueChange = { onEndHourChanged(it) },
+                                    dividerColor = MaterialTheme.colors.primary
                                 )
                             }
                             // Column for Minute Picker with caption
                             Column(
-                                modifier = Modifier.weight(1f),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                modifier = Modifier.width(128.dp).padding(start = 32.dp),
+                                horizontalAlignment = Alignment.Start
                             ) {
                                 Text(
                                     text = "دقیقه",
                                     style = MaterialTheme.typography.caption,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.align(Alignment.CenterHorizontally)
                                 )
                                 Picker(
                                     items = minuteValues,
                                     state = endMinutePickerState,
-                                    visibleItemsCount = 5,
-                                    modifier = Modifier.fillMaxWidth(),
+                                    visibleItemsCount = 3,
                                     textModifier = Modifier.padding(8.dp),
-                                    textStyle = TextStyle(fontSize = 24.sp)
+                                    textStyle = TextStyle(fontSize = 18.sp),
+                                    onValueChange = { onEndMinuteChanged(it) },
+                                    dividerColor = MaterialTheme.colors.primary
                                 )
                             }
                         }
 
                         // Size and Quantity Section
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                            modifier = Modifier.wrapContentWidth().padding(horizontal = 16.dp, vertical = 8.dp).align(Alignment.Start),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             FilterDropDownList(
                                 modifier = Modifier
-                                    .padding(start = 16.dp, bottom = 16.dp),
+                                    .wrapContentWidth()
+                                    .align(Alignment.CenterVertically),
                                 icon = {
                                     Icon(
                                         Icons.Filled.Edit,
@@ -240,31 +248,30 @@ fun EnterDateAndNumberScreen(
                                 onClick = {
                                     onSizeSelected(it)
                                 },
-                                values = userTask.product.tasks
+                                values = userTask.product.sizes
                             )
-                            // Input field for quantity
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = "تعداد",
-                                    style = MaterialTheme.typography.h6,
-                                    modifier = Modifier.fillMaxWidth(),
-                                    textAlign = TextAlign.End
-                                )
-                                OutlinedTextField(
-                                    value = userTask.number.toString(),
-                                    onValueChange = { newValue ->
-                                        // Allow only digits
-                                        onTextFieldChanged(newValue.filter { it.isDigit() })
-                                    },
-                                    label = { Text("تعداد") },
-                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            }
+                            OutlinedTextField(
+                                value = userTask.number.toString(),
+                                onValueChange = { newValue ->
+                                    // Allow only digits
+                                    onTextFieldChanged(newValue.filter { it.isDigit() })
+                                },
+                                label = { Text("تعداد") },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                modifier = Modifier.width(64.dp)
+                            )
                         }
                     }
                 },
                 snackbarHost = { ErrorSnackBar(state) },
+                bottomBar = {
+                    BigButton(
+                        text = "ثبت اطلاعات",
+                        onClick = {
+                            onClick()
+                        },
+                    )
+                }
             )
         }
     }
@@ -309,11 +316,10 @@ fun FilterDropDownList(
             Icon(
 
                 if (expanded) {
-                        Icons.Filled.KeyboardArrowUp
-                    } else {
-                        Icons.Filled.KeyboardArrowDown
-                    }
-                ,
+                    Icons.Filled.KeyboardArrowUp
+                } else {
+                    Icons.Filled.KeyboardArrowDown
+                },
                 "",
                 modifier = Modifier
                     .align(Alignment.CenterVertically)

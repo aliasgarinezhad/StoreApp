@@ -31,7 +31,6 @@ class FactoryAddTaskViewModel {
     }
 
     private fun getProductionLines() {
-
         //TODO
         println("getProductionLines")
         products.add(Product())

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Divider
@@ -20,7 +21,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -53,6 +56,7 @@ fun Picker(
     textModifier: Modifier = Modifier,
     textStyle: TextStyle = LocalTextStyle.current,
     dividerColor: Color = LocalContentColor.current,
+    onValueChange: (String) -> Unit = {}  // New parameter with a default empty lambda
 ) {
 
     val visibleItemsMiddle = visibleItemsCount / 2
@@ -81,7 +85,10 @@ fun Picker(
         snapshotFlow { listState.firstVisibleItemIndex }
             .map { index -> getItem(index + visibleItemsMiddle) }
             .distinctUntilChanged()
-            .collect { item -> state.selectedItem = item.toString() }
+            .collect { item ->
+                state.selectedItem = item
+                onValueChange(item)
+            }
     }
 
     Box(modifier = modifier) {
@@ -116,7 +123,9 @@ fun Picker(
 
         Divider(
             modifier = Modifier
-                .padding(top = (itemHeightDp * visibleItemsMiddle) + itemHeightDp)
+                .padding(
+                    top = (itemHeightDp * visibleItemsMiddle) + itemHeightDp
+                )
                 .height(1.dp),
             color = dividerColor
         )
