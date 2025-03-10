@@ -48,7 +48,7 @@ class FactoryAddTaskViewModel {
 
     fun onProductLineClick(product: Product) {
         println("onProductLineClick")
-        userTask.product = product
+        userTask = userTask.copy(product = product)
         changeScreen(SelectTaskScreen)
     }
 
@@ -63,32 +63,32 @@ class FactoryAddTaskViewModel {
     }
 
     fun onTaskClick(task: String) {
-        userTask.task = task
+        userTask = userTask.copy(task = task)
         changeScreen(EnterDateAndNumberScreen)
     }
 
     fun onStartHourChanged(hour: Int) {
-        userTask.startHour = hour
+        userTask = userTask.copy(startHour = hour)
     }
 
     fun onStartMinuteChanged(minute: Int) {
-        userTask.startMinute = minute
+        userTask = userTask.copy(startMinute = minute)
     }
 
     fun onEndHourChanged(hour: Int) {
-        userTask.endHour = hour
+        userTask = userTask.copy(endHour = hour)
     }
 
     fun onEndMinuteChanged(minute: Int) {
-        userTask.endMinute = minute
+        userTask = userTask.copy(endMinute = minute)
     }
 
     fun onSizeChanged(size: String) {
-        userTask.size = size
+        userTask = userTask.copy(size = size)
     }
 
     fun onNumberChanged(number: Int) {
-        userTask.number = number
+        userTask = userTask.copy(number = number)
     }
 
     fun onAddTaskButtonClick() {
