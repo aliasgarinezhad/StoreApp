@@ -79,6 +79,8 @@ fun EnterDateAndNumberScreen(
     onEndHourChanged: (endHour: String) -> Unit,
     onEndMinuteChanged: (endMinute: String) -> Unit,
     userTask: UserTask,
+    pageTitle: String,
+    onBack: () -> Unit
 ) {
     // Define hour and minute values for the pickers
     val hourValues = (7..18).map { it.toString() }
@@ -98,6 +100,9 @@ fun EnterDateAndNumberScreen(
     MyApplicationTheme {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
             Scaffold(
+                topBar = {
+                    AppBarWithBack(title = pageTitle, onBackPressed = onBack)
+                },
                 content = {
                     Column(
                         modifier = Modifier

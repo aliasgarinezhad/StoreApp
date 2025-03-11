@@ -49,7 +49,9 @@ fun FactoryApp(
                 loading = factoryAddTaskViewModel.loading,
                 products = factoryAddTaskViewModel.products,
                 onClick = { factoryAddTaskViewModel.onProductLineClick(it) },
-                state = factoryAddTaskViewModel.state
+                state = factoryAddTaskViewModel.state,
+                pageTitle = "انتخاب کالا",
+                onBack = { factoryAddTaskViewModel.changeScreen(FeatureListScreen) }
             )
         }
 
@@ -58,7 +60,9 @@ fun FactoryApp(
                 loading = factoryAddTaskViewModel.loading,
                 product = factoryAddTaskViewModel.userTask.product,
                 onClick = { factoryAddTaskViewModel.onTaskClick(it) },
-                state = factoryAddTaskViewModel.state
+                state = factoryAddTaskViewModel.state,
+                pageTitle = "انتخاب نوع فعالیت",
+                onBack = { factoryAddTaskViewModel.changeScreen(ShowProductionLinesScreen) }
             )
         }
 
@@ -87,6 +91,9 @@ fun FactoryApp(
                     factoryAddTaskViewModel.onEndMinuteChanged(it.toInt())
                 },
                 userTask = factoryAddTaskViewModel.userTask,
+                pageTitle = "انتخاب سایز و تعداد",
+                onBack = { factoryAddTaskViewModel.changeScreen(SelectTaskScreen) }
+
             )
         }
     }

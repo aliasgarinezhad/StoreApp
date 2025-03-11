@@ -48,12 +48,18 @@ fun ShowProductionLinesScreen(
     loading: Boolean,
     products: List<Product>,
     onClick: (product: Product) -> Unit,
-    state: SnackbarHostState
+    state: SnackbarHostState,
+    pageTitle: String,
+    onBack: () -> Unit
 ) {
 
     MyApplicationTheme {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
             Scaffold(
+
+                topBar = {
+                    AppBarWithBack(title = pageTitle, onBackPressed = onBack)
+                },
                 content = {
                     Content(
                         loading = loading,
