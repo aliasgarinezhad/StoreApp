@@ -4,9 +4,20 @@ import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import io.domil.store.factory.addTaskFeature.data.FactoryUser
+import io.domil.store.factory.addTaskFeature.data.RemoteConnection
 import io.domil.store.factory.main.useCase.features
 import io.domil.store.factory.main.view.FeatureListScreen
+import io.domil.store.networking.createHttpClient
+import io.domil.store.tools.onError
+import io.domil.store.tools.onSuccess
 import io.domil.store.view.LoginScreen
+import io.domil.store.view.showLog
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FactoryMainViewModel {
 
@@ -25,11 +36,35 @@ class FactoryMainViewModel {
     var currentScreen: Any = LoginScreen
     var screenChangePending by mutableStateOf(false)
         private set
+    private var factoryConnection = RemoteConnection(createHttpClient())
+    private var factoryUser = FactoryUser()
 
     fun signIn() {
-
-        changeScreen(FeatureListScreen)
-        //TODO
+        CoroutineScope(Default).launch {
+            if (username.isEmpty() || password.isEmpty()) {
+                showLog("لطفا تمامی مقادیر را وارد کنید", state)
+            } else if (!username.all { it.isDigit() } || !password.all { it.isDigit() }) {
+                showLog("تمام مقادیر وارد شده باید عددی باشد", state)
+            } else {
+                loading = true
+                factoryConnection.loginUserFactory(username.toLong(), password.toLong()).onSuccess {
+                    factoryUser = it
+                    withContext(Main) {
+                        changeScreen(FeatureListScreen)
+                        loading = false
+                    }
+                }.onError {
+                    if (it.name == "UNKNOWN" || it.name == "UNAUTHORIZED") {
+                        showLog("نام کاربری یا رمزعبور اشتباه است", state)
+                    } else {
+                        showLog(it.toString(), state)
+                    }
+                    withContext(Main) {
+                        loading = false
+                    }
+                }
+            }
+        }
     }
 
     fun onFeatureIconClick(screen: Any) {

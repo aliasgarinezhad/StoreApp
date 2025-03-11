@@ -138,7 +138,7 @@ fun PasswordTextField(
             .fillMaxWidth(),
         label = { Text(text = "رمز عبور") },
         keyboardOptions = KeyboardOptions.Default.copy(
-            keyboardType = KeyboardType.Number
+            keyboardType = KeyboardType.NumberPassword
         ),
         singleLine = true
     )

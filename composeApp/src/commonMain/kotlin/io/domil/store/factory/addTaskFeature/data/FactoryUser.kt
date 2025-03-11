@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FactoryUser(
     @SerialName("FullName")
-    val fullName: String,
-    val accessToken: String,
-    val icons: List<Icon>
+    val fullName: String = "",
+    val accessToken: String = "",
+    val icons: List<Icon> = emptyList()
 )
 
 @Serializable

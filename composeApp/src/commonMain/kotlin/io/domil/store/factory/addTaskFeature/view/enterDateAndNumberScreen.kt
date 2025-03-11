@@ -119,7 +119,7 @@ fun EnterDateAndNumberScreen(
                         ) {
                             // Column for Hour Picker with caption
                             Column(
-                                                          modifier = Modifier.width(128.dp).padding(start = 32.dp),
+                                modifier = Modifier.width(128.dp).padding(start = 32.dp),
                                 horizontalAlignment = Alignment.Start
                             ) {
                                 Text(
@@ -140,7 +140,7 @@ fun EnterDateAndNumberScreen(
                             }
                             // Column for Minute Picker with caption
                             Column(
-                                                          modifier = Modifier.width(128.dp).padding(start = 32.dp),
+                                modifier = Modifier.width(128.dp).padding(start = 32.dp),
                                 horizontalAlignment = Alignment.Start
                             ) {
                                 Text(
@@ -174,7 +174,7 @@ fun EnterDateAndNumberScreen(
                         ) {
                             // Column for Hour Picker with caption
                             Column(
-                                                          modifier = Modifier.width(128.dp).padding(start = 32.dp),
+                                modifier = Modifier.width(128.dp).padding(start = 32.dp),
                                 horizontalAlignment = Alignment.Start
                             ) {
                                 Text(
@@ -202,7 +202,7 @@ fun EnterDateAndNumberScreen(
                                     text = "دقیقه",
                                     style = MaterialTheme.typography.caption,
                                     fontWeight = FontWeight.Bold,
-                                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                                    modifier = Modifier.align(Alignment.CenterHorizontally)
                                 )
                                 Picker(
                                     items = minuteValues,
@@ -218,12 +218,16 @@ fun EnterDateAndNumberScreen(
 
                         // Size and Quantity Section
                         Row(
-                            modifier = Modifier.wrapContentWidth().padding(horizontal = 16.dp, vertical = 8.dp).align(Alignment.Start),
+                            modifier = Modifier.wrapContentWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .align(Alignment.Start),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             FilterDropDownList(
                                 modifier = Modifier
                                     .wrapContentWidth()
+                                    .height(54.dp)
+                                    .padding(top = 6.dp)
                                     .align(Alignment.CenterVertically),
                                 icon = {
                                     Icon(
@@ -236,19 +240,12 @@ fun EnterDateAndNumberScreen(
                                             .padding(start = 6.dp)
                                     )
                                 },
-                                text = {
-                                    Text(
-                                        text = userTask.size,
-                                        style = MaterialTheme.typography.body2,
-                                        modifier = Modifier
-                                            .align(Alignment.CenterVertically)
-                                            .padding(start = 6.dp)
-                                    )
-                                },
                                 onClick = {
                                     onSizeSelected(it)
                                 },
-                                values = userTask.product.sizes
+                                values = userTask.product.sizes,
+                                currentSelection = userTask.size,
+                                defaultText = "انتخاب سایز",
                             )
                             OutlinedTextField(
                                 value = userTask.number.toString(),
@@ -258,7 +255,7 @@ fun EnterDateAndNumberScreen(
                                 },
                                 label = { Text("تعداد") },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                modifier = Modifier.width(64.dp)
+                                modifier = Modifier.width(102.dp).height(60.dp).padding(start = 20.dp)
                             )
                         }
                     }
@@ -282,14 +279,14 @@ fun EnterDateAndNumberScreen(
 fun FilterDropDownList(
     modifier: Modifier = Modifier,
     icon: @Composable () -> Unit = {},
-    text: @Composable () -> Unit,
+    currentSelection: String, // current selected value (empty if nothing selected)
+    defaultText: String = "Select your size",
     values: List<String>,
     onClick: (item: String) -> Unit,
 ) {
-
-    var expanded by rememberSaveable {
-        mutableStateOf(false)
-    }
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    // If nothing is selected, show default text
+    val displayText = if (currentSelection.isEmpty()) defaultText else currentSelection
 
     Box(
         modifier = modifier
@@ -309,18 +306,19 @@ fun FilterDropDownList(
                 .clickable { expanded = true }
                 .testTag("FilterDropDownList")
                 .fillMaxHeight(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-
             icon()
-            text()
+            Text(
+                text = displayText,
+                style = MaterialTheme.typography.body2,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 6.dp)
+            )
             Icon(
-
-                if (expanded) {
-                    Icons.Filled.KeyboardArrowUp
-                } else {
-                    Icons.Filled.KeyboardArrowDown
-                },
-                "",
+                imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                contentDescription = "",
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(start = 0.dp, end = 4.dp)
@@ -336,12 +334,13 @@ fun FilterDropDownList(
                 .background(color = BottomBar, shape = Shapes.small)
                 .align(Alignment.Center)
         ) {
-            values.forEach {
+            // Only show the selectable options (the default text is not listed)
+            values.forEach { value ->
                 DropdownMenuItem(onClick = {
                     expanded = false
-                    onClick(it)
+                    onClick(value)
                 }) {
-                    Text(text = it)
+                    Text(text = value)
                 }
             }
         }
