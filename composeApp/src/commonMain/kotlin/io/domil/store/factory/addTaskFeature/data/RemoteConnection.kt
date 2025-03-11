@@ -94,4 +94,36 @@ class RemoteConnection(
         }
     }
 
+    suspend fun finalUserAction(): Result<String, NetworkError> {
+        val response: HttpResponse = try {
+            httpClient.post(urlString = "$severAddress/sewing/production-plan/action") {
+//                val bodyMap = mutableMapOf(
+//                    "username" to JsonPrimitive(username),
+//                    "password" to JsonPrimitive(password)
+//                )
+//                val body = JsonObject(bodyMap)
+                contentType(ContentType.Application.Json)
+                header("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwIiwibmFtZSI6Itin2YTZh9in2YUg2q_ZhCDZhdit2YXYr9uM2KfZhiDar9mE24zYp9mGIiwicm9sZXMiOlsidXNlciJdLCJzY29wZXMiOlsic2V3aW5nIl0sImlhdCI6MTc0MTY5MTAyMSwibmJmIjoxNzQxNjkxMDIxLCJleHAiOjE3NDIyNzE2MjksImF1ZCI6InJhaGthcmFuIn0.Qidbv1C2tKd8JECxCHOACQGXEE3kRFCMxpaKC2I6VKI")
+                println("navid body: $$body")
+            }
+        } catch (_: UnresolvedAddressException) {
+            return Result.Error(NetworkError.NO_INTERNET)
+        } catch (_: SerializationException) {
+            return Result.Error(NetworkError.SERIALIZATION)
+        }
+
+        return when (response.status.value) {
+            in 200..299 -> {
+                Result.Success(data = "OK")
+            }
+
+            401 -> Result.Error(NetworkError.UNAUTHORIZED)
+            409 -> Result.Error(NetworkError.CONFLICT)
+            408 -> Result.Error(NetworkError.REQUEST_TIMEOUT)
+            413 -> Result.Error(NetworkError.PAYLOAD_TOO_LARGE)
+            in 500..599 -> Result.Error(NetworkError.SERVER_ERROR)
+            else -> Result.Error(NetworkError.UNKNOWN)
+        }
+    }
+
 }
