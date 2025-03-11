@@ -54,6 +54,7 @@ fun App(
         } else if (factoryMainViewModel.destinationScreen == ShowProductionLinesScreen && factoryMainViewModel.currentScreen == FeatureListScreen) {
             navHostController.navigate(ShowProductionLinesScreen)
             factoryMainViewModel.onScreenChanged()
+            factoryAddTaskViewModel.getProductionLines()
         } else if (factoryAddTaskViewModel.destinationScreen == FeatureListScreen && factoryAddTaskViewModel.currentScreen == ShowProductionLinesScreen) {
             navHostController.popBackStack()
             factoryMainViewModel.destinationScreen = FeatureListScreen
@@ -66,6 +67,7 @@ fun App(
             factoryAddTaskViewModel.onScreenChanged()
         } else if (factoryAddTaskViewModel.destinationScreen == ShowProductionLinesScreen && factoryAddTaskViewModel.currentScreen == SelectTaskScreen) {
             navHostController.popBackStack()
+            factoryAddTaskViewModel.getProductionLines()
             factoryAddTaskViewModel.onScreenChanged()
         } else if (factoryAddTaskViewModel.destinationScreen == EnterDateAndNumberScreen && factoryAddTaskViewModel.currentScreen == SelectTaskScreen) {
             println("EnterDateAndNumberScreen")

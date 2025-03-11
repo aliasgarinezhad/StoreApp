@@ -4,11 +4,21 @@ import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
+import io.domil.store.factory.addTaskFeature.data.RemoteConnection
 import io.domil.store.factory.addTaskFeature.model.Product
 import io.domil.store.factory.addTaskFeature.model.UserTask
 import io.domil.store.factory.addTaskFeature.view.EnterDateAndNumberScreen
 import io.domil.store.factory.addTaskFeature.view.SelectTaskScreen
 import io.domil.store.factory.addTaskFeature.view.ShowProductionLinesScreen
+import io.domil.store.networking.createHttpClient
+import io.domil.store.tools.onError
+import io.domil.store.tools.onSuccess
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FactoryAddTaskViewModel {
 
@@ -24,25 +34,51 @@ class FactoryAddTaskViewModel {
 
     var userTask by mutableStateOf(UserTask())
     var products = mutableListOf<Product>()
+    private var remoteConnection = RemoteConnection(createHttpClient())
 
-    init {
-        println("init")
-        getProductionLines()
-    }
+//    init {
+//        println("init")
+//        getProductionLines()
+//    }
 
-    private fun getProductionLines() {
-        //TODO
-        println("getProductionLines")
-        products.add(Product())
-        products.add(Product())
-        products.add(Product())
-        products.add(Product())
-        products.add(Product())
-        products.add(Product())
-        products.add(Product())
-        products.add(Product())
-        products.add(Product())
-        products.add(Product())
+    fun getProductionLines() {
+        loading = true
+        CoroutineScope(Default).launch {
+            remoteConnection.getProductionOrders().onSuccess {
+                println("navid body: $it")
+                it.forEach { productLineApi ->
+                    products.add(
+                        Product(
+                            name = productLineApi.partName,
+                            style = productLineApi.styleN,
+                            color = productLineApi.colorCodeF,
+                            //uiColor = Color(productLineApi.colorHex.substring(1).toInt()),
+                           // tasks = productLineApi.operationItems
+                        )
+                    )
+                }
+                withContext(Dispatchers.Main){
+                    loading = false
+                }
+            }.onError {
+
+                withContext(Dispatchers.Main){
+                    loading = false
+                }
+            }
+        }
+//        //TODO
+//        println("getProductionLines")
+//        products.add(Product())
+//        products.add(Product())
+//        products.add(Product())
+//        products.add(Product())
+//        products.add(Product())
+//        products.add(Product())
+//        products.add(Product())
+//        products.add(Product())
+//        products.add(Product())
+//        products.add(Product())
     }
 
     fun onProductLineClick(product: Product) {
