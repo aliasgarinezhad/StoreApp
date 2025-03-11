@@ -34,10 +34,16 @@ fun SelectTaskScreen(
     loading: Boolean,
     state: SnackbarHostState,
     onClick: (task: String) -> Unit,
+    pageTitle: String,
+    onBack: () -> Unit
 ) {
     MyApplicationTheme {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
             Scaffold(
+
+                topBar = {
+                    AppBarWithBack(title = pageTitle, onBackPressed = onBack)
+                },
                 content = {
                     Content(
                         loading = loading,
@@ -71,7 +77,7 @@ private fun Content(
                             color = MaterialTheme.colors.onPrimary,
                             shape = MaterialTheme.shapes.small
                         )
-                        .padding(top = 8.dp, bottom = 8.dp, start = 8.dp)
+                        .padding(top = 8.dp, bottom = 8.dp, start = 16.dp)
                         .fillMaxWidth()
                         .clickable { onClick(task) }
                 )

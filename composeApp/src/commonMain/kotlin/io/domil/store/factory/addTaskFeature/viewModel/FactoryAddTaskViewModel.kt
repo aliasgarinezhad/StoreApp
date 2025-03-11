@@ -51,7 +51,7 @@ class FactoryAddTaskViewModel {
         changeScreen(SelectTaskScreen)
     }
 
-    private fun changeScreen(screen: Any) {
+    fun changeScreen(screen: Any) {
         destinationScreen = screen
         screenChangePending = true
     }

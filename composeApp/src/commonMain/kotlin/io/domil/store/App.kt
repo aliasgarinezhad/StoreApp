@@ -56,7 +56,10 @@ fun App(
             factoryMainViewModel.onScreenChanged()
         } else if (factoryAddTaskViewModel.destinationScreen == FeatureListScreen && factoryAddTaskViewModel.currentScreen == ShowProductionLinesScreen) {
             navHostController.popBackStack()
+            factoryMainViewModel.destinationScreen = FeatureListScreen
             factoryMainViewModel.onScreenChanged()
+            factoryAddTaskViewModel.onScreenChanged()
+            factoryAddTaskViewModel.currentScreen = ShowProductionLinesScreen
         } else if (factoryAddTaskViewModel.destinationScreen == SelectTaskScreen && factoryAddTaskViewModel.currentScreen == ShowProductionLinesScreen) {
             println("SelectTaskScreen")
             navHostController.navigate(SelectTaskScreen)
