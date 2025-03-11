@@ -9,8 +9,11 @@ import io.domil.store.factory.addTaskFeature.model.UserTask
 import io.domil.store.factory.addTaskFeature.view.EnterDateAndNumberScreen
 import io.domil.store.factory.addTaskFeature.view.SelectTaskScreen
 import io.domil.store.factory.addTaskFeature.view.ShowProductionLinesScreen
+import io.domil.store.view.showLog
 
 class FactoryAddTaskViewModel {
+
+    var textFieldValue by mutableStateOf("")
 
     //charge ui parameters
     var loading by mutableStateOf(false)
@@ -86,8 +89,14 @@ class FactoryAddTaskViewModel {
         userTask = userTask.copy(size = size)
     }
 
-    fun onNumberChanged(number: Int) {
-        userTask = userTask.copy(number = number)
+    fun onNumberChanged(number: String) {
+        textFieldValue = number
+        if (number.toIntOrNull() == null) {
+            if(textFieldValue != "") showLog("لطفا مقدار عددی وارد کنید.", state)
+            userTask = userTask.copy(number = 0)
+        } else {
+            userTask = userTask.copy(number = number.toInt())
+        }
     }
 
     fun onAddTaskButtonClick() {

@@ -80,7 +80,8 @@ fun EnterDateAndNumberScreen(
     onEndMinuteChanged: (endMinute: String) -> Unit,
     userTask: UserTask,
     pageTitle: String,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    textFieldValue: String,
 ) {
     // Define hour and minute values for the pickers
     val hourValues = (7..18).map { it.toString() }
@@ -253,10 +254,10 @@ fun EnterDateAndNumberScreen(
                                 defaultText = "انتخاب سایز",
                             )
                             OutlinedTextField(
-                                value = userTask.number.toString(),
+                                value = textFieldValue,
                                 onValueChange = { newValue ->
                                     // Allow only digits
-                                    onTextFieldChanged(newValue.filter { it.isDigit() })
+                                    onTextFieldChanged(newValue)
                                 },
                                 label = { Text("تعداد") },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

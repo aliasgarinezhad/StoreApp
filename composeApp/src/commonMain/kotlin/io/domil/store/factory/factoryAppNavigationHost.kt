@@ -76,7 +76,7 @@ fun FactoryApp(
                     factoryAddTaskViewModel.onSizeChanged(it)
                 },
                 onTextFieldChanged = {
-                    factoryAddTaskViewModel.onNumberChanged(it.toInt())
+                    factoryAddTaskViewModel.onNumberChanged(it)
                 },
                 onStartHourChanged = {
                     factoryAddTaskViewModel.onStartHourChanged(it.toInt())
@@ -92,7 +92,8 @@ fun FactoryApp(
                 },
                 userTask = factoryAddTaskViewModel.userTask,
                 pageTitle = "انتخاب سایز و تعداد",
-                onBack = { factoryAddTaskViewModel.changeScreen(SelectTaskScreen) }
+                onBack = { factoryAddTaskViewModel.changeScreen(SelectTaskScreen) },
+                textFieldValue = factoryAddTaskViewModel.textFieldValue
 
             )
         }
