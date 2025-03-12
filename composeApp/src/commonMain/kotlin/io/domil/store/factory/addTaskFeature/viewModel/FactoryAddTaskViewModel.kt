@@ -37,51 +37,47 @@ class FactoryAddTaskViewModel {
 
     var userTask by mutableStateOf(UserTask())
     var products = mutableListOf<Product>()
-    private var remoteConnection = RemoteConnection(createHttpClient())
-
-//    init {
-//        println("init")
-//        getProductionLines()
-//    }
 
     fun getProductionLines() {
         loading = true
         CoroutineScope(Default).launch {
-            remoteConnection.getProductionOrders().onSuccess {
+            RemoteConnection.getProductionOrders().onSuccess {
                 println("navid body: $it")
+                products.clear()
                 it.forEach { productLineApi ->
+
+                    val tasks = mutableMapOf<String, Long>()
+                    val sizes = mutableMapOf<String, Int>()
+                    productLineApi.operationItems.forEach { operationItem ->
+                        tasks[operationItem.operation] = operationItem.productionOrderOperationId
+                        operationItem.pieces.forEach { size ->
+                            sizes[size.size] = size.sizeCode
+                        }
+                    }
+
                     products.add(
                         Product(
+                            lineID = productLineApi.productionOrderId,
                             name = productLineApi.partName,
                             style = productLineApi.styleN,
                             color = productLineApi.colorCodeF,
-                            //uiColor = Color(productLineApi.colorHex.substring(1).toInt()),
-                           // tasks = productLineApi.operationItems
+                            colorHex = productLineApi.colorHex,
+                            tasks = tasks,
+                            part = productLineApi.part,
+                            sizes = sizes,
                         )
                     )
                 }
-                withContext(Dispatchers.Main){
+                withContext(Dispatchers.Main) {
                     loading = false
                 }
             }.onError {
 
-                withContext(Dispatchers.Main){
+                withContext(Dispatchers.Main) {
                     loading = false
                 }
             }
         }
-//        //TODO
-//        println("getProductionLines")
-//        products.add(Product())
-//        products.add(Product())
-//        products.add(Product())
-//        products.add(Product())
-//        products.add(Product())
-//        products.add(Product())
-//        products.add(Product())
-//        products.add(Product())
-//        products.add(Product())
-//        products.add(Product())
     }
 
     fun onProductLineClick(product: Product) {
@@ -91,8 +87,10 @@ class FactoryAddTaskViewModel {
     }
 
     fun changeScreen(screen: Any) {
-        destinationScreen = screen
-        screenChangePending = true
+        if(!screenChangePending) {
+            destinationScreen = screen
+            screenChangePending = true
+        }
     }
 
     fun onScreenChanged() {
@@ -101,7 +99,7 @@ class FactoryAddTaskViewModel {
     }
 
     fun onTaskClick(task: String) {
-        userTask = userTask.copy(task = task)
+        userTask = userTask.copy(task = task, taskId = userTask.product.tasks[task] ?: 0L)
         changeScreen(EnterDateAndNumberScreen)
     }
 
@@ -122,13 +120,13 @@ class FactoryAddTaskViewModel {
     }
 
     fun onSizeChanged(size: String) {
-        userTask = userTask.copy(size = size)
+        userTask = userTask.copy(size = size, sizeCode = userTask.product.sizes[size] ?: 0)
     }
 
     fun onNumberChanged(number: String) {
         textFieldValue = number
         if (number.toIntOrNull() == null) {
-            if(textFieldValue != "") showLog("لطفا مقدار عددی وارد کنید.", state)
+            if (textFieldValue != "") showLog("لطفا مقدار عددی وارد کنید.", state)
             userTask = userTask.copy(number = 0)
         } else {
             userTask = userTask.copy(number = number.toInt())
@@ -136,6 +134,26 @@ class FactoryAddTaskViewModel {
     }
 
     fun onAddTaskButtonClick() {
-        //TODO
+
+        if (userTask.sizeCode == 0) {
+            showLog("لطفا سایز را انتخاب کنید.", state = state)
+        } else {
+            loading = true
+            CoroutineScope(Default).launch {
+                RemoteConnection.finalUserAction(userTask = userTask).onSuccess {
+                    println("navid body: $it")
+                    println("request success")
+                    withContext(Dispatchers.Main) {
+                        loading = false
+                        changeScreen(ShowProductionLinesScreen)
+                    }
+                }.onError {
+
+                    withContext(Dispatchers.Main) {
+                        loading = false
+                    }
+                }
+            }
+        }
     }
 }

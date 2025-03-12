@@ -67,7 +67,8 @@ private fun Content(
         item(product.tasks.size) {
             product.tasks.forEach { task ->
                 Text(
-                    text = task,
+
+                    text = task.key,
                     style = MaterialTheme.typography.body1,
                     textAlign = TextAlign.Right,
                     modifier = Modifier
@@ -79,7 +80,7 @@ private fun Content(
                         )
                         .padding(top = 8.dp, bottom = 8.dp, start = 16.dp)
                         .fillMaxWidth()
-                        .clickable { onClick(task) }
+                        .clickable { onClick(task.key) }
                 )
             }
             Spacer(

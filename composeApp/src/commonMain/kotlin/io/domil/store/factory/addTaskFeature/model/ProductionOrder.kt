@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ProductionOrder(
     @SerialName("ProductionOrderID")
-    val productionOrderId: Int,
+    val productionOrderId: Long,
     @SerialName("ManufacturingOrderType")
     val manufacturingOrderType: String,
     @SerialName("Number")
@@ -38,7 +38,7 @@ data class ProductionOrder(
 @Serializable
 data class OperationItem(
     @SerialName("ProductionOrderOperationID")
-    val productionOrderOperationId: Int,
+    val productionOrderOperationId: Long,
     @SerialName("Operation")
     val operation: String,
     @SerialName("Rank")

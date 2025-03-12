@@ -76,6 +76,11 @@ fun App(
         } else if (factoryAddTaskViewModel.destinationScreen == SelectTaskScreen && factoryAddTaskViewModel.currentScreen == EnterDateAndNumberScreen) {
             navHostController.popBackStack()
             factoryAddTaskViewModel.onScreenChanged()
+        } else if (factoryAddTaskViewModel.destinationScreen == ShowProductionLinesScreen && factoryAddTaskViewModel.currentScreen == EnterDateAndNumberScreen) {
+            navHostController.popBackStack()
+            navHostController.popBackStack()
+            factoryAddTaskViewModel.onScreenChanged()
+            factoryAddTaskViewModel.getProductionLines()
         }
     }
 }

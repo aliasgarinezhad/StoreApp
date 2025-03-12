@@ -2,10 +2,12 @@ package io.domil.store.factory.main.viewModel
 
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.domil.store.factory.addTaskFeature.data.FactoryUser
 import io.domil.store.factory.addTaskFeature.data.RemoteConnection
+import io.domil.store.factory.main.model.Feature
 import io.domil.store.factory.main.useCase.features
 import io.domil.store.factory.main.view.FeatureListScreen
 import io.domil.store.networking.createHttpClient
@@ -30,13 +32,12 @@ class FactoryMainViewModel {
         private set
     var password by mutableStateOf("")
         private set
-    val featureList = features
+    val featureList = mutableStateListOf<Feature>()
 
     var destinationScreen: Any = LoginScreen
     var currentScreen: Any = LoginScreen
     var screenChangePending by mutableStateOf(false)
         private set
-    private var factoryConnection = RemoteConnection(createHttpClient())
     private var factoryUser = FactoryUser()
 
     fun signIn() {
@@ -47,8 +48,14 @@ class FactoryMainViewModel {
                 showLog("تمام مقادیر وارد شده باید عددی باشد", state)
             } else {
                 loading = true
-                factoryConnection.loginUserFactory(username.toLong(), password.toLong()).onSuccess {
+                RemoteConnection.loginUserFactory(username.toLong(), password.toLong()).onSuccess {
                     factoryUser = it
+                    val userFeatures = factoryUser.icons.map { feature -> feature.iconLatinName }
+                    features.forEach { feature ->
+                        if (feature.accessKey in userFeatures) {
+                            featureList.add(feature)
+                        }
+                    }
                     withContext(Main) {
                         changeScreen(FeatureListScreen)
                         loading = false
@@ -72,8 +79,10 @@ class FactoryMainViewModel {
     }
 
     private fun changeScreen(screen: Any) {
-        destinationScreen = screen
-        screenChangePending = true
+        if (!screenChangePending) {
+            destinationScreen = screen
+            screenChangePending = true
+        }
     }
 
     fun onScreenChanged() {

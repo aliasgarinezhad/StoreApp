@@ -58,6 +58,7 @@ kotlin {
             implementation(libs.coil.mp)
             implementation(libs.coil.network.ktor)
             implementation(libs.navigation.compose)
+            implementation(libs.kotlinx.datetime)
         }
     }
 }

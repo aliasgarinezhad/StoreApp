@@ -152,7 +152,7 @@ private fun ProductLineItem(
         ) {
             Column(
                 modifier = Modifier
-                    .weight(1.2F)
+                    .weight(1.5F)
                     .fillMaxHeight()
                     .padding(top = 16.dp, bottom = 16.dp),
                 verticalArrangement = Arrangement.SpaceEvenly
@@ -168,6 +168,7 @@ private fun ProductLineItem(
                     text = product.name,
                     style = MaterialTheme.typography.h4,
                     textAlign = TextAlign.Right,
+                    maxLines = 1
                 )
             }
 
@@ -185,7 +186,7 @@ private fun ProductLineItem(
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Text(
-                    text = product.color,
+                    text = "رنگ: " + product.color,
                     style = MaterialTheme.typography.h3,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
@@ -198,7 +199,7 @@ private fun ProductLineItem(
                         .width(66.dp)
                 )
                 Text(
-                    text = product.line,
+                    text = "پارت: " + product.part,
                     style = MaterialTheme.typography.h3,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)

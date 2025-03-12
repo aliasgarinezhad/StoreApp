@@ -249,7 +249,7 @@ fun EnterDateAndNumberScreen(
                                 onClick = {
                                     onSizeSelected(it)
                                 },
-                                values = userTask.product.sizes,
+                                values = userTask.product.sizes.keys.toList(),
                                 currentSelection = userTask.size,
                                 defaultText = "انتخاب سایز",
                             )
