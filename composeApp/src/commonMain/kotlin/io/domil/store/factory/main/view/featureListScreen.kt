@@ -22,16 +22,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import io.domil.store.factory.addTaskFeature.data.FactoryUser
 import io.domil.store.factory.main.model.Feature
 import io.domil.store.theme.MyApplicationTheme
 import io.domil.store.view.ErrorSnackBar
 import io.domil.store.view.LoadingIndicator
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.painterResource
 
 @Serializable
 object FeatureListScreen
@@ -41,6 +43,7 @@ fun FeatureListScreen(
     state: SnackbarHostState,
     loading: Boolean,
     featuresList: List<Feature>,
+    factoryUser: FactoryUser,
     onFeatureIconClick: (screen: Any) -> Unit
 ) {
 
@@ -51,7 +54,8 @@ fun FeatureListScreen(
                     MainContent(
                         loading = loading,
                         featuresList = featuresList,
-                        onFeatureIconClick = onFeatureIconClick
+                        onFeatureIconClick = onFeatureIconClick,
+                        factoryUser = factoryUser
                     )
                 },
                 snackbarHost = { ErrorSnackBar(state) },
@@ -64,6 +68,7 @@ fun FeatureListScreen(
 fun MainContent(
     loading: Boolean,
     featuresList: List<Feature>,
+    factoryUser: FactoryUser,
     onFeatureIconClick: (screen: Any) -> Unit
 ) {
 
@@ -71,76 +76,79 @@ fun MainContent(
         if (loading) {
             LoadingIndicator()
         } else
-            LazyColumn(
-                modifier = Modifier.padding(top = 16.dp, start = 8.dp, end = 8.dp),
-                verticalArrangement = Arrangement.Top
-            ) {
-                item {
 
-                    val numberOfRowsBeforeLastRow = (featuresList.size / 4)
-                    val numberOfFeaturesInLastRow = (featuresList.size % 4)
+            Text(factoryUser.fullName, modifier = Modifier.padding(top = 16.dp, start = 16.dp))
 
-                    for (rowIndex in 0 until numberOfRowsBeforeLastRow) {
+        LazyColumn(
+            modifier = Modifier.padding(top = 16.dp, start = 8.dp, end = 8.dp),
+            verticalArrangement = Arrangement.Top
+        ) {
+            item {
 
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 8.dp)
-                        ) {
+                val numberOfRowsBeforeLastRow = (featuresList.size / 3)
+                val numberOfFeaturesInLastRow = (featuresList.size % 3)
 
-                            for (i in 0..3) {
-                                val it = featuresList[rowIndex * 4 + i]
-                                OpenActivityButton(
-                                    title = it.title,
-                                    icon = it.icon,
-                                ) {
-                                    onFeatureIconClick(it.routeScreen)
-                                }
-                            }
-                        }
-                    }
+                for (rowIndex in 0 until numberOfRowsBeforeLastRow) {
 
-                    if (numberOfFeaturesInLastRow != 0) {
-
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 8.dp)
-                        ) {
-
-                            for (i in 0 until numberOfFeaturesInLastRow) {
-                                val it =
-                                    featuresList[numberOfRowsBeforeLastRow * 4 + i]
-                                OpenActivityButton(
-                                    title = it.title,
-                                    icon = it.icon,
-                                ) {
-                                    onFeatureIconClick(it.routeScreen)
-                                }
-                            }
-
-                            for (i in 0 until (4 - numberOfFeaturesInLastRow)) {
-                                Box(modifier = Modifier.size(80.dp))
-                            }
-                        }
-                    }
-                    Spacer(
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
                         modifier = Modifier
-                            .height(128.dp)
                             .fillMaxWidth()
-                    )
+                            .padding(bottom = 8.dp)
+                    ) {
+
+                        for (i in 0..2) {
+                            val it = featuresList[rowIndex * 3 + i]
+                            OpenActivityButton(
+                                title = it.title,
+                                icon = painterResource(it.iconRes),
+                            ) {
+                                onFeatureIconClick(it.routeScreen)
+                            }
+                        }
+                    }
                 }
+
+                if (numberOfFeaturesInLastRow != 0) {
+
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
+                    ) {
+
+                        for (i in 0 until numberOfFeaturesInLastRow) {
+                            val it =
+                                featuresList[numberOfRowsBeforeLastRow * 3 + i]
+                            OpenActivityButton(
+                                title = it.title,
+                                icon = painterResource(it.iconRes),
+                            ) {
+                                onFeatureIconClick(it.routeScreen)
+                            }
+                        }
+
+                        for (i in 0 until (3 - numberOfFeaturesInLastRow)) {
+                            Box(modifier = Modifier.size(80.dp))
+                        }
+                    }
+                }
+                Spacer(
+                    modifier = Modifier
+                        .height(128.dp)
+                        .fillMaxWidth()
+                )
             }
+        }
     }
 }
 
 @Composable
-fun OpenActivityButton(title: String, icon: ImageVector, onClick: () -> Unit) {
+fun OpenActivityButton(title: String, icon: Painter, onClick: () -> Unit) {
 
-    val iconSize = 48.dp
-    val textSize = 64.dp
+    val iconSize = 88.dp
+    val textSize = 96.dp
 
     Column(
         verticalArrangement = Arrangement.SpaceEvenly,
@@ -152,17 +160,14 @@ fun OpenActivityButton(title: String, icon: ImageVector, onClick: () -> Unit) {
     ) {
 
         Icon(
-            imageVector = icon,
-            tint = MaterialTheme.colors.onPrimary,
-            contentDescription = "",
-            modifier = Modifier
+            painter = icon, contentDescription = "", modifier = Modifier
                 .size(iconSize)
                 .align(Alignment.CenterHorizontally)
                 .background(
                     color = MaterialTheme.colors.primary,
                     shape = MaterialTheme.shapes.large
                 )
-                .padding(4.dp)
+                .padding(4.dp), tint = MaterialTheme.colors.onPrimary
         )
         Text(
             title,
@@ -170,7 +175,7 @@ fun OpenActivityButton(title: String, icon: ImageVector, onClick: () -> Unit) {
                 .width(textSize)
                 .padding(top = 4.dp),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.caption
+            style = MaterialTheme.typography.body1
         )
     }
 }

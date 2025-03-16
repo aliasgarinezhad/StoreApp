@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import io.domil.store.factory.addTaskFeature.data.RemoteConnection
 import io.domil.store.factory.addTaskFeature.view.EnterDateAndNumberScreen
 import io.domil.store.factory.addTaskFeature.view.SelectTaskScreen
 import io.domil.store.factory.addTaskFeature.view.ShowProductionLinesScreen
@@ -40,7 +41,8 @@ fun FactoryApp(
                 onFeatureIconClick = { factoryMainViewModel.onFeatureIconClick(it) },
                 state = factoryMainViewModel.state,
                 loading = factoryMainViewModel.loading,
-                featuresList = factoryMainViewModel.featureList
+                featuresList = factoryMainViewModel.featureList,
+                factoryUser = RemoteConnection.factoryUser,
             )
         }
 
@@ -68,6 +70,7 @@ fun FactoryApp(
 
         composable<EnterDateAndNumberScreen> {
             EnterDateAndNumberScreen(
+                popupHost = factoryAddTaskViewModel.popupHost,
                 loading = factoryAddTaskViewModel.loading,
                 product = factoryAddTaskViewModel.userTask.product,
                 onClick = { factoryAddTaskViewModel.onAddTaskButtonClick() },

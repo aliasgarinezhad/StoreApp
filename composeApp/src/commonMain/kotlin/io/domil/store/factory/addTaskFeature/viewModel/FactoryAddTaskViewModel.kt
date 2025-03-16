@@ -15,6 +15,7 @@ import io.domil.store.view.showLog
 import io.domil.store.networking.createHttpClient
 import io.domil.store.tools.onError
 import io.domil.store.tools.onSuccess
+import io.domil.store.view.NotificationPopupHost
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Default
@@ -23,6 +24,7 @@ import kotlinx.coroutines.withContext
 
 class FactoryAddTaskViewModel {
 
+    val popupHost = NotificationPopupHost()
     var textFieldValue by mutableStateOf("")
 
     //charge ui parameters
@@ -82,7 +84,8 @@ class FactoryAddTaskViewModel {
 
     fun onProductLineClick(product: Product) {
         println("onProductLineClick")
-        userTask = userTask.copy(product = product)
+        userTask = UserTask(product = product)
+        textFieldValue = ""
         changeScreen(SelectTaskScreen)
     }
 
@@ -143,9 +146,13 @@ class FactoryAddTaskViewModel {
                 RemoteConnection.finalUserAction(userTask = userTask).onSuccess {
                     println("navid body: $it")
                     println("request success")
+                    popupHost.showPopupWithAButton("ثبت فعالیت با موفقیت انجام شد.", onDoneButtonClick = {
+                        changeScreen(ShowProductionLinesScreen)
+                    }, onDismiss = {
+                        changeScreen(ShowProductionLinesScreen)
+                    })
                     withContext(Dispatchers.Main) {
                         loading = false
-                        changeScreen(ShowProductionLinesScreen)
                     }
                 }.onError {
 

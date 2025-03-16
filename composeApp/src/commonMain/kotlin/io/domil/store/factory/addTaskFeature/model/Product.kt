@@ -8,7 +8,7 @@ data class Product(
     val style: String = "41531052",
     val color: String = "2010",
     val sizes: Map<String, Int> = mapOf("Small" to 0, "Medium" to 1, "Large" to 2, "XLarger" to 3),
-    val colorHex: String = "",
+    val colorHex: String = "x000000",
     val tasks: Map<String, Long> = mapOf("یقه" to 0L, "آستین" to 1L, "دکمه" to 2L),
     val part: String = "2",
 ) {

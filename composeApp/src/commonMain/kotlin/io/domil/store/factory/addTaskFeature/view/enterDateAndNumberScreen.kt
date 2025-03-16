@@ -60,6 +60,8 @@ import io.domil.store.theme.Shapes
 import io.domil.store.theme.borderColor
 import io.domil.store.theme.iconColor
 import io.domil.store.view.ErrorSnackBar
+import io.domil.store.view.NotificationPopUp
+import io.domil.store.view.NotificationPopupHost
 import kotlinx.serialization.Serializable
 import rememberPickerState
 
@@ -82,6 +84,7 @@ fun EnterDateAndNumberScreen(
     pageTitle: String,
     onBack: () -> Unit,
     textFieldValue: String,
+    popupHost: NotificationPopupHost,
 ) {
     // Define hour and minute values for the pickers
     val hourValues = (7..18).map { it.toString() }
@@ -105,164 +108,207 @@ fun EnterDateAndNumberScreen(
                     AppBarWithBack(title = pageTitle, onBackPressed = onBack)
                 },
                 content = {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        // Start Time Section
-                        Text(
-                            text = "ساعت شروع",
-                            style = MaterialTheme.typography.h6,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Start
-                        )
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            // Column for Hour Picker with caption
-                            Column(
-                                modifier = Modifier.width(128.dp).padding(start = 32.dp),
-                                horizontalAlignment = Alignment.Start
-                            ) {
-                                Text(
-                                    text = "ساعت",
-                                    style = MaterialTheme.typography.caption,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                                )
-                                Picker(
-                                    items = hourValues,
-                                    state = startHourPickerState,
-                                    visibleItemsCount = 3,
-                                    textModifier = Modifier.padding(8.dp),
-                                    textStyle = TextStyle(fontSize = 18.sp),
-                                    onValueChange = { onStartHourChanged(it) },
-                                    dividerColor = MaterialTheme.colors.primary
-                                )
-                            }
-                            // Column for Minute Picker with caption
-                            Column(
-                                modifier = Modifier.width(128.dp).padding(start = 32.dp),
-                                horizontalAlignment = Alignment.Start
-                            ) {
-                                Text(
-                                    text = "دقیقه",
-                                    style = MaterialTheme.typography.caption,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                                )
-                                Picker(
-                                    items = minuteValues,
-                                    state = startMinutePickerState,
-                                    visibleItemsCount = 3,
-                                    textModifier = Modifier.padding(8.dp),
-                                    textStyle = TextStyle(fontSize = 18.sp),
-                                    onValueChange = { onStartMinuteChanged(it) },
-                                    dividerColor = MaterialTheme.colors.primary
-                                )
-                            }
-                        }
 
-                        // End Time Section
-                        Text(
-                            text = "ساعت پایان",
-                            style = MaterialTheme.typography.h6,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Start
-                        )
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            // Column for Hour Picker with caption
-                            Column(
-                                modifier = Modifier.width(128.dp).padding(start = 32.dp),
-                                horizontalAlignment = Alignment.Start
-                            ) {
-                                Text(
-                                    text = "ساعت",
-                                    style = MaterialTheme.typography.caption,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                                )
-                                Picker(
-                                    items = hourValues,
-                                    state = endHourPickerState,
-                                    visibleItemsCount = 3,
-                                    textModifier = Modifier.padding(8.dp),
-                                    textStyle = TextStyle(fontSize = 18.sp),
-                                    onValueChange = { onEndHourChanged(it) },
-                                    dividerColor = MaterialTheme.colors.primary
-                                )
-                            }
-                            // Column for Minute Picker with caption
-                            Column(
-                                modifier = Modifier.width(128.dp).padding(start = 32.dp),
-                                horizontalAlignment = Alignment.Start
-                            ) {
-                                Text(
-                                    text = "دقیقه",
-                                    style = MaterialTheme.typography.caption,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                                )
-                                Picker(
-                                    items = minuteValues,
-                                    state = endMinutePickerState,
-                                    visibleItemsCount = 3,
-                                    textModifier = Modifier.padding(8.dp),
-                                    textStyle = TextStyle(fontSize = 18.sp),
-                                    onValueChange = { onEndMinuteChanged(it) },
-                                    dividerColor = MaterialTheme.colors.primary
-                                )
-                            }
-                        }
+                    Column {
 
-                        // Size and Quantity Section
-                        Row(
-                            modifier = Modifier.wrapContentWidth()
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                                .align(Alignment.Start),
-                            verticalAlignment = Alignment.CenterVertically
+                        NotificationPopUp(state = popupHost)
+
+                        Row(modifier = Modifier.padding(top = 16.dp, start = 16.dp)) {
+
+                            Text(
+                                text = "استایل: ",
+                                style = MaterialTheme.typography.body2,
+                                textAlign = TextAlign.Right,
+                            )
+
+                            Text(
+                                text = userTask.product.style.substring(product.style.length - 3, product.style.length) + "-",
+                                style = MaterialTheme.typography.h1,
+                                textAlign = TextAlign.Right,
+                                fontSize = 14.sp,
+                            )
+                            Text(
+                                text = userTask.product.style.substring(0 , product.style.length - 3),
+                                style = MaterialTheme.typography.body2,
+                                textAlign = TextAlign.Right,
+                            )
+
+                            Text(
+                                text = "رنگ: " + userTask.product.color,
+                                modifier = Modifier.padding(start = 16.dp),
+                                style = MaterialTheme.typography.body2,
+                                textAlign = TextAlign.Right,
+                            )
+
+                            Text(
+                                text = "فعالیت: " + userTask.task,
+                                modifier = Modifier.padding(start = 16.dp),
+                                style = MaterialTheme.typography.body2,
+                                textAlign = TextAlign.Right,
+                            )
+                        }
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            FilterDropDownList(
-                                modifier = Modifier
-                                    .wrapContentWidth()
-                                    .height(54.dp)
-                                    .padding(top = 6.dp)
-                                    .align(Alignment.CenterVertically),
-                                icon = {
-                                    Icon(
-                                        Icons.Filled.Edit,
-                                        contentDescription = "",
-                                        tint = iconColor,
-                                        modifier = Modifier
-                                            .size(28.dp)
-                                            .align(Alignment.CenterVertically)
-                                            .padding(start = 6.dp)
+
+                            // Start Time Section
+                            Text(
+                                text = "ساعت شروع",
+                                style = MaterialTheme.typography.h6,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Start
+                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                // Column for Minute Picker with caption
+                                Column(
+                                    modifier = Modifier.width(128.dp).padding(start = 32.dp),
+                                    horizontalAlignment = Alignment.Start
+                                ) {
+                                    Text(
+                                        text = "دقیقه",
+                                        style = MaterialTheme.typography.caption,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.align(Alignment.CenterHorizontally)
                                     )
-                                },
-                                onClick = {
-                                    onSizeSelected(it)
-                                },
-                                values = userTask.product.sizes.keys.toList(),
-                                currentSelection = userTask.size,
-                                defaultText = "انتخاب سایز",
+                                    Picker(
+                                        items = minuteValues,
+                                        state = startMinutePickerState,
+                                        visibleItemsCount = 3,
+                                        textModifier = Modifier.padding(8.dp),
+                                        textStyle = TextStyle(fontSize = 18.sp),
+                                        onValueChange = { onStartMinuteChanged(it) },
+                                        dividerColor = MaterialTheme.colors.primary
+                                    )
+                                }
+                                // Column for Hour Picker with caption
+                                Column(
+                                    modifier = Modifier.width(128.dp).padding(start = 32.dp),
+                                    horizontalAlignment = Alignment.Start
+                                ) {
+                                    Text(
+                                        text = "ساعت",
+                                        style = MaterialTheme.typography.caption,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                                    )
+                                    Picker(
+                                        items = hourValues,
+                                        state = startHourPickerState,
+                                        visibleItemsCount = 3,
+                                        textModifier = Modifier.padding(8.dp),
+                                        textStyle = TextStyle(fontSize = 18.sp),
+                                        onValueChange = { onStartHourChanged(it) },
+                                        dividerColor = MaterialTheme.colors.primary
+                                    )
+                                }
+                            }
+
+                            // End Time Section
+                            Text(
+                                text = "ساعت پایان",
+                                style = MaterialTheme.typography.h6,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Start
                             )
-                            OutlinedTextField(
-                                value = textFieldValue,
-                                onValueChange = { newValue ->
-                                    // Allow only digits
-                                    onTextFieldChanged(newValue)
-                                },
-                                label = { Text("تعداد") },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                modifier = Modifier.width(102.dp).height(60.dp).padding(start = 20.dp)
-                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                // Column for Minute Picker with caption
+                                Column(
+                                    modifier = Modifier.width(128.dp).padding(start = 32.dp),
+                                    horizontalAlignment = Alignment.Start
+                                ) {
+                                    Text(
+                                        text = "دقیقه",
+                                        style = MaterialTheme.typography.caption,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                                    )
+                                    Picker(
+                                        items = minuteValues,
+                                        state = endMinutePickerState,
+                                        visibleItemsCount = 3,
+                                        textModifier = Modifier.padding(8.dp),
+                                        textStyle = TextStyle(fontSize = 18.sp),
+                                        onValueChange = { onEndMinuteChanged(it) },
+                                        dividerColor = MaterialTheme.colors.primary
+                                    )
+                                }
+
+                                // Column for Hour Picker with caption
+                                Column(
+                                    modifier = Modifier.width(128.dp).padding(start = 32.dp),
+                                    horizontalAlignment = Alignment.Start
+                                ) {
+                                    Text(
+                                        text = "ساعت",
+                                        style = MaterialTheme.typography.caption,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                                    )
+                                    Picker(
+                                        items = hourValues,
+                                        state = endHourPickerState,
+                                        visibleItemsCount = 3,
+                                        textModifier = Modifier.padding(8.dp),
+                                        textStyle = TextStyle(fontSize = 18.sp),
+                                        onValueChange = { onEndHourChanged(it) },
+                                        dividerColor = MaterialTheme.colors.primary
+                                    )
+                                }
+                            }
+
+                            // Size and Quantity Section
+                            Row(
+                                modifier = Modifier.wrapContentWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                                    .align(Alignment.Start),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                FilterDropDownList(
+                                    modifier = Modifier
+                                        .wrapContentWidth()
+                                        .height(54.dp)
+                                        .padding(top = 6.dp)
+                                        .align(Alignment.CenterVertically),
+                                    icon = {
+                                        Icon(
+                                            Icons.Filled.Edit,
+                                            contentDescription = "",
+                                            tint = iconColor,
+                                            modifier = Modifier
+                                                .size(28.dp)
+                                                .align(Alignment.CenterVertically)
+                                                .padding(start = 6.dp)
+                                        )
+                                    },
+                                    onClick = {
+                                        onSizeSelected(it)
+                                    },
+                                    values = userTask.product.sizes.keys.toList(),
+                                    currentSelection = userTask.size,
+                                    defaultText = "انتخاب سایز",
+                                )
+                                OutlinedTextField(
+                                    value = textFieldValue,
+                                    onValueChange = { newValue ->
+                                        // Allow only digits
+                                        onTextFieldChanged(newValue)
+                                    },
+                                    label = { Text("تعداد") },
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                    modifier = Modifier.width(102.dp).height(60.dp)
+                                        .padding(start = 20.dp)
+                                )
+                            }
                         }
                     }
                 },
@@ -276,6 +322,7 @@ fun EnterDateAndNumberScreen(
                     )
                 }
             )
+
         }
     }
 }

@@ -158,12 +158,21 @@ private fun ProductLineItem(
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
 
-                Text(
-                    text = product.style,
-                    style = MaterialTheme.typography.body2,
-                    textAlign = TextAlign.Right,
-                    fontSize = 12.sp
-                )
+                Row {
+
+                    Text(
+                        text = product.style.substring(product.style.length - 3, product.style.length) + "-",
+                        style = MaterialTheme.typography.h1,
+                        textAlign = TextAlign.Right,
+                        fontSize = 14.sp,
+                    )
+                    Text(
+                        text = product.style.substring(0 , product.style.length - 3),
+                        style = MaterialTheme.typography.body2,
+                        textAlign = TextAlign.Right,
+                    )
+                }
+
                 Text(
                     text = product.name,
                     style = MaterialTheme.typography.h4,

@@ -34,7 +34,7 @@ import severAddress
 
 object RemoteConnection {
 
-    private var factoryUser = FactoryUser()
+    var factoryUser = FactoryUser()
     private val httpClient: HttpClient = createHttpClient()
 
     suspend fun loginUserFactory(
