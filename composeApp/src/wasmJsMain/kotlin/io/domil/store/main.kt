@@ -1,18 +1,17 @@
 package io.domil.store
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
 import barcodeScannerPageAddress
+import io.domil.store.factory.addTaskFeature.viewModel.FactoryAddTaskViewModel
+import io.domil.store.factory.main.viewModel.FactoryMainViewModel
 import io.domil.store.viewModel.AppViewModel
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import networking.User
+import io.domil.store.networking.User
 import org.w3c.dom.get
 import org.w3c.dom.set
 
@@ -20,6 +19,7 @@ import org.w3c.dom.set
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
 
+    val isFactoryAppRequested = window.location.href.contains("factory")
     val barcode = window.location.href.substringAfter("keyword=", "")
     val user = getUserData()
 
@@ -43,7 +43,10 @@ fun main() {
 
         App(
             barcodeScanner = barcodeScannerComposable,
-            viewModel = viewModel
+            viewModel = viewModel,
+            factoryMainViewModel = FactoryMainViewModel(),
+            isFactoryAppRequested = isFactoryAppRequested,
+            factoryAddTaskViewModel = FactoryAddTaskViewModel()
         )
     }
 }

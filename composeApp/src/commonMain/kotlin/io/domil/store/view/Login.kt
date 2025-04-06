@@ -24,7 +24,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.domil.store.theme.BigButton
-import io.domil.store.theme.ErrorSnackBar
 import io.domil.store.theme.MyApplicationTheme
 import kotlinx.serialization.Serializable
 
@@ -139,7 +138,7 @@ fun PasswordTextField(
             .fillMaxWidth(),
         label = { Text(text = "رمز عبور") },
         keyboardOptions = KeyboardOptions.Default.copy(
-            keyboardType = KeyboardType.Number
+            keyboardType = KeyboardType.NumberPassword
         ),
         singleLine = true
     )

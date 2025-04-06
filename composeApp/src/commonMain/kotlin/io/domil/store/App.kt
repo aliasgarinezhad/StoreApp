@@ -5,27 +5,92 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import io.domil.store.factory.FactoryApp
+import io.domil.store.factory.addTaskFeature.view.EnterDateAndNumberScreen
+import io.domil.store.factory.addTaskFeature.view.SelectTaskScreen
+import io.domil.store.factory.addTaskFeature.view.ShowProductionLinesScreen
+import io.domil.store.factory.addTaskFeature.viewModel.FactoryAddTaskViewModel
+import io.domil.store.factory.main.view.FeatureListScreen
+import io.domil.store.factory.main.viewModel.FactoryMainViewModel
 import io.domil.store.view.LoginPage
 import io.domil.store.view.LoginScreen
 import io.domil.store.view.MainPage
 import io.domil.store.view.MainScreen
 import io.domil.store.viewModel.AppViewModel
-import networking.User
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-@Preview
 fun App(
     viewModel: AppViewModel,
+    factoryMainViewModel: FactoryMainViewModel,
+    factoryAddTaskViewModel: FactoryAddTaskViewModel,
+    isFactoryAppRequested: Boolean = false,
     barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit,
 ) {
 
     val navHostController = rememberNavController()
-    ComposableHost(
-        viewModel,
-        navHostController = navHostController,
-        barcodeScanner = barcodeScanner,
-    )
+    if (isFactoryAppRequested) {
+        FactoryApp(
+            factoryMainViewModel = factoryMainViewModel,
+            factoryAddTaskViewModel = factoryAddTaskViewModel,
+            navHostController = navHostController
+        )
+    } else {
+        ComposableHost(
+            viewModel,
+            navHostController = navHostController,
+            barcodeScanner = barcodeScanner,
+        )
+    }
+
+    if (factoryMainViewModel.screenChangePending || factoryAddTaskViewModel.screenChangePending) {
+
+        println("screenChangePending")
+        if (factoryMainViewModel.destinationScreen == FeatureListScreen && factoryMainViewModel.currentScreen == LoginScreen) {
+            navHostController.navigate(FeatureListScreen)
+            factoryMainViewModel.onScreenChanged()
+        } else if (factoryMainViewModel.destinationScreen == LoginScreen && factoryMainViewModel.currentScreen == FeatureListScreen) {
+            navHostController.popBackStack()
+            factoryMainViewModel.onScreenChanged()
+        } else if (factoryMainViewModel.destinationScreen == ShowProductionLinesScreen && factoryMainViewModel.currentScreen == FeatureListScreen) {
+            navHostController.navigate(ShowProductionLinesScreen)
+            factoryMainViewModel.onScreenChanged()
+            factoryAddTaskViewModel.getProductionLines()
+        } else if (factoryAddTaskViewModel.destinationScreen == FeatureListScreen && factoryAddTaskViewModel.currentScreen == ShowProductionLinesScreen) {
+            navHostController.popBackStack()
+            factoryMainViewModel.destinationScreen = FeatureListScreen
+            factoryMainViewModel.onScreenChanged()
+            factoryAddTaskViewModel.onScreenChanged()
+            factoryAddTaskViewModel.currentScreen = ShowProductionLinesScreen
+        } else if (factoryAddTaskViewModel.destinationScreen == SelectTaskScreen && factoryAddTaskViewModel.currentScreen == ShowProductionLinesScreen) {
+            println("SelectTaskScreen")
+            navHostController.navigate(SelectTaskScreen)
+            factoryAddTaskViewModel.onScreenChanged()
+        } else if (factoryAddTaskViewModel.destinationScreen == ShowProductionLinesScreen && factoryAddTaskViewModel.currentScreen == SelectTaskScreen) {
+            navHostController.popBackStack()
+            factoryAddTaskViewModel.getProductionLines()
+            factoryAddTaskViewModel.onScreenChanged()
+        } else if (factoryAddTaskViewModel.destinationScreen == EnterDateAndNumberScreen && factoryAddTaskViewModel.currentScreen == SelectTaskScreen) {
+            println("EnterDateAndNumberScreen")
+            navHostController.navigate(EnterDateAndNumberScreen)
+            factoryAddTaskViewModel.onScreenChanged()
+        } else if (factoryAddTaskViewModel.destinationScreen == SelectTaskScreen && factoryAddTaskViewModel.currentScreen == EnterDateAndNumberScreen) {
+            navHostController.popBackStack()
+            factoryAddTaskViewModel.onScreenChanged()
+        } else if (factoryAddTaskViewModel.destinationScreen == ShowProductionLinesScreen && factoryAddTaskViewModel.currentScreen == EnterDateAndNumberScreen) {
+            navHostController.popBackStack()
+            navHostController.popBackStack()
+            factoryAddTaskViewModel.onScreenChanged()
+            factoryAddTaskViewModel.getProductionLines()
+        } else if (factoryAddTaskViewModel.destinationScreen == FeatureListScreen && factoryAddTaskViewModel.currentScreen == EnterDateAndNumberScreen) {
+            navHostController.popBackStack()
+            navHostController.popBackStack()
+            navHostController.popBackStack()
+            factoryMainViewModel.destinationScreen = FeatureListScreen
+            factoryMainViewModel.onScreenChanged()
+            factoryAddTaskViewModel.onScreenChanged()
+            factoryAddTaskViewModel.currentScreen = ShowProductionLinesScreen
+        }
+    }
 }
 
 @Composable
@@ -84,3 +149,4 @@ fun ComposableHost(
         }
     }
 }
+

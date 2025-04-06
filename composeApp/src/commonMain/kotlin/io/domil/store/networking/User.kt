@@ -1,4 +1,4 @@
-package networking
+package io.domil.store.networking
 
 import kotlinx.serialization.Serializable
 

@@ -57,8 +57,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
-import io.domil.store.getPlatform
-import io.domil.store.theme.ErrorSnackBar
 import io.domil.store.theme.FilterDropDownList
 import io.domil.store.theme.FullScreenImage
 import io.domil.store.theme.Jeanswest
@@ -67,7 +65,7 @@ import io.domil.store.theme.MyTypography
 import io.domil.store.theme.Shapes
 import io.domil.store.theme.iconColor
 import kotlinx.serialization.Serializable
-import networking.Product
+import io.domil.store.networking.Product
 import org.jetbrains.compose.resources.painterResource
 import storeapp.composeapp.generated.resources.Res
 import storeapp.composeapp.generated.resources.barcode_scan_icon
@@ -192,16 +190,7 @@ fun SearchContent(
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         if (loading) {
-            Row(
-                modifier = Modifier.padding(32.dp).fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                CircularProgressIndicator(color = MaterialTheme.colors.primary)
-                Text(
-                    text = "در حال بارگذاری",
-                    modifier = Modifier.padding(start = 16.dp).align(Alignment.CenterVertically)
-                )
-            }
+            LoadingIndicator()
         } else {
             if (isAccountDialogOpen) {
                 AlertDialog(onDismissRequest = {

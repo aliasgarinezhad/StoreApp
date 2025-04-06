@@ -54,49 +54,13 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
-import networking.Product
+import io.domil.store.networking.Product
 import org.jetbrains.compose.resources.painterResource
 import storeapp.composeapp.generated.resources.Res
 import storeapp.composeapp.generated.resources.ic_baseline_arrow_drop_down_24
 import storeapp.composeapp.generated.resources.ic_baseline_arrow_drop_up_24
 import kotlin.math.max
 import kotlin.math.min
-
-@Composable
-fun ErrorSnackBar(state: SnackbarHostState) {
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Bottom
-    ) {
-
-        SnackbarHost(hostState = state, snackbar = {
-            Snackbar(
-                shape = MaterialTheme.shapes.large,
-                action = {
-                    Text(
-                        text = "باشه",
-                        color = Done,
-                        style = MaterialTheme.typography.body1,
-                        modifier = Modifier
-                            .padding(end = 16.dp)
-                            .clickable {
-                                state.currentSnackbarData?.dismiss()
-                            }
-                    )
-                }
-            ) {
-                Text(
-                    text = state.currentSnackbarData?.message ?: "",
-                    color = Error,
-                    style = MaterialTheme.typography.body1,
-                )
-            }
-        })
-    }
-}
-
 
 @Composable
 fun BigButton(
