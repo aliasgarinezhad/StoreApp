@@ -24,6 +24,11 @@ import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+
+object SharedRepository {
+    var machineCode: Int? = 0
+}
+
 class FactoryAddTaskViewModel {
 
     val popupHost = NotificationPopupHost()
@@ -142,7 +147,10 @@ class FactoryAddTaskViewModel {
 
         if (userTask.sizeCode == 0) {
             showLog("لطفا سایز را انتخاب کنید.", state = state)
+        } else if(SharedRepository.machineCode == null) {
+            showLog("شماره چرخ نامعتبر است.", state = state)
         } else {
+            userTask = userTask.copy(machineCode = SharedRepository.machineCode!!)
             loading = true
             CoroutineScope(Default).launch {
                 RemoteConnection.finalUserAction(userTask = userTask).onSuccess {
@@ -151,13 +159,14 @@ class FactoryAddTaskViewModel {
                     popupHost.showPopupWithAButton("ثبت فعالیت با موفقیت انجام شد.", onDoneButtonClick = {
                         changeScreen(FeatureListScreen)
                     }, onDismiss = {
-                        changeScreen(ShowProductionLinesScreen)
+                        changeScreen(FeatureListScreen)
                     })
                     withContext(Dispatchers.Main) {
                         loading = false
                     }
                 }.onError {
 
+                    showLog("مشکلی پیش آمده است.", state)
                     withContext(Dispatchers.Main) {
                         loading = false
                     }

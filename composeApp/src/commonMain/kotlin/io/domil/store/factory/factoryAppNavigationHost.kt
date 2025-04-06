@@ -43,6 +43,8 @@ fun FactoryApp(
                 loading = factoryMainViewModel.loading,
                 featuresList = factoryMainViewModel.featureList,
                 factoryUser = RemoteConnection.factoryUser,
+                textFieldValue = factoryMainViewModel.machineCodeTextFieldValue,
+                onTextFieldChanged = { factoryMainViewModel.changeMachineCode(it) }
             )
         }
 
@@ -97,7 +99,6 @@ fun FactoryApp(
                 pageTitle = "انتخاب سایز و تعداد",
                 onBack = { factoryAddTaskViewModel.changeScreen(SelectTaskScreen) },
                 textFieldValue = factoryAddTaskViewModel.textFieldValue
-
             )
         }
     }

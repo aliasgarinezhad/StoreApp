@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.domil.store.factory.addTaskFeature.data.FactoryUser
 import io.domil.store.factory.addTaskFeature.data.RemoteConnection
+import io.domil.store.factory.addTaskFeature.viewModel.SharedRepository
 import io.domil.store.factory.main.model.Feature
 import io.domil.store.factory.main.useCase.features
 import io.domil.store.factory.main.view.FeatureListScreen
@@ -38,7 +39,9 @@ class FactoryMainViewModel {
     var currentScreen: Any = LoginScreen
     var screenChangePending by mutableStateOf(false)
         private set
+    var machineCodeTextFieldValue by mutableStateOf("")
     private var factoryUser = FactoryUser()
+
 
     fun signIn() {
         CoroutineScope(Default).launch {
@@ -56,6 +59,8 @@ class FactoryMainViewModel {
                             featureList.add(feature)
                         }
                     }
+                    SharedRepository.machineCode = factoryUser.machineCode
+                    machineCodeTextFieldValue = SharedRepository.machineCode.toString()
                     withContext(Main) {
                         changeScreen(FeatureListScreen)
                         loading = false
@@ -96,5 +101,14 @@ class FactoryMainViewModel {
 
     fun onPasswordValueChanges(value: String) {
         password = value
+    }
+
+    fun changeMachineCode(value: String) {
+        machineCodeTextFieldValue = value
+        if (value.toIntOrNull() == null) {
+            if (value != "") showLog("لطفا مقدار عددی وارد کنید.", state)
+        } else {
+            SharedRepository.machineCode = value.toInt()
+        }
     }
 }

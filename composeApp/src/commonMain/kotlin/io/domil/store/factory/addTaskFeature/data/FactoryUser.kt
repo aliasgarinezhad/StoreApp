@@ -8,7 +8,9 @@ data class FactoryUser(
     @SerialName("FullName")
     val fullName: String = "",
     val accessToken: String = "",
-    val icons: List<Icon> = emptyList()
+    val icons: List<Icon> = emptyList(),
+    @SerialName("MachineCode")
+    val machineCode: Int? = null
 )
 
 @Serializable
@@ -19,6 +21,4 @@ data class Icon(
     val iconLatinName: String,
     @SerialName("IconStatus")
     val iconStatus: Boolean,
-    @SerialName("MachineCode")
-    val machineCode: String? = null
 )

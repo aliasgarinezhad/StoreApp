@@ -11,4 +11,5 @@ data class UserTask(
     val size: String = "",
     val sizeCode : Int = 0,
     val number: Int = 0,
+    val machineCode: Int = 0
 )

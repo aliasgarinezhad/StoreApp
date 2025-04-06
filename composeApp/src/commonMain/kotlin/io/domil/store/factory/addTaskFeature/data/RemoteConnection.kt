@@ -143,6 +143,7 @@ object RemoteConnection {
                     "Quantity" to JsonPrimitive(userTask.number),
                     "StartDate" to JsonPrimitive(startDate.format(dateFormat)),
                     "EndDate" to JsonPrimitive(endDate.format(dateFormat)),
+                    "MachineCode" to JsonPrimitive(userTask.machineCode),
                 )
                 val body = JsonObject(bodyMap)
                 contentType(ContentType.Application.Json)

@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
@@ -24,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -44,6 +47,8 @@ fun FeatureListScreen(
     loading: Boolean,
     featuresList: List<Feature>,
     factoryUser: FactoryUser,
+    textFieldValue: String,
+    onTextFieldChanged: (value: String) -> Unit,
     onFeatureIconClick: (screen: Any) -> Unit
 ) {
 
@@ -55,7 +60,9 @@ fun FeatureListScreen(
                         loading = loading,
                         featuresList = featuresList,
                         onFeatureIconClick = onFeatureIconClick,
-                        factoryUser = factoryUser
+                        factoryUser = factoryUser,
+                        textFieldValue = textFieldValue,
+                        onTextFieldChanged = onTextFieldChanged
                     )
                 },
                 snackbarHost = { ErrorSnackBar(state) },
@@ -69,76 +76,98 @@ fun MainContent(
     loading: Boolean,
     featuresList: List<Feature>,
     factoryUser: FactoryUser,
+    textFieldValue: String,
+    onTextFieldChanged: (value: String) -> Unit,
     onFeatureIconClick: (screen: Any) -> Unit
 ) {
 
     Column {
         if (loading) {
             LoadingIndicator()
-        } else
+        } else {
 
-            Text(factoryUser.fullName, modifier = Modifier.padding(top = 16.dp, start = 16.dp))
+            Row {
+                Text(
+                    factoryUser.fullName,
+                    modifier = Modifier.padding(top = 16.dp, start = 16.dp)
+                        .align(Alignment.CenterVertically)
+                )
 
-        LazyColumn(
-            modifier = Modifier.padding(top = 16.dp, start = 8.dp, end = 8.dp),
-            verticalArrangement = Arrangement.Top
-        ) {
-            item {
-
-                val numberOfRowsBeforeLastRow = (featuresList.size / 3)
-                val numberOfFeaturesInLastRow = (featuresList.size % 3)
-
-                for (rowIndex in 0 until numberOfRowsBeforeLastRow) {
-
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                    ) {
-
-                        for (i in 0..2) {
-                            val it = featuresList[rowIndex * 3 + i]
-                            OpenActivityButton(
-                                title = it.title,
-                                icon = painterResource(it.iconRes),
-                            ) {
-                                onFeatureIconClick(it.routeScreen)
-                            }
-                        }
-                    }
-                }
-
-                if (numberOfFeaturesInLastRow != 0) {
-
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                    ) {
-
-                        for (i in 0 until numberOfFeaturesInLastRow) {
-                            val it =
-                                featuresList[numberOfRowsBeforeLastRow * 3 + i]
-                            OpenActivityButton(
-                                title = it.title,
-                                icon = painterResource(it.iconRes),
-                            ) {
-                                onFeatureIconClick(it.routeScreen)
-                            }
-                        }
-
-                        for (i in 0 until (3 - numberOfFeaturesInLastRow)) {
-                            Box(modifier = Modifier.size(80.dp))
-                        }
-                    }
-                }
-                Spacer(
+                OutlinedTextField(
+                    value = textFieldValue,
+                    onValueChange = { newValue ->
+                        // Allow only digits
+                        onTextFieldChanged(newValue)
+                    },
+                    label = { Text("شماره چرخ") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier
-                        .height(128.dp)
+                        .padding(start = 16.dp, end = 16.dp, top = 16.dp)
                         .fillMaxWidth()
                 )
+            }
+
+            LazyColumn(
+                modifier = Modifier.padding(top = 32.dp, start = 8.dp, end = 8.dp),
+                verticalArrangement = Arrangement.Top
+            ) {
+                item {
+
+                    val numberOfRowsBeforeLastRow = (featuresList.size / 3)
+                    val numberOfFeaturesInLastRow = (featuresList.size % 3)
+
+                    for (rowIndex in 0 until numberOfRowsBeforeLastRow) {
+
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp)
+                        ) {
+
+                            for (i in 0..2) {
+                                val it = featuresList[rowIndex * 3 + i]
+                                OpenActivityButton(
+                                    title = it.title,
+                                    icon = painterResource(it.iconRes),
+                                ) {
+                                    onFeatureIconClick(it.routeScreen)
+                                }
+                            }
+                        }
+                    }
+
+                    if (numberOfFeaturesInLastRow != 0) {
+
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp)
+                        ) {
+
+                            for (i in 0 until numberOfFeaturesInLastRow) {
+                                val it =
+                                    featuresList[numberOfRowsBeforeLastRow * 3 + i]
+                                OpenActivityButton(
+                                    title = it.title,
+                                    icon = painterResource(it.iconRes),
+                                ) {
+                                    onFeatureIconClick(it.routeScreen)
+                                }
+                            }
+
+                            for (i in 0 until (3 - numberOfFeaturesInLastRow)) {
+                                Box(modifier = Modifier.size(80.dp))
+                            }
+                        }
+                    }
+                    Spacer(
+                        modifier = Modifier
+                            .height(128.dp)
+                            .fillMaxWidth()
+                    )
+                }
             }
         }
     }

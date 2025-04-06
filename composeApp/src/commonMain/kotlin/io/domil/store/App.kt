@@ -83,10 +83,12 @@ fun App(
             factoryAddTaskViewModel.getProductionLines()
         } else if (factoryAddTaskViewModel.destinationScreen == FeatureListScreen && factoryAddTaskViewModel.currentScreen == EnterDateAndNumberScreen) {
             navHostController.popBackStack()
+            navHostController.popBackStack()
+            navHostController.popBackStack()
             factoryMainViewModel.destinationScreen = FeatureListScreen
             factoryMainViewModel.onScreenChanged()
             factoryAddTaskViewModel.onScreenChanged()
-            factoryAddTaskViewModel.currentScreen = EnterDateAndNumberScreen
+            factoryAddTaskViewModel.currentScreen = ShowProductionLinesScreen
         }
     }
 }
