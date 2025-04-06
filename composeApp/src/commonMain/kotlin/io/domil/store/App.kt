@@ -5,11 +5,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import io.domil.store.factory.FactoryApp
 import io.domil.store.factory.addTaskFeature.view.EnterDateAndNumberScreen
 import io.domil.store.factory.addTaskFeature.view.SelectTaskScreen
 import io.domil.store.factory.addTaskFeature.view.ShowProductionLinesScreen
 import io.domil.store.factory.addTaskFeature.viewModel.FactoryAddTaskViewModel
-import io.domil.store.factory.FactoryApp
 import io.domil.store.factory.main.view.FeatureListScreen
 import io.domil.store.factory.main.viewModel.FactoryMainViewModel
 import io.domil.store.view.LoginPage
@@ -81,6 +81,12 @@ fun App(
             navHostController.popBackStack()
             factoryAddTaskViewModel.onScreenChanged()
             factoryAddTaskViewModel.getProductionLines()
+        } else if (factoryAddTaskViewModel.destinationScreen == FeatureListScreen && factoryAddTaskViewModel.currentScreen == EnterDateAndNumberScreen) {
+            navHostController.popBackStack()
+            factoryMainViewModel.destinationScreen = FeatureListScreen
+            factoryMainViewModel.onScreenChanged()
+            factoryAddTaskViewModel.onScreenChanged()
+            factoryAddTaskViewModel.currentScreen = EnterDateAndNumberScreen
         }
     }
 }

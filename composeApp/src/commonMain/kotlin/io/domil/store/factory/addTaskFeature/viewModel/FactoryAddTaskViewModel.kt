@@ -11,6 +11,8 @@ import io.domil.store.factory.addTaskFeature.model.UserTask
 import io.domil.store.factory.addTaskFeature.view.EnterDateAndNumberScreen
 import io.domil.store.factory.addTaskFeature.view.SelectTaskScreen
 import io.domil.store.factory.addTaskFeature.view.ShowProductionLinesScreen
+import io.domil.store.factory.main.view.FeatureListScreen
+import io.domil.store.factory.main.viewModel.FactoryMainViewModel
 import io.domil.store.view.showLog
 import io.domil.store.networking.createHttpClient
 import io.domil.store.tools.onError
@@ -147,7 +149,7 @@ class FactoryAddTaskViewModel {
                     println("navid body: $it")
                     println("request success")
                     popupHost.showPopupWithAButton("ثبت فعالیت با موفقیت انجام شد.", onDoneButtonClick = {
-                        changeScreen(ShowProductionLinesScreen)
+                        changeScreen(FeatureListScreen)
                     }, onDismiss = {
                         changeScreen(ShowProductionLinesScreen)
                     })
