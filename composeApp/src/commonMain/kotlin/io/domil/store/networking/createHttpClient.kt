@@ -8,6 +8,8 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
+val httpClient = createHttpClient()
+
 fun createHttpClient(): HttpClient {
     return HttpClient {
 
