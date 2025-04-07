@@ -2,10 +2,9 @@ package io.domil.store.factory.addTaskFeature.data
 
 import io.domil.store.factory.addTaskFeature.model.ProductionOrder
 import io.domil.store.factory.addTaskFeature.model.UserTask
-import io.domil.store.networking.createHttpClient
+import io.domil.store.networking.httpClient
 import io.domil.store.tools.NetworkError
 import io.domil.store.tools.Result
-import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -14,10 +13,8 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import io.ktor.util.date.GMTDate
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
@@ -35,7 +32,6 @@ import severAddress
 object RemoteConnection {
 
     var factoryUser = FactoryUser()
-    private val httpClient: HttpClient = createHttpClient()
 
     suspend fun loginUserFactory(
         username: Long,

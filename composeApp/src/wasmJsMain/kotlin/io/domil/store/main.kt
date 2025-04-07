@@ -6,6 +6,7 @@ import androidx.compose.ui.window.ComposeViewport
 import barcodeScannerPageAddress
 import io.domil.store.factory.addTaskFeature.viewModel.FactoryAddTaskViewModel
 import io.domil.store.factory.main.viewModel.FactoryMainViewModel
+import io.domil.store.factory.stopActivityFeature.viewModel.StopActivityViewModel
 import io.domil.store.viewModel.AppViewModel
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -44,9 +45,10 @@ fun main() {
         App(
             barcodeScanner = barcodeScannerComposable,
             viewModel = viewModel,
-            factoryMainViewModel = FactoryMainViewModel(),
+            mainViewModel = FactoryMainViewModel(),
             isFactoryAppRequested = isFactoryAppRequested,
-            factoryAddTaskViewModel = FactoryAddTaskViewModel()
+            addTaskViewModel = FactoryAddTaskViewModel(),
+            stopActivityViewModel = StopActivityViewModel()
         )
     }
 }
