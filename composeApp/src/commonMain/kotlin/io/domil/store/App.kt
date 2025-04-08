@@ -68,6 +68,7 @@ fun App(
             mainViewModel.onScreenChanged()
             stopActivityViewModel.onScreenChanged()
             stopActivityViewModel.currentScreen = StopActivityScreen
+            stopActivityViewModel.destinationScreen = StopActivityScreen
         } else if (addTaskViewModel.destinationScreen == FeatureListScreen && addTaskViewModel.currentScreen == ShowProductionLinesScreen) {
             navHostController.popBackStack()
             mainViewModel.destinationScreen = FeatureListScreen
@@ -102,6 +103,7 @@ fun App(
             mainViewModel.onScreenChanged()
             addTaskViewModel.onScreenChanged()
             addTaskViewModel.currentScreen = ShowProductionLinesScreen
+            addTaskViewModel.destinationScreen = ShowProductionLinesScreen
         }
     }
 }

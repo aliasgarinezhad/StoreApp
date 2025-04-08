@@ -7,6 +7,8 @@ plugins {
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.kotlin.serialization) apply false
+    //id("com.google.dagger.hilt.android") version "2.51.1" apply false
+
 }
 
 repositories {
