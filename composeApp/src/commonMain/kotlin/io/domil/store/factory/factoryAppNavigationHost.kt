@@ -16,6 +16,32 @@ import io.domil.store.factory.stopActivityFeature.viewModel.StopActivityViewMode
 import io.domil.store.view.LoginPage
 import io.domil.store.view.LoginScreen
 
+/**
+ * The main Composable function for the Factory application.
+ *
+ * This function sets up the navigation graph for the application, managing the different screens
+ * and their transitions. It uses a [NavHostController] to handle navigation between composables
+ * representing different features or pages within the app.  Each screen is associated with a
+ * specific route (defined as constants like `LoginScreen`, `FeatureListScreen`, etc.) and has
+ * its own composable function to render the UI.
+ *
+ *  The composables receive ViewModel instances as parameters and interact with them to manage state
+ * and handle user interactions. The ViewModels are responsible for business logic and data
+ * manipulation.
+ *
+ *  The navigation graph includes screens for:
+ *  - Login: Authenticating the user.
+ *  - Feature List: Displaying a list of available features.
+ *  - Production Lines: Selecting a product to work on.
+ *  - Task Selection: Choosing the type of activity for a product.
+ *  - Date and Number Entry: Specifying details for a task (size, quantity, time).
+ *  - Stop Activity: Recording a reason for halting an ongoing activity.
+ *
+ * @param factoryMainViewModel ViewModel for the main application logic.  Handles sign-in, feature selection, and other general tasks.
+ * @param factoryAddTaskViewModel ViewModel for adding new tasks.  Manages product selection, task details, and data submission.
+ * @param factoryStopActivityViewModel ViewModel for stopping ongoing activities. Handles reason selection and confirmation.
+ * @param navHostController The NavHostController instance used to manage navigation within the app.
+ */
 @Composable
 fun FactoryApp(
     factoryMainViewModel: FactoryMainViewModel,

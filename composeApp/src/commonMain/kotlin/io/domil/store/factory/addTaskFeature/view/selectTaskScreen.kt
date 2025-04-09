@@ -31,6 +31,16 @@ import kotlinx.serialization.Serializable
 @Serializable
 object SelectTaskScreen
 
+/**
+ * Composable function that displays a screen for selecting a task related to a product.
+ *
+ * @param product The [Product] for which tasks are being selected.
+ * @param loading A boolean flag indicating whether data is currently being loaded. If true, a loading indicator is displayed.
+ * @param state The [SnackbarHostState] used to manage and display Snackbars for error messages or other feedback.
+ * @param onClick A lambda function that is called when a task is selected.  It receives the selected task string as a parameter.
+ * @param pageTitle The title to be displayed in the app bar.
+ * @param onBack A lambda function that is called when the back button in the app bar is pressed.
+ */
 @Composable
 fun SelectTaskScreen(
     product: Product,

@@ -3,6 +3,24 @@ package io.domil.store.factory.addTaskFeature.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents a production order in a manufacturing system.
+ *
+ * @property productionOrderId Unique identifier for the production order.  Represented as "ProductionOrderID" in the serialized form.
+ * @property manufacturingOrderType Type of manufacturing order. Represented as "ManufacturingOrderType".
+ * @property number Production order number. Represented as "Number".
+ * @property date Date the production order was created. Represented as "Date".  Expected format should be documented separately if applicable (e.g., ISO 8601).
+ * @property state Numerical representation of the production order's state. Represented as "State". Refer to external documentation for state code definitions.
+ * @property stateProductionOrder Textual description of the production order's state. Represented as "StateProductionOrder".
+ * @property partId Identifier for the part being produced. Represented as "PartID".
+ * @property part Identifier for the part (likely a code or short name). Represented as "Part".
+ * @property partName Name of the part being produced. Represented as "PartName".
+ * @property partCode Code for the part being produced. Represented as "PartCode".
+ * @property styleN Style number associated with the production order. Represented as "StyleN".
+ * @property colorCodeF Color code associated with the production order. Represented as "ColorCodeF".
+ * @property colorHex Hexadecimal representation of the color. Represented as "ColorHEX".
+ * @property operationItems List of [OperationItem] objects representing the operations within the production order.  Represented as "OperationItems".
+ */
 @Serializable
 data class ProductionOrder(
     @SerialName("ProductionOrderID")

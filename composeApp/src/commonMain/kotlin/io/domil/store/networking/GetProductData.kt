@@ -19,6 +19,20 @@ import severAddress
 import io.domil.store.tools.NetworkError
 import io.domil.store.tools.Result
 
+/**
+ * This class is responsible for fetching product-related data from a remote server.
+ * It uses Ktor's HttpClient for making network requests and handles various network errors.
+ *
+ * @property user The user object containing authentication information (e.g., access token).
+ * @property httpClient The Ktor HttpClient instance used for making network requests.  It is expected to be pre-configured, likely with a JSON content negotiator.  Example:
+ * ```
+ * val httpClient = HttpClient {
+ *     install(ContentNegotiation) {
+ *         json(Json { ignoreUnknownKeys = true })
+ *     }
+ * }
+ * ```
+ */
 class GetProductData(
     private val user: User,
     private val httpClient: HttpClient

@@ -16,6 +16,17 @@ import io.domil.store.view.SnackBarActions
 import io.domil.store.view.showLog
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for the Stop Activity screen.
+ *
+ * This ViewModel manages the state and logic for stopping an activity, including:
+ *  - Fetching and displaying a list of reasons for stopping an activity.
+ *  - Handling user selection of a reason.
+ *  - Communicating with the remote server to stop the activity.
+ *  - Managing loading state during the server call.
+ *  - Displaying success or error messages via a Snackbar.
+ *  - Handling screen navigation after a successful stop.
+ */
 class StopActivityViewModel : ViewModel() {
     // State holding the list of reasons and a loading flag
     val reasons = listOf(Reason(1, "تعمیر"), Reason(2, "تنظیم"), Reason(3, "نبودن کالا"))

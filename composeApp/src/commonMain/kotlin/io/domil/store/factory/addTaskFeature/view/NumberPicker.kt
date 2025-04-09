@@ -45,6 +45,17 @@ class PickerState {
     var selectedItem by mutableStateOf("")
 }
 
+/**
+ * A composable function that creates a Picker component, allowing the user to select an item from a list.
+ *
+ * @param items The list of strings to be displayed in the picker.
+ * @param state The state object for the picker, defaults to a remembered [PickerState].
+ * @param modifier Modifier for styling and layout of the picker.
+ * @param startIndex The initial index of the selected item in the list. Defaults to 0.
+ * @param visibleItemsCount The number of items visible in the picker. Must be an odd number for proper centering. Defaults to 3.
+ * @param textModifier Modifier for styling the text of each item.
+ * @param textStyle The text style to be applied to the items. Defaults to the current local text style.
+ * @param dividerColor The color of the dividers separating the items. Defaults to the current local */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Picker(

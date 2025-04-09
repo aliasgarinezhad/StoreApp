@@ -29,6 +29,10 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromJsonElement
 import severAddress
 
+/**
+ * Object responsible for handling remote connections to the server.
+ * It provides methods for user login, retrieving production orders, and submitting user actions.
+ */
 object RemoteConnection {
 
     var factoryUser = FactoryUser()

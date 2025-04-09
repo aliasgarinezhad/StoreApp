@@ -22,6 +22,10 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/**
+ * ViewModel for the Factory Main screen, handling user authentication,
+ * feature access, and navigation within the application.
+ */
 class FactoryMainViewModel {
 
     //charge ui parameters

@@ -31,6 +31,17 @@ import kotlinx.serialization.Serializable
 @Serializable
 object LoginScreen
 
+/**
+ * Composable function for the login page.
+ *
+ * @param username The current value of the username input field.
+ * @param password The current value of the password input field.
+ * @param onSignInButtonClick Callback function to be executed when the sign-in button is clicked.
+ * @param onUsernameValueChanged Callback function to be executed when the username input value changes.  It receives the new username value as a parameter.
+ * @param onPasswordValueChanged Callback function to be executed when the password input value changes. It receives the new password value as a parameter.
+ * @param state The [SnackbarHostState] to control the display of snackbars for error messages.
+ * @param loading A boolean indicating whether a loading indicator should be displayed.  True displays the indicator, false hides it.
+ */
 @Composable
 fun LoginPage(
     username: String,

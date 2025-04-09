@@ -31,6 +31,25 @@ private val LightColorPalette = lightColors(
     error = Error,
 )
 
+/**
+ *  Applies the application's custom theme, including color palette, typography, and shapes,
+ *  to the composable content.  This allows consistent styling across the entire application.
+ *
+ *  @param darkTheme Boolean indicating whether to use the dark theme color palette.  Defaults to false (light theme).
+ *                  Note:  The original code commented out `isSystemInDarkTheme()`, forcing a light theme.  This
+ *                         has been preserved, but can be changed back to follow system settings if desired.
+ *  @param content The composable content to which the theme will be applied.
+ *
+ *  Example Usage:
+ *  ```kotlin
+ *  MyApplicationTheme {
+ *      Scaffold(topBar = { TopAppBar(title = { Text("My App") }) }) {
+ *          // Main content of the application
+ *          Text("Hello, world!")
+ *      }
+ *  }
+ *  ```
+ */
 @Composable
 fun MyApplicationTheme(
     //darkTheme: Boolean = isSystemInDarkTheme(),

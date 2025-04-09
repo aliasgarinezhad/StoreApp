@@ -43,6 +43,16 @@ import kotlinx.serialization.Serializable
 @Serializable
 object ShowProductionLinesScreen
 
+/**
+ * Displays a screen showing a list of production lines (products).
+ *
+ * @param loading Indicates whether the data is currently being loaded. If true, a loading indicator is displayed.
+ * @param products The list of [Product] objects representing the production lines.
+ * @param onClick Callback function triggered when a product item in the list is clicked.  It receives the clicked [Product] as a parameter.
+ * @param state The [SnackbarHostState] used to manage and display snackbar messages.
+ * @param pageTitle The title to be displayed in the top app bar.
+ * @param onBack Callback function triggered when the back button in the app bar is pressed.
+ */
 @Composable
 fun ShowProductionLinesScreen(
     loading: Boolean,

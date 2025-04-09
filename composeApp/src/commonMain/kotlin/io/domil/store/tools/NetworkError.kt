@@ -1,5 +1,10 @@
 package io.domil.store.tools
 
+/**
+ * Represents various network-related errors that can occur during API communication.
+ *
+ * Each enum value corresponds to a specific type of network issue, providing a standardized way to handle and categorize errors.
+ */
 enum class NetworkError : Error {
     REQUEST_TIMEOUT,
     UNAUTHORIZED,

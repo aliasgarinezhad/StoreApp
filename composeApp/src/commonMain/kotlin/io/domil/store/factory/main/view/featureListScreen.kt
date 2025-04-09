@@ -41,6 +41,17 @@ import org.jetbrains.compose.resources.painterResource
 @Serializable
 object FeatureListScreen
 
+/**
+ * Composable function that displays the list of features available to the user.
+ *
+ * @param state The state of the Snackbar host, used to display error messages.
+ * @param loading A boolean indicating whether the feature list is currently loading.
+ * @param featuresList The list of [Feature] objects to display.
+ * @param factoryUser The [FactoryUser] object associated with the current user.
+ * @param textFieldValue The current value of the search text field.
+ * @param onTextFieldChanged Callback function invoked when the search text field value changes.  Takes the new value as a parameter.
+ * @param onFeatureIconClick Callback function invoked when a feature icon is clicked. Takes the screen associated with the feature as a parameter (type `Any`).
+ */
 @Composable
 fun FeatureListScreen(
     state: SnackbarHostState,

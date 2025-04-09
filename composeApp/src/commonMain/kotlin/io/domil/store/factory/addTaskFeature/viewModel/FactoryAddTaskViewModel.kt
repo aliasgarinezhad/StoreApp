@@ -29,6 +29,22 @@ object SharedRepository {
     var machineCode: Int? = 0
 }
 
+/**
+ * ViewModel for the "Add Task" feature in the factory application.
+ *
+ * This class manages the UI state and logic for adding a new task to a user's schedule.
+ * It interacts with the remote API to fetch product lines and submit the user's task.
+ *
+ * @property popupHost Manages the display of pop-up notifications.
+ * @property textFieldValue Holds the current value of the text field for numeric input (e.g., number of items).
+ * @property loading Indicates whether a network request is in progress.
+ * @property state The state of the SnackbarHost for displaying temporary messages.
+ * @property destinationScreen Represents the screen to navigate to.
+ * @property currentScreen Represents the currently displayed screen.
+ * @property screenChangePending Flags whether a screen change is pending.
+ * @property userTask The data model representing the user's task details.
+ * @property products A list of available product lines fetched from the API.
+ */
 class FactoryAddTaskViewModel {
 
     val popupHost = NotificationPopupHost()
