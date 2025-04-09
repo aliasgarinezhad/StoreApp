@@ -18,6 +18,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * A class to manage and display different types of notification popups.
+ * This class uses mutable state to control the visibility and content of the popups,
+ * allowing for reactive updates in a UI.
+ */
 class NotificationPopupHost {
 
     var showPopup1Button by mutableStateOf(false)

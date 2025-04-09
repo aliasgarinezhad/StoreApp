@@ -16,6 +16,16 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
+/**
+ * Displays an AppBar with a back arrow icon for navigation.
+ *
+ * This composable provides a convenient way to create a standard app bar with a back button.
+ * It uses the `AppBarWithNavigationButton` composable internally and pre-configures it
+ * with a back arrow icon and the provided title and navigation action.
+ *
+ * @param onBackPressed Callback to be executed when the back button is pressed.  Defaults to an empty lambda.
+ * @param title The title to display in the app bar.
+ */
 @Composable
 fun AppBarWithBack(
     onBackPressed: () -> Unit = {},

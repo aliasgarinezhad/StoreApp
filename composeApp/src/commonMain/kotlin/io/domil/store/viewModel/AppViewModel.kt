@@ -24,6 +24,13 @@ import io.domil.store.networking.createHttpClient
 import io.domil.store.tools.onError
 import io.domil.store.tools.onSuccess
 
+/**
+ * ViewModel for the application, managing UI state and interactions related to product data, user authentication, and navigation.
+ *
+ * @property saveUserData A function to save user data to persistent storage.  It takes a [User] object as input.
+ * @property webPageRequestBarcode  A barcode passed from a web page request, used to automatically search for a product upon login if not empty.
+ * @property savedUser The [User] object retrieved from persistent storage upon app launch.  If empty, the user is not logged in.
+ */
 class AppViewModel(
     val saveUserData: (user: User) -> Unit,
     val webPageRequestBarcode: String,

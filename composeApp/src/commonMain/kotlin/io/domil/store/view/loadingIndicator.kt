@@ -12,6 +12,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+/**
+ * Displays a loading indicator with a circular progress bar and a "Loading..." text.
+ *
+ * The indicator is centered horizontally within its parent and uses the primary color from the app's MaterialTheme.
+ */
 @Composable
 fun LoadingIndicator() {
     Row(

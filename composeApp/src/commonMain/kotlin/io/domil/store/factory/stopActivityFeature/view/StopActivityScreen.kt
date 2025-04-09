@@ -34,6 +34,21 @@ import kotlinx.serialization.Serializable
 @Serializable
 object StopActivityScreen
 
+/**
+ * Composable function for the "Stop Activity" screen.  Allows the user to select a reason
+ * for stopping an activity and submit it. Displays a loading indicator during submission
+ * and handles errors with a Snackbar.
+ *
+ * @param loading Boolean flag indicating whether a submission is in progress.  Disables
+ *                interaction with the content while true and shows a loading indicator.
+ * @param state SnackbarHostState for displaying error messages via a Snackbar.
+ * @param pageTitle String to display as the title in the top app bar.
+ * @param onBack Lambda function to be executed when the back button in the app bar is pressed.  Usually
+ *               used for navigating back to the previous screen.
+ * @param reasons List of Reason objects representing the possible reasons for stopping the activity.
+ * @param onConfirm Lambda function to be executed when the user confirms their selection.  It takes the
+ *                  ID of the selected reason as an integer parameter.
+ */
 @Composable
 fun StopActivityScreen(
     loading: Boolean,

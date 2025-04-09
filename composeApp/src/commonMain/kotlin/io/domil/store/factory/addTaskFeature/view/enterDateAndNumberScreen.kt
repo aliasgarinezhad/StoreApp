@@ -68,6 +68,15 @@ import rememberPickerState
 @Serializable
 object EnterDateAndNumberScreen
 
+/**
+ * Composable function for the screen where the user enters the date, time and number for a task.
+ *
+ * This screen allows the user to select the start and end times using pickers, choose a size from a dropdown,
+ * and enter a quantity in a text field. It displays product and task information and provides a button to submit the data.
+ *
+ * @param loading Boolean indicating whether the screen is in a loading state.
+ * @param product The [Product] associated with the user task.
+ * @param state The [SnackbarHostState] for displaying snack */
 @Composable
 fun EnterDateAndNumberScreen(
     loading: Boolean,

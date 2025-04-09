@@ -76,6 +76,32 @@ import storeapp.composeapp.generated.resources.store
 @Serializable
 object MainScreen
 
+/**
+ * Composable function for the main page of the application.  It displays the search content,
+ * handles UI state, and manages user interactions.
+ *
+ * @param state The state of the SnackbarHost for displaying error messages.
+ * @param isCameraOn Boolean flag indicating if the camera is active for scanning.
+ * @param colorFilterValue The currently selected color filter value.
+ * @param sizeFilterValue The currently selected size filter value.
+ * @param onBottomBarButtonClick Callback for when the scan button on the bottom bar is clicked.
+ * @param loading Boolean flag indicating if data is being loaded.
+ * @param uiList The list of products to display before filtering.
+ * @param onScanButtonClick Callback for when the scan button is clicked.  (Duplicate with onBottomBarButtonClick, needs clarification)
+ * @param onColorFilterValueChange Callback for when the color filter value changes.
+ * @param onSizeFilterValueChange Callback for when the size filter value changes.
+ * @param textFieldValue The current text value in the search text field.
+ * @param onTextValueChange Callback for when the search text field value changes.
+ * @param onImeAction Callback for when the user performs an IME action (e.g., search).
+ * @param onScanSuccess Callback for successful barcode scan, providing the scanned barcode string.
+ * @param barcodeScanner Composable function that renders the barcode scanner UI. It accepts a callback
+ *   `onScanSuccess` that is invoked when a barcode is successfully scanned, receiving the barcode string as a parameter.
+ * @param onLogoutClick Callback for when the user clicks the logout button.
+ * @param storesFilterValue The currently selected store filter value.
+ * @param storesFilterValues List of available store filter values.
+ * @param onStoreFilterValueChange Callback for when the store filter value changes.
+ * @param isFullScreenImage Boolean flag indicating if the image is displayed in full screen.
+ * @param changeImageFullScreen Callback to toggle full-screen */
 @Composable
 fun MainPage(
     state: SnackbarHostState,

@@ -20,6 +20,21 @@ import io.domil.store.view.MainPage
 import io.domil.store.view.MainScreen
 import io.domil.store.viewModel.AppViewModel
 
+/**
+ * The main composable function for the application, handling navigation and screen changes.
+ *
+ * This function conditionally displays either the factory-specific app flow or the standard app flow
+ * based on the `isFactoryAppRequested` flag. It also manages navigation between screens based on
+ * pending screen change requests from the provided ViewModels.
+ *
+ * @param viewModel The main application ViewModel.
+ * @param mainViewModel ViewModel for the main factory flow.
+ * @param addTaskViewModel ViewModel for adding tasks in the factory flow.
+ * @param stopActivityViewModel ViewModel for stopping activities in the factory flow.
+ * @param isFactoryAppRequested Flag indicating whether the factory-specific app flow should be used. Defaults to false.
+ * @param barcodeScanner Composable function for scanning barcodes.  It should take a callback function
+ *  `onScanSuccess` as a parameter, which will be invoked with the scanned barcode string when a scan is successful.
+ */
 @Composable
 fun App(
     viewModel: AppViewModel,
@@ -108,6 +123,21 @@ fun App(
     }
 }
 
+/**
+ *  This Composable function hosts the navigation graph for the application.
+ *  It uses Jetpack Compose Navigation to manage transitions between different screens.
+ *
+ * @param viewModel The shared [AppViewModel] instance containing the application's state and logic.
+ * @param navHostController The [NavHostController] that manages navigation within the NavHost.
+ * @param barcodeScanner A composable function that displays a barcode scanner UI.  It takes a lambda
+ *  `onScanSuccess` which is called when a barcode is successfully scanned, passing the scanned barcode string.
+ *
+ *  The NavHost defines two routes:
+ *  - **LoginScreen**: Displays the login page, handling user authentication via the [AppViewModel].
+ *  - **MainScreen**: Displays the main application screen after successful login. This screen includes functionality for
+ *     viewing data, filtering, interacting with the camera, and user logout, all managed by the [AppViewModel].  The barcode scanner UI
+ *     is integrated within the MainPage composable, utilizing the provided [barcodeScanner] composable.
+ */
 @Composable
 fun ComposableHost(
     viewModel: AppViewModel,

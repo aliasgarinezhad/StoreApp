@@ -16,6 +16,9 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import severAddress
 
+/**
+ *  A singleton object responsible for handling remote connections and API calls related to machine control.
+ */
 object RemoteConnection {
 
     suspend fun stopActivity(
