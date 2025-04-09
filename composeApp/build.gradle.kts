@@ -45,6 +45,15 @@ kotlin {
 
     sourceSets {
 
+        val composeVersion = "1.6.7"
+
+        androidInstrumentedTest.dependencies {
+            implementation("androidx.compose.ui:ui-tooling:$composeVersion")
+            implementation("androidx.compose.ui:ui-test-manifest:$composeVersion")
+            implementation("androidx.compose.ui:ui-test-junit4:$composeVersion")
+
+        }
+
         androidMain.dependencies {
 
             implementation(fileTree(mapOf("dir" to "lib", "include" to listOf("*.*"))))
@@ -81,15 +90,11 @@ kotlin {
             implementation("com.google.mlkit:barcode-scanning:17.3.0")
 
             // Compose
-            val compose_version = "1.6.7"
-            //debugImplementation("androidx.compose.ui:ui-tooling:$compose_version")
-            //debugImplementation("androidx.compose.ui:ui-test-manifest:$compose_version")
-            implementation("androidx.compose.ui:ui:$compose_version")
-            implementation("androidx.compose.material:material:$compose_version")
-            implementation("androidx.compose.ui:ui-tooling-preview:$compose_version")
-            implementation("androidx.compose.runtime:runtime:$compose_version")
-            implementation("androidx.compose.runtime:runtime-rxjava2:$compose_version")
-            //androidTestImplementation("androidx.compose.ui:ui-test-junit4:$compose_version")
+            implementation("androidx.compose.ui:ui:$composeVersion")
+            implementation("androidx.compose.material:material:$composeVersion")
+            implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
+            implementation("androidx.compose.runtime:runtime:$composeVersion")
+            implementation("androidx.compose.runtime:runtime-rxjava2:$composeVersion")
             implementation("com.google.android.material:material:1.12.0")
 
             // Jalali datePicker
