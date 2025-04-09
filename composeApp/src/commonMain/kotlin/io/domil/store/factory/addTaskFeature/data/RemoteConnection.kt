@@ -2,9 +2,9 @@ package io.domil.store.factory.addTaskFeature.data
 
 import io.domil.store.factory.addTaskFeature.model.ProductionOrder
 import io.domil.store.factory.addTaskFeature.model.UserTask
-import io.domil.store.networking.httpClient
-import io.domil.store.tools.NetworkError
-import io.domil.store.tools.Result
+import io.domil.store.data.httpClient
+import io.domil.store.data.NetworkError
+import io.domil.store.data.Result
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.header

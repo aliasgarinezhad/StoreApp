@@ -11,10 +11,9 @@ import io.domil.store.factory.addTaskFeature.viewModel.SharedRepository
 import io.domil.store.factory.main.model.Feature
 import io.domil.store.factory.main.useCase.features
 import io.domil.store.factory.main.view.FeatureListScreen
-import io.domil.store.networking.createHttpClient
-import io.domil.store.tools.onError
-import io.domil.store.tools.onSuccess
-import io.domil.store.view.LoginScreen
+import io.domil.store.data.onError
+import io.domil.store.data.onSuccess
+import io.domil.store.shop.view.LoginScreen
 import io.domil.store.view.showLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default

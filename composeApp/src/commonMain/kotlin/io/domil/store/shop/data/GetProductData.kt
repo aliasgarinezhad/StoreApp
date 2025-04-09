@@ -1,5 +1,7 @@
-package io.domil.store.networking
+package io.domil.store.shop.data
 
+import io.domil.store.data.NetworkError
+import io.domil.store.data.Result
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -16,8 +18,6 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromJsonElement
 import severAddress
-import io.domil.store.tools.NetworkError
-import io.domil.store.tools.Result
 
 /**
  * This class is responsible for fetching product-related data from a remote server.

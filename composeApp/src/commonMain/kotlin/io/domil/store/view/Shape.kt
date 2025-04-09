@@ -1,4 +1,4 @@
-package io.domil.store.theme
+package io.domil.store.view
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

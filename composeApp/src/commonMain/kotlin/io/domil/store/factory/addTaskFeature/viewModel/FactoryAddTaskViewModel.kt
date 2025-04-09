@@ -4,7 +4,6 @@ import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import io.domil.store.factory.addTaskFeature.data.RemoteConnection
 import io.domil.store.factory.addTaskFeature.model.Product
 import io.domil.store.factory.addTaskFeature.model.UserTask
@@ -12,11 +11,9 @@ import io.domil.store.factory.addTaskFeature.view.EnterDateAndNumberScreen
 import io.domil.store.factory.addTaskFeature.view.SelectTaskScreen
 import io.domil.store.factory.addTaskFeature.view.ShowProductionLinesScreen
 import io.domil.store.factory.main.view.FeatureListScreen
-import io.domil.store.factory.main.viewModel.FactoryMainViewModel
 import io.domil.store.view.showLog
-import io.domil.store.networking.createHttpClient
-import io.domil.store.tools.onError
-import io.domil.store.tools.onSuccess
+import io.domil.store.data.onError
+import io.domil.store.data.onSuccess
 import io.domil.store.view.NotificationPopupHost
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

@@ -13,8 +13,8 @@ import io.domil.store.factory.main.view.FeatureListScreen
 import io.domil.store.factory.main.viewModel.FactoryMainViewModel
 import io.domil.store.factory.stopActivityFeature.view.StopActivityScreen
 import io.domil.store.factory.stopActivityFeature.viewModel.StopActivityViewModel
-import io.domil.store.view.LoginPage
-import io.domil.store.view.LoginScreen
+import io.domil.store.shop.view.LoginPage
+import io.domil.store.shop.view.LoginScreen
 
 /**
  * The main Composable function for the Factory application.

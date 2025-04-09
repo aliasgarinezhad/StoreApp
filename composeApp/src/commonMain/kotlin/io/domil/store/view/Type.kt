@@ -1,4 +1,4 @@
-package io.domil.store.theme
+package io.domil.store.view
 
 import androidx.compose.material.Typography
 import androidx.compose.runtime.Composable

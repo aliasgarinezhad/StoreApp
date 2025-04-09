@@ -14,11 +14,11 @@ import io.domil.store.factory.main.view.FeatureListScreen
 import io.domil.store.factory.main.viewModel.FactoryMainViewModel
 import io.domil.store.factory.stopActivityFeature.view.StopActivityScreen
 import io.domil.store.factory.stopActivityFeature.viewModel.StopActivityViewModel
-import io.domil.store.view.LoginPage
-import io.domil.store.view.LoginScreen
-import io.domil.store.view.MainPage
-import io.domil.store.view.MainScreen
-import io.domil.store.viewModel.AppViewModel
+import io.domil.store.shop.view.LoginPage
+import io.domil.store.shop.view.LoginScreen
+import io.domil.store.shop.view.MainPage
+import io.domil.store.shop.view.MainScreen
+import io.domil.store.shop.viewModel.AppViewModel
 
 /**
  * The main composable function for the application, handling navigation and screen changes.

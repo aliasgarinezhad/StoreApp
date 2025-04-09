@@ -1,4 +1,4 @@
-package io.domil.store.view
+package io.domil.store.shop.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
@@ -23,8 +22,9 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import io.domil.store.theme.BigButton
-import io.domil.store.theme.MyApplicationTheme
+import io.domil.store.view.BigButton
+import io.domil.store.view.MyApplicationTheme
+import io.domil.store.view.ErrorSnackBar
 import kotlinx.serialization.Serializable
 
 

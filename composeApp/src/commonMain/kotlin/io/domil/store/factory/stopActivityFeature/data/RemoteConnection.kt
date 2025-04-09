@@ -1,9 +1,9 @@
 package io.domil.store.factory.stopActivityFeature.data
 
 import io.domil.store.factory.addTaskFeature.data.RemoteConnection.factoryUser
-import io.domil.store.networking.httpClient
-import io.domil.store.tools.NetworkError
-import io.domil.store.tools.Result
+import io.domil.store.data.httpClient
+import io.domil.store.data.NetworkError
+import io.domil.store.data.Result
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody

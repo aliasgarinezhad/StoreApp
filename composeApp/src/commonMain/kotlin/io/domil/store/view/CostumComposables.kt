@@ -1,4 +1,4 @@
-package io.domil.store.theme
+package io.domil.store.view
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -29,9 +29,6 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -54,7 +51,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
-import io.domil.store.networking.Product
+import io.domil.store.shop.data.Product
 import org.jetbrains.compose.resources.painterResource
 import storeapp.composeapp.generated.resources.Res
 import storeapp.composeapp.generated.resources.ic_baseline_arrow_drop_down_24

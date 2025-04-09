@@ -1,4 +1,4 @@
-package io.domil.store.view
+package io.domil.store.shop.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,7 +21,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -57,15 +56,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
-import io.domil.store.theme.FilterDropDownList
-import io.domil.store.theme.FullScreenImage
-import io.domil.store.theme.Jeanswest
-import io.domil.store.theme.MyApplicationTheme
-import io.domil.store.theme.MyTypography
-import io.domil.store.theme.Shapes
-import io.domil.store.theme.iconColor
+import io.domil.store.view.FilterDropDownList
+import io.domil.store.view.FullScreenImage
+import io.domil.store.view.Jeanswest
+import io.domil.store.view.MyApplicationTheme
+import io.domil.store.view.MyTypography
+import io.domil.store.view.Shapes
+import io.domil.store.view.iconColor
 import kotlinx.serialization.Serializable
-import io.domil.store.networking.Product
+import io.domil.store.shop.data.Product
+import io.domil.store.view.ErrorSnackBar
+import io.domil.store.view.LoadingIndicator
 import org.jetbrains.compose.resources.painterResource
 import storeapp.composeapp.generated.resources.Res
 import storeapp.composeapp.generated.resources.barcode_scan_icon

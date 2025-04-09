@@ -7,12 +7,12 @@ import barcodeScannerPageAddress
 import io.domil.store.factory.addTaskFeature.viewModel.FactoryAddTaskViewModel
 import io.domil.store.factory.main.viewModel.FactoryMainViewModel
 import io.domil.store.factory.stopActivityFeature.viewModel.StopActivityViewModel
-import io.domil.store.viewModel.AppViewModel
+import io.domil.store.shop.viewModel.AppViewModel
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import io.domil.store.networking.User
+import io.domil.store.shop.data.User
 import org.w3c.dom.get
 import org.w3c.dom.set
 

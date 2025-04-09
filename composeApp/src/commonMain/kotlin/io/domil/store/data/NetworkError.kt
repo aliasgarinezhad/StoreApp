@@ -1,4 +1,4 @@
-package io.domil.store.tools
+package io.domil.store.data
 
 /**
  * Represents various network-related errors that can occur during API communication.

@@ -1,4 +1,4 @@
-package io.domil.store.networking
+package io.domil.store.data
 
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout

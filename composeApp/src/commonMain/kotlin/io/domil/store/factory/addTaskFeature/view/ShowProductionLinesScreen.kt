@@ -31,11 +31,11 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.domil.store.factory.addTaskFeature.model.Product
-import io.domil.store.theme.BorderLight
-import io.domil.store.theme.Jeanswest
-import io.domil.store.theme.MyApplicationTheme
-import io.domil.store.theme.Shapes
-import io.domil.store.theme.innerBackground
+import io.domil.store.view.BorderLight
+import io.domil.store.view.Jeanswest
+import io.domil.store.view.MyApplicationTheme
+import io.domil.store.view.Shapes
+import io.domil.store.view.innerBackground
 import io.domil.store.view.ErrorSnackBar
 import io.domil.store.view.LoadingIndicator
 import kotlinx.serialization.Serializable

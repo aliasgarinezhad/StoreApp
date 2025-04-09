@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.domil.store.factory.addTaskFeature.model.Product
-import io.domil.store.theme.MyApplicationTheme
-import io.domil.store.theme.Shapes
+import io.domil.store.view.MyApplicationTheme
+import io.domil.store.view.Shapes
 import io.domil.store.view.ErrorSnackBar
 import kotlinx.serialization.Serializable
 

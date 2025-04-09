@@ -1,4 +1,4 @@
-package io.domil.store.tools
+package io.domil.store.data
 
 
 /**
@@ -17,7 +17,7 @@ package io.domil.store.tools
  */
 sealed interface Result<out D, out E: Error> {
     data class Success<out D>(val data: D): Result<D, Nothing>
-    data class Error<out E: io.domil.store.tools.Error>(val error: E): Result<Nothing, E>
+    data class Error<out E: io.domil.store.data.Error>(val error: E): Result<Nothing, E>
 }
 
 inline fun <T, E: Error, R> Result<T, E>.map(map: (T) -> R): Result<R, E> {

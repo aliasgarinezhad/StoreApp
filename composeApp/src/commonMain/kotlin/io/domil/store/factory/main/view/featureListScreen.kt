@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.domil.store.factory.addTaskFeature.data.FactoryUser
 import io.domil.store.factory.main.model.Feature
-import io.domil.store.theme.MyApplicationTheme
+import io.domil.store.view.MyApplicationTheme
 import io.domil.store.view.ErrorSnackBar
 import io.domil.store.view.LoadingIndicator
 import kotlinx.serialization.Serializable

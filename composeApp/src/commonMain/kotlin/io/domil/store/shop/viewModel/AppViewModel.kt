@@ -1,4 +1,4 @@
-package io.domil.store.viewModel
+package io.domil.store.shop.viewModel
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.SnackbarHostState
@@ -8,8 +8,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
-import io.domil.store.view.LoginScreen
-import io.domil.store.view.MainScreen
+import io.domil.store.shop.view.LoginScreen
+import io.domil.store.shop.view.MainScreen
 import io.domil.store.view.showLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
@@ -17,12 +17,12 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import io.domil.store.networking.GetProductData
-import io.domil.store.networking.Product
-import io.domil.store.networking.User
-import io.domil.store.networking.createHttpClient
-import io.domil.store.tools.onError
-import io.domil.store.tools.onSuccess
+import io.domil.store.shop.data.GetProductData
+import io.domil.store.shop.data.Product
+import io.domil.store.shop.data.User
+import io.domil.store.data.createHttpClient
+import io.domil.store.data.onError
+import io.domil.store.data.onSuccess
 
 /**
  * ViewModel for the application, managing UI state and interactions related to product data, user authentication, and navigation.

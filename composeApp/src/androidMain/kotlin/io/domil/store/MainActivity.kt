@@ -7,7 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import io.domil.store.networking.User
+import io.domil.store.shop.data.User
 import java.io.File
 
 class MainActivity : ComponentActivity() {

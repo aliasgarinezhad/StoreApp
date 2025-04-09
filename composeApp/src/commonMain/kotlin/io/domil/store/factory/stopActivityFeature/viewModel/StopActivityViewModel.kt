@@ -11,7 +11,7 @@ import io.domil.store.factory.main.view.FeatureListScreen
 import io.domil.store.factory.stopActivityFeature.data.RemoteConnection
 import io.domil.store.factory.stopActivityFeature.model.Reason
 import io.domil.store.factory.stopActivityFeature.view.StopActivityScreen
-import io.domil.store.tools.Result
+import io.domil.store.data.Result
 import io.domil.store.view.SnackBarActions
 import io.domil.store.view.showLog
 import kotlinx.coroutines.launch
