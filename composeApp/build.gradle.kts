@@ -132,26 +132,40 @@ kotlin {
 }
 
 android {
-    namespace = "io.domil.store"
+    namespace = "com.jeanwest.reader"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "io.domil.store"
+        applicationId = "com.jeanwest.reader"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
     }
+
+    signingConfigs {
+        create("release") {
+            // Ensure the keystore file (rfid.jks) is available at this location.
+            storeFile = file("rfid.jks")
+            storePassword = "Mojtaba77@m.a.com"
+            keyAlias = "key0"
+            keyPassword = "Mojtaba77@m.a.com"
+        }
+    }
+
+    buildTypes {
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
+            // Additional release-specific settings can go here.
+        }
+    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
