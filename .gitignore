@@ -10,6 +10,7 @@ local.properties
 captures
 .externalNativeBuild
 .cxx
+composeApp/src/commonMain/kotlin/env.kt
 *.xcodeproj/*
 !*.xcodeproj/project.pbxproj
 !*.xcodeproj/xcshareddata/
