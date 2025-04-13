@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
-    id("com.google.dagger.hilt.android") version "2.51.1"
+    id("com.google.dagger.hilt.android") version "2.56.1"
     id("kotlin-kapt")
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
@@ -101,13 +101,13 @@ kotlin {
             implementation("com.github.hamooo90:jalali-datepicker-compose:1.1.1")
             implementation("ir.huri:JalaliCalendar:1.3.3")
             // Hilt
-            implementation("com.google.dagger:hilt-android:2.51.1")
+            implementation(libs.hilt.android)
             // Sentry
             implementation("io.sentry:sentry-android:6.8.0")
             // refresh by swipe
             implementation("com.google.accompanist:accompanist-swiperefresh:0.30.1")
             // Serializable
-            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+            implementation(libs.kotlinx.serialization.json)
             // Navigation Component
             implementation("androidx.navigation:navigation-compose:2.8.5")
 
@@ -174,7 +174,7 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
-    "kapt"("com.google.dagger:hilt-compiler:2.51.1")
+    "kapt"("com.google.dagger:hilt-compiler:2.56.1")
 }
 
 
