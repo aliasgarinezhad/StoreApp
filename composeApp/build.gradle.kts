@@ -3,17 +3,13 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
-    id("com.google.dagger.hilt.android") version "2.56.1"
-    id("kotlin-kapt")
+    alias(libs.plugins.hiltAndroid)
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlin.serialization)
-}
-
-kapt {
-    correctErrorTypes = true
+    alias(libs.plugins.kotlinAndroidKsp)
 }
 
 kotlin {
@@ -51,7 +47,6 @@ kotlin {
             implementation("androidx.compose.ui:ui-tooling:$composeVersion")
             implementation("androidx.compose.ui:ui-test-manifest:$composeVersion")
             implementation("androidx.compose.ui:ui-test-junit4:$composeVersion")
-
         }
 
         androidMain.dependencies {
@@ -134,6 +129,7 @@ kotlin {
 android {
     namespace = "com.jeanwest.reader"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
+    ndkVersion = "23.0.7123448"
 
     defaultConfig {
         applicationId = "com.jeanwest.reader"
@@ -141,6 +137,10 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+        multiDexEnabled = true
     }
 
     signingConfigs {
@@ -174,7 +174,7 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
-    "kapt"("com.google.dagger:hilt-compiler:2.56.1")
+    ksp(libs.hilt.compiler)
 }
 
 

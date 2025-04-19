@@ -1,30 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-feature android:name="android.hardware.camera.any" />
-
-    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-feature android:name="android.hardware.camera.any" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application
+        android:name=".di.RfidApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.Material.Light.NoActionBar">
+        android:theme="@android:style/Theme.Material.Light.NoActionBar"
+        android:usesCleartextTraffic="true">
+
+        <service android:name="com.jeanwest.reader.data.remote.IotHub" />
+
+        <activity
+            android:name="com.jeanwest.reader.features.inventory.view.Count"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="application/vnd.ms-excel" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".features.inventory.view.Inventory" />
+        <activity android:name=".features.refillStore.view.RefillManualAddItems" />
+        <activity android:name=".features.refillStore.view.RefillManual" />
+        <activity android:name=".features.refillStore.view.Refill" />
+        <activity android:name=".features.logistic.view.StockDraftTransferToStoreByDriver" />
+        <activity android:name=".features.main.view.DeviceRegister" />
+        <activity android:name=".features.kiosk.view.SearchProduct" />
+        <activity android:name=".features.kiosk.view.Kiosk" />
+        <activity android:name=".features.main.view.Update" />
+        <activity android:name=".features.write.view.WriteTag" />
+        <activity android:name=".features.stockDraft.view.StockDraftAttachEPCs" />
+        <activity android:name=".features.carton.view.CartonCreate" />
+        <activity android:name=".features.carton.view.CartonDetails" />
+        <activity android:name=".features.carton.view.CartonTransfer" />
+        <activity android:name=".features.stockDraft.view.StockDraftCreate" />
+        <activity android:name=".features.stockDraft.view.StockDraftConfirm" />
+        <activity android:name=".features.stockDraftRequest.view.StockDraftRequestConfirm" />
+        <activity android:name=".features.kiosk.view.BarcodeChecker" />
+        <activity android:name=".features.kiosk.view.BarcodeSpecial" />
+        <activity android:name=".features.kiosk.view.KioskCentralWarehouse" />
+        <activity android:name=".features.carton.view.AddOrRemoveCarton" />
+        <activity android:name=".features.stockDraftRequest.view.StockDraftRequestFindItems" />
+        <activity android:name=".features.logistic.view.StockDraftTransferConfirmation" />
+        <activity android:name=".features.carton.view.CartonTransferConfirmation" />
+        <activity android:name=".features.logistic.view.StockDraftTransfer" />
+        <activity android:name=".features.stockDraftRequest.view.StockDraftRequestFindStore" />
+        <activity android:name=".features.logistic.view.ConfirmStockDraftLogisticInStore" />
+        <activity android:name=".features.stockDraftRequest.view.StockDraftRequestCreateStore" />
+        <activity android:name=".features.stockDraft.view.StockDraftDetails" />
+        <activity android:name=".features.print.view.PrintPriceLabel" />
+        <activity android:name=".features.print.view.PrintPricePerProduct" />
+        <activity android:name=".features.shelf.view.ShelfAddress" />
+        <activity android:name=".features.shelf.view.ShelfEnter" />
+        <activity android:name=".features.shelf.view.ShelfExit" />
+        <activity android:name=".features.shelf.view.ShelfContent" />
+        <activity android:name=".features.logistic.view.StockDraftTransferToStoreByDriverCancellation" />
+        <activity android:name=".features.stockDraft.view.ReverseRefill" />
+        <activity android:name=".features.cardex.viewmodel.Cardex" />
+        <activity android:name=".features.inventory.view.InventoryReportDepartment" />
+        <activity android:name=".features.carton.view.CartonsConfirmItems" />
+        <activity android:name=".features.logistic.view.SackCreate" />
+        <activity android:name=".features.carton.view.SearchAnItemInCartons" />
+        <activity android:name=".features.stockDraft.view.CreateStockDraftFromCarton" />
+        <activity android:name=".features.refillStore.view.Refill2" />
+        <activity android:name=".features.stockDraft.view.StockDraftsHistory" />
+        <activity android:name=".features.shelf.view.CreateShelfStore" />
+        <activity android:name=".features.shelf.view.ShelfEnterStore" />
+        <activity android:name=".features.shelf.view.AddressProductShelf" />
+        <activity android:name=".features.cargo.view.CargoRegistration" />
+        <activity android:name=".features.cargo.view.CargoReceive" />
+        <activity android:name=".features.banimode.view.BanimodeReceiveReturn" />
+        <activity android:name=".features.banimode.view.BanimodeReturn" />
+        <activity android:name=".features.write.view.FixTagErrors" />
+        <activity android:name=".features.shelf.view.ShelfContentStore" />
+        <activity android:name=".features.carton.view.CartonModification"/>
+        <activity android:name=".features.shelf.view.CreateShelfInRequest"/>
+        <activity android:name=".features.shelf.view.NewShelfIn"/>
+        <activity android:name=".features.shelf.view.TransferShelf"/>
+
         <activity
             android:name="com.jeanwest.reader.features.main.view.MainActivity"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@android:style/Theme.Material.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@android:style/Theme.Material.Light.NoActionBar" />
+        </provider>
+
         <!-- Required: set your sentry.io project identifier (DSN) -->
         <meta-data
             android:name="io.sentry.dsn"
@@ -46,5 +149,4 @@
 
 
     </application>
-
 </manifest>
