@@ -1,3065 +1,3741 @@
-package com.jeanwest.reader.useCases.pointMobileSDK;
+package com.jeanwest.reader.useCases.pointMobileSDK
 
-import android.bluetooth.BluetoothAdapter;
+import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
+import com.jeanwest.reader.useCases.pointMobileSDK.DeviceState.Scanner.Symbologies.AdvancedConfig.OneD.Code11
+import com.jeanwest.reader.useCases.pointMobileSDK.DeviceState.Scanner.Symbologies.AdvancedConfig.OneD.Code128
+import com.jeanwest.reader.useCases.pointMobileSDK.DeviceState.Scanner.Symbologies.AdvancedConfig.OneD.Code39
+import com.jeanwest.reader.useCases.pointMobileSDK.DeviceState.Scanner.Symbologies.AdvancedConfig.OneD.Code93
+import com.jeanwest.reader.useCases.pointMobileSDK.DeviceState.Scanner.Symbologies.AdvancedConfig.OneD.Discrete2of5
+import com.jeanwest.reader.useCases.pointMobileSDK.DeviceState.Scanner.Symbologies.AdvancedConfig.OneD.ISBT
+import com.jeanwest.reader.useCases.pointMobileSDK.DeviceState.Scanner.Symbologies.AdvancedConfig.OneD.Interleaved2of5
+import com.jeanwest.reader.useCases.pointMobileSDK.DeviceState.Scanner.Symbologies.AdvancedConfig.OneD.Matrix2of5
+import com.jeanwest.reader.useCases.pointMobileSDK.DeviceState.Scanner.Symbologies.AdvancedConfig.OneD.UPCEAN
+import com.jeanwest.reader.useCases.pointMobileSDK.DeviceState.Scanner.Symbologies.AdvancedConfig.OneD.UPCEAN.Convert.UPC_E0ToA
+import com.jeanwest.reader.useCases.pointMobileSDK.DeviceState.Scanner.Symbologies.AdvancedConfig.OneD.UPCEAN.Convert.UPC_E1ToA
+import com.jeanwest.reader.useCases.pointMobileSDK.DeviceState.Scanner.Symbologies.AdvancedConfig.TwoD.MacroPDF
+import com.jeanwest.reader.useCases.pointMobileSDK.DeviceState.Scanner.Symbologies.AdvancedConfig.TwoD.MicroPDF417
+import com.jeanwest.reader.useCases.pointMobileSDK.DeviceState.Scanner.Symbologies.AdvancedConfig.TwoD.PostalCodes
 
 /**
  * Created by NG on 2016-04-28.
  */
-public class DeviceState {
-    private static final int ENABLE = 1;
-    private static final int DISABLE = 0;
+@SuppressLint("MissingPermission")
+object DeviceState {
+    private const val ENABLE: Int = 1
+    private const val DISABLE: Int = 0
 
-    public static class Scanner {
-        public static void setDefault() {
-            ScanningPreferences.setDefault();
-            Symbologies.setDefault();
-            DataFormat.setDefault();
-            RedundancyAndSecurityLevel.setDefault();
-            Delimiter.setDefault();
+    object Scanner {
+        fun setDefault() {
+            ScanningPreferences.setDefault()
+            Symbologies.setDefault()
+            DataFormat.setDefault()
+            RedundancyAndSecurityLevel.setDefault()
+            Delimiter.setDefault()
         }
 
-        private static int enable(int bitNum, int registerValue) {
-            return (registerValue | (0x1 << bitNum));
+        private fun enable(bitNum: Int, registerValue: Int): Int {
+            return (registerValue or (0x1 shl bitNum))
         }
 
-        private static int disable(int bitNum, int registerValue) {
-            return (registerValue & (~(0x1 << bitNum)));
+        private fun disable(bitNum: Int, registerValue: Int): Int {
+            return (registerValue and ((0x1 shl bitNum).inv()))
         }
 
-        private static boolean isEnable(int bitNum, int registerValue) {
-            return (registerValue & (0x1 << bitNum)) > 0;
+        private fun isEnable(bitNum: Int, registerValue: Int): Boolean {
+            return (registerValue and (0x1 shl bitNum)) > 0
         }
 
-        private static int setValue(int bitNum, int nData, int registerValue, int nMaxData) {
-            registerValue = registerValue & (~(nMaxData << bitNum));
-            registerValue = registerValue | (nData << bitNum);
-            return registerValue;
+        private fun setValue(bitNum: Int, nData: Int, registerValue: Int, nMaxData: Int): Int {
+            var registerValue: Int = registerValue
+            registerValue = registerValue and ((nMaxData shl bitNum).inv())
+            registerValue = registerValue or (nData shl bitNum)
+            return registerValue
         }
 
-        private static int getValue(int bitNum, int nRegister, int nMaxData) {
-            return (nRegister & (nMaxData << bitNum)) >> bitNum;
+        private fun getValue(bitNum: Int, nRegister: Int, nMaxData: Int): Int {
+            return (nRegister and (nMaxData shl bitNum)) shr bitNum
         }
 
-        public static class Firmware {
-            private static String firmwareString;
-
-            public static String getFirmwareVersion() {
-                return firmwareString;
-            }
-
-            public static void setFirmwareVersion(String firmware) {
-                firmwareString = firmware;
-            }
+        object Firmware {
+            var firmwareVersion: String? = null
         }
 
-        public static class Type {
-            public static final int NO_SCANNER = 0;
-            public static final int SCANNER_1D_SE655 = 1;
-            public static final int SCANNER_2D_SE4750 = 2;
-            public static final int SCANNER_2D_EM3396 = 3;
-            private static int scannerType = NO_SCANNER;
-
-            public static int getType() {
-                return scannerType;
-            }
-
-            public static void setType(int nType) {
-                scannerType = nType;
-            }
+        object Type {
+            const val NO_SCANNER: Int = 0
+            const val SCANNER_1D_SE655: Int = 1
+            const val SCANNER_2D_SE4750: Int = 2
+            const val SCANNER_2D_EM3396: Int = 3
+            var type: Int = NO_SCANNER
         }
 
-        public static class ScanningPreferences {
+        object ScanningPreferences {
             //private static int registerValue = 0x13900063;
-            private static int registerValue = setDefault();
+            var register: Int = setDefault()
 
-            public static int setDefault() {
-                return DecodeSessionTimeout.defaultValue
-                        | Fnc1.defaultValue
-                        | Inverse.defaultValue
-                        | PickList.defaultValue
-                        | MirroredImage.defaultValue
-                        | MobileDisplayMode.defaultValue
-                        | DecodingIllumination.defaultValue
-                        | DecodingAimingPattern.defaultValue
-                        | OneDQuietZoneLevel.defaultValue
-                        | IntercharacterGapSize.defaultValue
-                        | Fuzzy1DProcessing.defaultValue;
+            fun setDefault(): Int {
+                return (DecodeSessionTimeout.defaultValue
+                        or Fnc1.defaultValue
+                        or Inverse.defaultValue
+                        or PickList.defaultValue
+                        or MirroredImage.defaultValue
+                        or MobileDisplayMode.defaultValue
+                        or DecodingIllumination.defaultValue
+                        or DecodingAimingPattern.defaultValue
+                        or OneDQuietZoneLevel.defaultValue
+                        or IntercharacterGapSize.defaultValue
+                        or Fuzzy1DProcessing.defaultValue)
             }
 
-            public static int getRegister() {
-                return registerValue;
+            object DecodeSessionTimeout {
+                const val MAX_VALUE: Int = 0xFF
+                private const val BIT_DECODESESSION: Int = 0
+                val defaultValue: Int = 99 shl BIT_DECODESESSION
+
+                var timeout: Int
+                    get() = getValue(
+                        BIT_DECODESESSION,
+                        register,
+                        MAX_VALUE
+                    )
+                    set(nTimeout) {
+                        var nTimeout: Int = nTimeout
+                        if (nTimeout > 99) nTimeout = 99
+                        else if (nTimeout < 5) nTimeout = 5
+                        register =
+                            setValue(
+                                BIT_DECODESESSION,
+                                nTimeout,
+                                register,
+                                MAX_VALUE
+                            )
+                    }
             }
 
-            public static void setRegister(int value) {
-                registerValue = value;
-            }
+            object Fnc1 {
+                const val S_KEY_ENABLE: String = "Enable"
+                const val S_KEY_ASCII: String = "Ascii"
+                private const val BIT_FNC1_ENABLE: Int = 8
+                private const val BIT_FNC1_VALUE: Int = 9
+                val defaultValue: Int = (DISABLE shl BIT_FNC1_ENABLE) or (0 shl BIT_FNC1_VALUE)
+                private const val FNC1_MAX_VALUE: Int = 0x7F
 
-            public static class DecodeSessionTimeout {
-                static final int MAX_VALUE = 0xFF;
-                private static final int BIT_DECODESESSION = 0;
-                private static final int defaultValue = 99 << BIT_DECODESESSION;
-
-                public static int getTimeout() {
-                    return Scanner.getValue(BIT_DECODESESSION, registerValue, MAX_VALUE);
+                fun enable() {
+                    register = enable(BIT_FNC1_ENABLE, register)
                 }
 
-                public static void setTimeout(int nTimeout) {
-                    if (nTimeout > 99)
-                        nTimeout = 99;
-                    else if (nTimeout < 5)
-                        nTimeout = 5;
-                    registerValue = Scanner.setValue(BIT_DECODESESSION, nTimeout, registerValue, MAX_VALUE);
-                }
-            }
-
-            public static class Fnc1 {
-                public static final String S_KEY_ENABLE = "Enable";
-                public static final String S_KEY_ASCII = "Ascii";
-                private static final int BIT_FNC1_ENABLE = 8;
-                private static final int BIT_FNC1_VALUE = 9;
-                private static final int defaultValue = (DISABLE << BIT_FNC1_ENABLE) | (0 << BIT_FNC1_VALUE);
-                private static final int FNC1_MAX_VALUE = 0x7F;
-
-                public static void enable() {
-                    registerValue = Scanner.enable(BIT_FNC1_ENABLE, registerValue);
+                fun disable() {
+                    register = disable(BIT_FNC1_ENABLE, register)
                 }
 
-                public static void disable() {
-                    registerValue = Scanner.disable(BIT_FNC1_ENABLE, registerValue);
-                }
-
-                public static boolean isEnable() {
-                    return Scanner.isEnable(BIT_FNC1_ENABLE, registerValue);
-                }
-
-                public static int getAsciiCode() {
-                    return Scanner.getValue(BIT_FNC1_VALUE, registerValue, FNC1_MAX_VALUE);
-                }
-
-                public static void setAsciiCode(int nCode) {
-                    registerValue = Scanner.setValue(BIT_FNC1_VALUE, nCode, registerValue, FNC1_MAX_VALUE);
-                }
-            }
-
-            public static class Inverse {
-                public static final int MODE_REGULAR = 0;
-                public static final int MODE_INVERSE_ONLY = 1;
-                public static final int MODE_INVERSE_AUTO = 2;
-                static final int MAX_VALUE = 3;
-                private static final int BIT_INVERSE_1D = 16;
-                private static final int BIT_INVERSE_2D = 18;
-                private static final int defaultValue = (MODE_REGULAR << BIT_INVERSE_1D) | (MODE_REGULAR << BIT_INVERSE_2D);
-
-                public static class OneD {
-                    public static int getMode() {
-                        return Scanner.getValue(BIT_INVERSE_1D, registerValue, MAX_VALUE);
+                val isEnable: Boolean
+                    get() {
+                        return isEnable(
+                            BIT_FNC1_ENABLE,
+                            register
+                        )
                     }
 
-                    public static void setMode(int nMode) {
-                        registerValue = Scanner.setValue(BIT_INVERSE_1D, nMode, registerValue, MAX_VALUE);
+                var asciiCode: Int
+                    get() {
+                        return getValue(
+                            BIT_FNC1_VALUE,
+                            register,
+                            FNC1_MAX_VALUE
+                        )
                     }
-                }
-
-                public static class TwoD {
-                    public static int getMode() {
-                        return Scanner.getValue(BIT_INVERSE_2D, registerValue, MAX_VALUE);
+                    set(nCode) {
+                        register =
+                            setValue(
+                                BIT_FNC1_VALUE,
+                                nCode,
+                                register,
+                                FNC1_MAX_VALUE
+                            )
                     }
+            }
 
-                    public static void setMode(int nMode) {
-                        registerValue = Scanner.setValue(BIT_INVERSE_2D, nMode, registerValue, MAX_VALUE);
+            object Inverse {
+                const val MODE_REGULAR: Int = 0
+                const val MODE_INVERSE_ONLY: Int = 1
+                const val MODE_INVERSE_AUTO: Int = 2
+                const val MAX_VALUE: Int = 3
+                private const val BIT_INVERSE_1D: Int = 16
+                private const val BIT_INVERSE_2D: Int = 18
+                val defaultValue: Int =
+                    (MODE_REGULAR shl BIT_INVERSE_1D) or (MODE_REGULAR shl BIT_INVERSE_2D)
+
+                object OneD {
+                    var mode: Int
+                        get() {
+                            return getValue(
+                                BIT_INVERSE_1D,
+                                register,
+                                MAX_VALUE
+                            )
+                        }
+                        set(nMode) {
+                            register =
+                                setValue(
+                                    BIT_INVERSE_1D,
+                                    nMode,
+                                    register,
+                                    MAX_VALUE
+                                )
+                        }
+                }
+
+                object TwoD {
+                    var mode: Int
+                        get() {
+                            return getValue(
+                                BIT_INVERSE_2D,
+                                register,
+                                MAX_VALUE
+                            )
+                        }
+                        set(nMode) {
+                            register =
+                                setValue(
+                                    BIT_INVERSE_2D,
+                                    nMode,
+                                    register,
+                                    MAX_VALUE
+                                )
+                        }
+                }
+            }
+
+            object PickList {
+                private const val BIT_PICKLIST: Int = 20
+                val defaultValue: Int = ENABLE shl BIT_PICKLIST
+
+                fun enable() {
+                    register = enable(BIT_PICKLIST, register)
+                }
+
+                fun disable() {
+                    register = disable(BIT_PICKLIST, register)
+                }
+
+                val isEnable: Boolean
+                    get() {
+                        return isEnable(
+                            BIT_PICKLIST,
+                            register
+                        )
                     }
-                }
             }
 
-            public static class PickList {
-                private static final int BIT_PICKLIST = 20;
-                private static final int defaultValue = ENABLE << BIT_PICKLIST;
+            object MirroredImage {
+                private const val BIT_MIRRORED_IMAGE: Int = 21
+                val defaultValue: Int = DISABLE shl BIT_MIRRORED_IMAGE
 
-                public static void enable() {
-                    registerValue = Scanner.enable(BIT_PICKLIST, registerValue);
+                fun enable() {
+                    register = enable(BIT_MIRRORED_IMAGE, register)
                 }
 
-                public static void disable() {
-                    registerValue = Scanner.disable(BIT_PICKLIST, registerValue);
+                fun disable() {
+                    register = disable(BIT_MIRRORED_IMAGE, register)
                 }
 
-                public static boolean isEnable() {
-                    return Scanner.isEnable(BIT_PICKLIST, registerValue);
-                }
+                val isEnable: Boolean
+                    get() {
+                        return isEnable(
+                            BIT_MIRRORED_IMAGE,
+                            register
+                        )
+                    }
             }
 
-            public static class MirroredImage {
-                private static final int BIT_MIRRORED_IMAGE = 21;
-                private static final int defaultValue = DISABLE << BIT_MIRRORED_IMAGE;
+            object MobileDisplayMode {
+                private const val BIT_MOBILE_DISPLAY_MODE: Int = 22
+                val defaultValue: Int = DISABLE shl BIT_MOBILE_DISPLAY_MODE
 
-                public static void enable() {
-                    registerValue = Scanner.enable(BIT_MIRRORED_IMAGE, registerValue);
+                fun enable() {
+                    register = enable(BIT_MOBILE_DISPLAY_MODE, register)
                 }
 
-                public static void disable() {
-                    registerValue = Scanner.disable(BIT_MIRRORED_IMAGE, registerValue);
+                fun disable() {
+                    register = disable(BIT_MOBILE_DISPLAY_MODE, register)
                 }
 
-                public static boolean isEnable() {
-                    return Scanner.isEnable(BIT_MIRRORED_IMAGE, registerValue);
-                }
+                val isEnable: Boolean
+                    get() {
+                        return isEnable(
+                            BIT_MOBILE_DISPLAY_MODE,
+                            register
+                        )
+                    }
             }
 
-            public static class MobileDisplayMode {
-                private static final int BIT_MOBILE_DISPLAY_MODE = 22;
-                private static final int defaultValue = DISABLE << BIT_MOBILE_DISPLAY_MODE;
+            object DecodingIllumination {
+                private const val BIT_DECODING_ILLUMINATION: Int = 23
+                val defaultValue: Int = ENABLE shl BIT_DECODING_ILLUMINATION
 
-                public static void enable() {
-                    registerValue = Scanner.enable(BIT_MOBILE_DISPLAY_MODE, registerValue);
+                fun enable() {
+                    register = enable(BIT_DECODING_ILLUMINATION, register)
                 }
 
-                public static void disable() {
-                    registerValue = Scanner.disable(BIT_MOBILE_DISPLAY_MODE, registerValue);
+                fun disable() {
+                    register = disable(BIT_DECODING_ILLUMINATION, register)
                 }
 
-                public static boolean isEnable() {
-                    return Scanner.isEnable(BIT_MOBILE_DISPLAY_MODE, registerValue);
-                }
+                val isEnable: Boolean
+                    get() {
+                        return isEnable(
+                            BIT_DECODING_ILLUMINATION,
+                            register
+                        )
+                    }
             }
 
-            public static class DecodingIllumination {
-                private static final int BIT_DECODING_ILLUMINATION = 23;
-                private static final int defaultValue = ENABLE << BIT_DECODING_ILLUMINATION;
+            object DecodingAimingPattern {
+                private const val BIT_DECODING_AIMING_PATTERN: Int = 24
+                val defaultValue: Int = ENABLE shl BIT_DECODING_AIMING_PATTERN
 
-                public static void enable() {
-                    registerValue = Scanner.enable(BIT_DECODING_ILLUMINATION, registerValue);
+                fun enable() {
+                    register = enable(BIT_DECODING_AIMING_PATTERN, register)
                 }
 
-                public static void disable() {
-                    registerValue = Scanner.disable(BIT_DECODING_ILLUMINATION, registerValue);
+                fun disable() {
+                    register = disable(BIT_DECODING_AIMING_PATTERN, register)
                 }
 
-                public static boolean isEnable() {
-                    return Scanner.isEnable(BIT_DECODING_ILLUMINATION, registerValue);
-                }
+                val isEnable: Boolean
+                    get() {
+                        return isEnable(
+                            BIT_DECODING_AIMING_PATTERN,
+                            register
+                        )
+                    }
             }
 
-            public static class DecodingAimingPattern {
-                private static final int BIT_DECODING_AIMING_PATTERN = 24;
-                private static final int defaultValue = ENABLE << BIT_DECODING_AIMING_PATTERN;
+            object OneDQuietZoneLevel {
+                const val MODE_NORMALLY: Int = 0
+                const val MODE_MORE_AGGRESSIVELY: Int = 1
+                const val MODE_ONE_SIDE_EB: Int = 2
+                const val MODE_ANYTHING: Int = 3
 
-                public static void enable() {
-                    registerValue = Scanner.enable(BIT_DECODING_AIMING_PATTERN, registerValue);
-                }
+                private const val BIT_QUIETZONE_LEVEL: Int = 25
+                val defaultValue: Int = 1 shl BIT_QUIETZONE_LEVEL
+                private const val MAX_VALUE: Int = 3
 
-                public static void disable() {
-                    registerValue = Scanner.disable(BIT_DECODING_AIMING_PATTERN, registerValue);
-                }
-
-                public static boolean isEnable() {
-                    return Scanner.isEnable(BIT_DECODING_AIMING_PATTERN, registerValue);
-                }
+                var mode: Int
+                    get() {
+                        return getValue(
+                            BIT_QUIETZONE_LEVEL,
+                            register,
+                            MAX_VALUE
+                        )
+                    }
+                    set(nMode) {
+                        register =
+                            setValue(
+                                BIT_QUIETZONE_LEVEL,
+                                nMode,
+                                register,
+                                MAX_VALUE
+                            )
+                    }
             }
 
-            public static class OneDQuietZoneLevel {
-                public static final int MODE_NORMALLY = 0;
-                public static final int MODE_MORE_AGGRESSIVELY = 1;
-                public static final int MODE_ONE_SIDE_EB = 2;
-                public static final int MODE_ANYTHING = 3;
+            object IntercharacterGapSize {
+                const val LARGE_SIZE: Int = 1
+                const val NORMAL_SIZE: Int = 0
+                private const val BIT_INTERCHARACTER_GAP_SIZE: Int = 27
+                val defaultValue: Int = NORMAL_SIZE shl BIT_INTERCHARACTER_GAP_SIZE
 
-                private static final int BIT_QUIETZONE_LEVEL = 25;
-                private static final int defaultValue = 1 << BIT_QUIETZONE_LEVEL;
-                private static final int MAX_VALUE = 3;
-
-                public static int getMode() {
-                    return Scanner.getValue(BIT_QUIETZONE_LEVEL, registerValue, MAX_VALUE);
+                fun setLarge() {
+                    register = enable(BIT_INTERCHARACTER_GAP_SIZE, register)
                 }
 
-                public static void setMode(int nMode) {
-                    registerValue = Scanner.setValue(BIT_QUIETZONE_LEVEL, nMode, registerValue, MAX_VALUE);
+                fun setNormal() {
+                    register = disable(BIT_INTERCHARACTER_GAP_SIZE, register)
                 }
+
+                val size: Int
+                    get() {
+                        return if (isEnable(
+                                BIT_INTERCHARACTER_GAP_SIZE,
+                                register
+                            )
+                        ) 1 else 0
+                    }
             }
 
-            public static class IntercharacterGapSize {
-                public static final int LARGE_SIZE = 1;
-                public static final int NORMAL_SIZE = 0;
-                private static final int BIT_INTERCHARACTER_GAP_SIZE = 27;
-                private static final int defaultValue = NORMAL_SIZE << BIT_INTERCHARACTER_GAP_SIZE;
+            object Fuzzy1DProcessing {
+                const val BIT_1DFUZZY: Int = 28
+                val defaultValue: Int = ENABLE shl BIT_1DFUZZY
 
-                public static void setLarge() {
-                    registerValue = Scanner.enable(BIT_INTERCHARACTER_GAP_SIZE, registerValue);
+                fun enable() {
+                    register = enable(BIT_1DFUZZY, register)
                 }
 
-                public static void setNormal() {
-                    registerValue = Scanner.disable(BIT_INTERCHARACTER_GAP_SIZE, registerValue);
+                fun disable() {
+                    register = disable(BIT_1DFUZZY, register)
                 }
 
-                public static int getSize() {
-                    return Scanner.isEnable(BIT_INTERCHARACTER_GAP_SIZE, registerValue) ? 1 : 0;
-                }
-            }
-
-            public static class Fuzzy1DProcessing {
-                static final int BIT_1DFUZZY = 28;
-                private static final int defaultValue = ENABLE << BIT_1DFUZZY;
-
-                public static void enable() {
-                    registerValue = Scanner.enable(BIT_1DFUZZY, registerValue);
-                }
-
-                public static void disable() {
-                    registerValue = Scanner.disable(BIT_1DFUZZY, registerValue);
-                }
-
-                public static boolean isEnable() {
-                    return Scanner.isEnable(BIT_1DFUZZY, registerValue);
-                }
+                val isEnable: Boolean
+                    get() {
+                        return isEnable(
+                            BIT_1DFUZZY,
+                            register
+                        )
+                    }
             }
         }
 
-        public static class DataFormat {
+        object DataFormat {
             //private static int mDataOptionRegisterValue = 0x68A000;
-            private static int mDataOptionRegisterValue = getDefault();
+            var register: Int =
+                default
 
-            private static int getDefault() {
-                return TransmitCodeID.defaultValue
-                        | ScanDataTransmissionFormat.defaultValue
-                        | Prefix.defaultValue
-                        | Suffix1.defaultValue
-                        | Suffix2.defaultValue;
+            private val default: Int
+                get() {
+                    return (TransmitCodeID.defaultValue
+                            or ScanDataTransmissionFormat.defaultValue
+                            or Prefix.defaultValue
+                            or Suffix1.defaultValue
+                            or Suffix2.defaultValue)
+                }
+
+            fun setDefault() {
+                register =
+                    default
             }
 
-            public static int getRegister() {
-                return mDataOptionRegisterValue;
+            object TransmitCodeID {
+                private const val BIT_DATAOPTION_TRANSMIT_CODEID: Int = 0
+                internal val defaultValue: Int = 0 shl BIT_DATAOPTION_TRANSMIT_CODEID
+                var MAX_VALUE: Int = 0x3
+
+                var value: Int
+                    get() {
+                        return getValue(
+                            BIT_DATAOPTION_TRANSMIT_CODEID,
+                            register,
+                            MAX_VALUE
+                        )
+                    }
+                    set(mode) {
+                        register =
+                            setValue(
+                                BIT_DATAOPTION_TRANSMIT_CODEID,
+                                mode,
+                                register,
+                                MAX_VALUE
+                            )
+                    }
             }
 
-            public static void setRegister(int value) {
-                mDataOptionRegisterValue = value;
+            object ScanDataTransmissionFormat {
+                var BIT_DATAOPTION_TRANSMIT_FORMAT: Int = 2
+                val defaultValue: Int = 0 shl BIT_DATAOPTION_TRANSMIT_FORMAT
+                var MAX_VALUE: Int = 0x7
+
+                var format: Int
+                    get() {
+                        return getValue(
+                            BIT_DATAOPTION_TRANSMIT_FORMAT,
+                            register,
+                            MAX_VALUE
+                        )
+                    }
+                    set(formatType) {
+                        register =
+                            setValue(
+                                BIT_DATAOPTION_TRANSMIT_FORMAT,
+                                formatType,
+                                register,
+                                MAX_VALUE
+                            )
+                    }
             }
 
-            public static void setDefault() {
-                mDataOptionRegisterValue = getDefault();
+            object Prefix {
+                var BIT_DATAOPTION_PREFIX: Int = 5
+                val defaultValue: Int = 0 shl BIT_DATAOPTION_PREFIX
+                var MAX_VALUE: Int = 0x7F
+
+                var value: Int
+                    get() {
+                        return getValue(
+                            BIT_DATAOPTION_PREFIX,
+                            register,
+                            MAX_VALUE
+                        )
+                    }
+                    set(value) {
+                        register =
+                            setValue(
+                                BIT_DATAOPTION_PREFIX,
+                                value,
+                                register,
+                                MAX_VALUE
+                            )
+                    }
             }
 
-            public static class TransmitCodeID {
-                private static final int BIT_DATAOPTION_TRANSMIT_CODEID = 0;
-                private static final int defaultValue = 0 << BIT_DATAOPTION_TRANSMIT_CODEID;
-                static int MAX_VALUE = 0x3;
+            object Suffix1 {
+                var BIT_DATAOPTION_SUFFIX1: Int = 12
+                val defaultValue: Int = 0xA shl BIT_DATAOPTION_SUFFIX1
+                var MAX_VALUE: Int = 0x7F
 
-                public static int getValue() {
-                    return Scanner.getValue(BIT_DATAOPTION_TRANSMIT_CODEID, mDataOptionRegisterValue, MAX_VALUE);
-                }
-
-                public static void setValue(int mode) {
-                    mDataOptionRegisterValue = Scanner.setValue(BIT_DATAOPTION_TRANSMIT_CODEID, mode, mDataOptionRegisterValue, MAX_VALUE);
-                }
+                var value: Int
+                    get() {
+                        return getValue(
+                            BIT_DATAOPTION_SUFFIX1,
+                            register,
+                            MAX_VALUE
+                        )
+                    }
+                    set(value) {
+                        register =
+                            setValue(
+                                BIT_DATAOPTION_SUFFIX1,
+                                value,
+                                register,
+                                MAX_VALUE
+                            )
+                    }
             }
 
-            public static class ScanDataTransmissionFormat {
-                static int BIT_DATAOPTION_TRANSMIT_FORMAT = 2;
-                private static final int defaultValue = 0 << BIT_DATAOPTION_TRANSMIT_FORMAT;
-                static int MAX_VALUE = 0x7;
+            object Suffix2 {
+                var BIT_DATAOPTION_SUFFIX2: Int = 19
+                val defaultValue: Int = 0xD shl BIT_DATAOPTION_SUFFIX2
+                var MAX_VALUE: Int = 0x7F
 
-                public static int getFormat() {
-                    return Scanner.getValue(BIT_DATAOPTION_TRANSMIT_FORMAT, mDataOptionRegisterValue, MAX_VALUE);
-                }
-
-                public static void setFormat(int formatType) {
-                    mDataOptionRegisterValue = Scanner.setValue(BIT_DATAOPTION_TRANSMIT_FORMAT, formatType, mDataOptionRegisterValue, MAX_VALUE);
-                }
-            }
-
-            public static class Prefix {
-                static int BIT_DATAOPTION_PREFIX = 5;
-                private static final int defaultValue = 0 << BIT_DATAOPTION_PREFIX;
-                static int MAX_VALUE = 0x7F;
-
-                public static int getValue() {
-                    return Scanner.getValue(BIT_DATAOPTION_PREFIX, mDataOptionRegisterValue, MAX_VALUE);
-                }
-
-                public static void setValue(int value) {
-                    mDataOptionRegisterValue = Scanner.setValue(BIT_DATAOPTION_PREFIX, value, mDataOptionRegisterValue, MAX_VALUE);
-                }
-            }
-
-            public static class Suffix1 {
-                static int BIT_DATAOPTION_SUFFIX1 = 12;
-                private static final int defaultValue = 0xA << BIT_DATAOPTION_SUFFIX1;
-                static int MAX_VALUE = 0x7F;
-
-                public static int getValue() {
-                    return Scanner.getValue(BIT_DATAOPTION_SUFFIX1, mDataOptionRegisterValue, MAX_VALUE);
-                }
-
-                public static void setValue(int value) {
-                    mDataOptionRegisterValue = Scanner.setValue(BIT_DATAOPTION_SUFFIX1, value, mDataOptionRegisterValue, MAX_VALUE);
-                }
-            }
-
-            public static class Suffix2 {
-                static int BIT_DATAOPTION_SUFFIX2 = 19;
-                private static final int defaultValue = 0xD << BIT_DATAOPTION_SUFFIX2;
-                static int MAX_VALUE = 0x7F;
-
-                public static int getValue() {
-                    return Scanner.getValue(BIT_DATAOPTION_SUFFIX2, mDataOptionRegisterValue, MAX_VALUE);
-                }
-
-                public static void setValue(int value) {
-                    mDataOptionRegisterValue = Scanner.setValue(BIT_DATAOPTION_SUFFIX2, value, mDataOptionRegisterValue, MAX_VALUE);
-                }
+                var value: Int
+                    get() {
+                        return getValue(
+                            BIT_DATAOPTION_SUFFIX2,
+                            register,
+                            MAX_VALUE
+                        )
+                    }
+                    set(value) {
+                        register =
+                            setValue(
+                                BIT_DATAOPTION_SUFFIX2,
+                                value,
+                                register,
+                                MAX_VALUE
+                            )
+                    }
             }
         }
 
-        public static class RedundancyAndSecurityLevel {
+        object RedundancyAndSecurityLevel {
             //private static int mRnSRegister = 0x5;
-            private static int mRnSRegister = getDefault();
+            var register: Int = default
 
-            private static int getDefault() {
-                return Redundancy.defaultValue
-                        | Security.defaultValue;
+            private val default: Int
+                get() {
+                    return (Redundancy.defaultValue
+                            or Security.defaultValue)
+                }
+
+            fun setDefault() {
+                register = default
             }
 
-            public static int getRegister() {
-                return mRnSRegister;
+            object Security {
+                const val BIT_RNS_SECURITY: Int = 2
+                const val MAX_VALUE: Int = 0x3
+                val defaultValue: Int = 1 shl BIT_RNS_SECURITY
+
+                fun level0() {
+                    register = setValue(BIT_RNS_SECURITY, 0x0, register, MAX_VALUE)
+                }
+
+                fun level1() {
+                    register = setValue(BIT_RNS_SECURITY, 0x1, register, MAX_VALUE)
+                }
+
+                fun level2() {
+                    register = setValue(BIT_RNS_SECURITY, 0x2, register, MAX_VALUE)
+                }
+
+                fun level3() {
+                    register = setValue(BIT_RNS_SECURITY, 0x3, register, MAX_VALUE)
+                }
+
+                val value: Int
+                    get() {
+                        return getValue(
+                            BIT_RNS_SECURITY,
+                            register,
+                            MAX_VALUE
+                        )
+                    }
             }
 
-            public static void setRegister(int value) {
-                mRnSRegister = value;
-            }
+            object Redundancy {
+                const val BIT_RNS_REDUNDANCY: Int = 0
+                const val MAX_VALUE: Int = 0x3
+                val defaultValue: Int = 1 shl BIT_RNS_REDUNDANCY
 
-            public static void setDefault() {
-                mRnSRegister = getDefault();
-            }
-
-            public static class Security {
-                static final int BIT_RNS_SECURITY = 2;
-                static final int MAX_VALUE = 0x3;
-                private static final int defaultValue = 1 << BIT_RNS_SECURITY;
-
-                public static void level0() {
-                    mRnSRegister = Scanner.setValue(BIT_RNS_SECURITY, 0x0, mRnSRegister, MAX_VALUE);
+                fun level1() {
+                    register = setValue(BIT_RNS_REDUNDANCY, 0x0, register, MAX_VALUE)
                 }
 
-                public static void level1() {
-                    mRnSRegister = Scanner.setValue(BIT_RNS_SECURITY, 0x1, mRnSRegister, MAX_VALUE);
+                fun level2() {
+                    register = setValue(BIT_RNS_REDUNDANCY, 0x1, register, MAX_VALUE)
                 }
 
-                public static void level2() {
-                    mRnSRegister = Scanner.setValue(BIT_RNS_SECURITY, 0x2, mRnSRegister, MAX_VALUE);
+                fun level3() {
+                    register = setValue(BIT_RNS_REDUNDANCY, 0x2, register, MAX_VALUE)
                 }
 
-                public static void level3() {
-                    mRnSRegister = Scanner.setValue(BIT_RNS_SECURITY, 0x3, mRnSRegister, MAX_VALUE);
+                fun level4() {
+                    register = setValue(BIT_RNS_REDUNDANCY, 0x3, register, MAX_VALUE)
                 }
 
-                public static int getValue() {
-                    return Scanner.getValue(BIT_RNS_SECURITY, mRnSRegister, MAX_VALUE);
-                }
-            }
-
-            public static class Redundancy {
-                static final int BIT_RNS_REDUNDANCY = 0;
-                static final int MAX_VALUE = 0x3;
-                private static final int defaultValue = 1 << BIT_RNS_REDUNDANCY;
-
-                public static void level1() {
-                    mRnSRegister = Scanner.setValue(BIT_RNS_REDUNDANCY, 0x0, mRnSRegister, MAX_VALUE);
-                }
-
-                public static void level2() {
-                    mRnSRegister = Scanner.setValue(BIT_RNS_REDUNDANCY, 0x1, mRnSRegister, MAX_VALUE);
-                }
-
-                public static void level3() {
-                    mRnSRegister = Scanner.setValue(BIT_RNS_REDUNDANCY, 0x2, mRnSRegister, MAX_VALUE);
-                }
-
-                public static void level4() {
-                    mRnSRegister = Scanner.setValue(BIT_RNS_REDUNDANCY, 0x3, mRnSRegister, MAX_VALUE);
-                }
-
-                public static int getValue() {
-                    return Scanner.getValue(BIT_RNS_REDUNDANCY, mRnSRegister, MAX_VALUE);
-                }
+                val value: Int
+                    get() {
+                        return getValue(
+                            BIT_RNS_REDUNDANCY,
+                            register,
+                            MAX_VALUE
+                        )
+                    }
             }
         }
 
-        public static class Delimiter {
+        object Delimiter {
             //private static int mDelimiterRegister = 0x1A28;
-            private static int mDelimiterRegister = getDefault();
+            var register: Int = default
 
-            private static int getDefault() {
-                return TransmissionFormat.defaultValue
-                        | Delimiter1.defaultValue
-                        | Delimiter2.defaultValue;
+            private val default: Int
+                get() {
+                    return (TransmissionFormat.defaultValue
+                            or Delimiter1.defaultValue
+                            or Delimiter2.defaultValue)
+                }
+
+            fun setDefault() {
+                register = default
             }
 
-            public static int getRegister() {
-                return mDelimiterRegister;
+            object Delimiter2 {
+                var BIT_DELIMITER_DELIMITER2: Int = 9
+                val defaultValue: Int = 0xD shl BIT_DELIMITER_DELIMITER2
+                var MAX_VALUE: Int = 0x7F
+
+                var value: Int
+                    get() {
+                        return getValue(
+                            BIT_DELIMITER_DELIMITER2,
+                            register,
+                            MAX_VALUE
+                        )
+                    }
+                    set(value) {
+                        register =
+                            setValue(
+                                BIT_DELIMITER_DELIMITER2,
+                                value,
+                                register,
+                                MAX_VALUE
+                            )
+                    }
             }
 
-            public static void setRegister(int value) {
-                mDelimiterRegister = value;
+            object Delimiter1 {
+                var BIT_DELIMITER_DELIMITER1: Int = 2
+                val defaultValue: Int = 0xA shl BIT_DELIMITER_DELIMITER1
+                var MAX_VALUE: Int = 0x7F
+
+                var value: Int
+                    get() {
+                        return getValue(
+                            BIT_DELIMITER_DELIMITER1,
+                            register,
+                            MAX_VALUE
+                        )
+                    }
+                    set(value) {
+                        register =
+                            setValue(
+                                BIT_DELIMITER_DELIMITER1,
+                                value,
+                                register,
+                                MAX_VALUE
+                            )
+                    }
             }
 
-            public static void setDefault() {
-                mDelimiterRegister = getDefault();
-            }
+            object TransmissionFormat {
+                const val BIT_RNS_SECURITY: Int = 0
+                const val MAX_VALUE: Int = 0x3
+                val defaultValue: Int = 0 shl BIT_RNS_SECURITY
 
-            public static class Delimiter2 {
-                static int BIT_DELIMITER_DELIMITER2 = 9;
-                private static final int defaultValue = 0xD << BIT_DELIMITER_DELIMITER2;
-                static int MAX_VALUE = 0x7F;
-
-                public static int getValue() {
-                    return Scanner.getValue(BIT_DELIMITER_DELIMITER2, mDelimiterRegister, MAX_VALUE);
+                fun dataAsIs() {
+                    register = setValue(BIT_RNS_SECURITY, 0x0, register, MAX_VALUE)
                 }
 
-                public static void setValue(int value) {
-                    mDelimiterRegister = Scanner.setValue(BIT_DELIMITER_DELIMITER2, value, mDelimiterRegister, MAX_VALUE);
-                }
-            }
-
-            public static class Delimiter1 {
-                static int BIT_DELIMITER_DELIMITER1 = 2;
-                private static final int defaultValue = 0xA << BIT_DELIMITER_DELIMITER1;
-                static int MAX_VALUE = 0x7F;
-
-                public static int getValue() {
-                    return Scanner.getValue(BIT_DELIMITER_DELIMITER1, mDelimiterRegister, MAX_VALUE);
+                fun setData1_Delimiter1_Data2() {
+                    register = setValue(BIT_RNS_SECURITY, 0x1, register, MAX_VALUE)
                 }
 
-                public static void setValue(int value) {
-                    mDelimiterRegister = Scanner.setValue(BIT_DELIMITER_DELIMITER1, value, mDelimiterRegister, MAX_VALUE);
-                }
-            }
-
-            public static class TransmissionFormat {
-                static final int BIT_RNS_SECURITY = 0;
-                static final int MAX_VALUE = 0x3;
-                private static final int defaultValue = 0 << BIT_RNS_SECURITY;
-
-                public static void dataAsIs() {
-                    mDelimiterRegister = Scanner.setValue(BIT_RNS_SECURITY, 0x0, mDelimiterRegister, MAX_VALUE);
+                fun setData1_Delimiter2_Data2() {
+                    register = setValue(BIT_RNS_SECURITY, 0x2, register, MAX_VALUE)
                 }
 
-                public static void setData1_Delimiter1_Data2() {
-                    mDelimiterRegister = Scanner.setValue(BIT_RNS_SECURITY, 0x1, mDelimiterRegister, MAX_VALUE);
+                fun setData1_Delimiter1_Delimiter2_Data2() {
+                    register = setValue(BIT_RNS_SECURITY, 0x3, register, MAX_VALUE)
                 }
 
-                public static void setData1_Delimiter2_Data2() {
-                    mDelimiterRegister = Scanner.setValue(BIT_RNS_SECURITY, 0x2, mDelimiterRegister, MAX_VALUE);
-                }
-
-                public static void setData1_Delimiter1_Delimiter2_Data2() {
-                    mDelimiterRegister = Scanner.setValue(BIT_RNS_SECURITY, 0x3, mDelimiterRegister, MAX_VALUE);
-                }
-
-                public static int getValue() {
-                    return Scanner.getValue(BIT_RNS_SECURITY, mDelimiterRegister, MAX_VALUE);
-                }
+                val value: Int
+                    get() {
+                        return getValue(
+                            BIT_RNS_SECURITY,
+                            register,
+                            MAX_VALUE
+                        )
+                    }
             }
         }
 
-        public static class Symbologies {
-
-            public static void setDefault() {
-                OneD.setDefault();
-                TwoD.setDefault();
-                AdvancedConfig.OneD.UPCEAN.setDefault();
-                AdvancedConfig.OneD.Codabar.setDefault();
-                AdvancedConfig.OneD.Code11.setDefault();
-                AdvancedConfig.OneD.Code39.setDefault();
-                AdvancedConfig.OneD.Code93.setDefault();
-                AdvancedConfig.OneD.Code128.setDefault();
-                AdvancedConfig.OneD.Discrete2of5.setDefault();
-                AdvancedConfig.OneD.GS1Databar.setDefault();
-                AdvancedConfig.OneD.Interleaved2of5.setDefault();
-                AdvancedConfig.OneD.ISBN.setDefault();
-                AdvancedConfig.OneD.ISBT.setDefault();
-                AdvancedConfig.OneD.Matrix2of5.setDefault();
-                AdvancedConfig.OneD.MSI.setDefault();
-                AdvancedConfig.TwoD.Composite.setDefault();
-                AdvancedConfig.TwoD.DataMatrix.setDefault();
-                AdvancedConfig.TwoD.MacroPDF.setDefault();
-                AdvancedConfig.TwoD.MicroPDF417.setDefault();
-                AdvancedConfig.TwoD.PostalCodes.setDefault();
+        object Symbologies {
+            fun setDefault() {
+                OneD.setDefault()
+                TwoD.setDefault()
+                UPCEAN.setDefault()
+                AdvancedConfig.OneD.Codabar.setDefault()
+                Code11.setDefault()
+                Code39.setDefault()
+                Code93.setDefault()
+                Code128.setDefault()
+                Discrete2of5.setDefault()
+                AdvancedConfig.OneD.GS1Databar.setDefault()
+                Interleaved2of5.setDefault()
+                AdvancedConfig.OneD.ISBN.setDefault()
+                ISBT.setDefault()
+                Matrix2of5.setDefault()
+                AdvancedConfig.OneD.MSI.setDefault()
+                AdvancedConfig.TwoD.Composite.setDefault()
+                AdvancedConfig.TwoD.DataMatrix.setDefault()
+                MacroPDF.setDefault()
+                MicroPDF417.setDefault()
+                PostalCodes.setDefault()
             }
 
-            public static class OneD {
+            object OneD {
                 //private static int mOneDRegisterValue = 0xE3C79B;
-                private static int mOneDRegisterValue = getDefault();
+                var register: Int =
+                    default
 
-                private static int getDefault() {
-                    return (UPC_A.defaultValue
-                            | UPC_E0.defaultValue
-                            | UPC_E1.defaultValue
-                            | EAN_8.defaultValue
-                            | EAN_13.defaultValue
-                            | ISBN.defaultValue
-                            | ISSN.defaultValue
-                            | CODE_128.defaultValue
-                            | GS1_128.defaultValue
-                            | ISBT_128.defaultValue
-                            | CODE_39.defaultValue
-                            | Trioptic_39.defaultValue
-                            | CODE_93.defaultValue
-                            | CODE_11.defaultValue
-                            | Interleaved_2of5.defaultValue
-                            | Discrete_2of5.defaultValue
-                            | Codabar.defaultValue
-                            | (MSI.defaultValue)
-                            | Chinese_2of5.defaultValue
-                            | Matrix_2of5.defaultValue
-                            | Korean_3of5.defaultValue
-                            | GS1Databar.defaultValue
-                            | GS1DatabarLimited.defaultValue
-                            | GS1DatabarExpanded.defaultValue);
+                private val default: Int
+                    get() {
+                        return ((UPC_A.defaultValue
+                                or UPC_E0.defaultValue
+                                or UPC_E1.defaultValue
+                                or EAN_8.defaultValue
+                                or EAN_13.defaultValue
+                                or ISBN.defaultValue
+                                or ISSN.defaultValue
+                                or CODE_128.defaultValue
+                                or GS1_128.defaultValue
+                                or ISBT_128.defaultValue
+                                or CODE_39.defaultValue
+                                or Trioptic_39.defaultValue
+                                or CODE_93.defaultValue
+                                or CODE_11.defaultValue
+                                or Interleaved_2of5.defaultValue
+                                or Discrete_2of5.defaultValue
+                                or Codabar.defaultValue
+                                or (MSI.defaultValue)
+                                or Chinese_2of5.defaultValue
+                                or Matrix_2of5.defaultValue
+                                or Korean_3of5.defaultValue
+                                or GS1Databar.defaultValue
+                                or GS1DatabarLimited.defaultValue
+                                or GS1DatabarExpanded.defaultValue))
+                    }
+
+                fun setDefault() {
+                    register =
+                        default
                 }
 
-                public static void setDefault() {
-                    mOneDRegisterValue = getDefault();
+                object UPC_A {
+                    const val BIT_UPC_A: Int = 0
+                    val defaultValue: Int = ENABLE shl BIT_UPC_A
+
+                    fun enable() {
+                        register = enable(BIT_UPC_A, register)
+                    }
+
+                    fun disable() {
+                        register = disable(BIT_UPC_A, register)
+                    }
+
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_UPC_A,
+                                register
+                            )
+                        }
                 }
 
-                public static int getRegister() {
-                    return mOneDRegisterValue;
+                object UPC_E0 {
+                    const val BIT_UPC_E0: Int = 1
+                    val defaultValue: Int = ENABLE shl BIT_UPC_E0
+
+                    fun enable() {
+                        register = enable(BIT_UPC_E0, register)
+                    }
+
+                    fun disable() {
+                        register = disable(BIT_UPC_E0, register)
+                    }
+
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_UPC_E0,
+                                register
+                            )
+                        }
                 }
 
-                public static void setRegister(int value) {
-                    mOneDRegisterValue = value;
+                object UPC_E1 {
+                    const val BIT_UPC_E1: Int = 2
+                    val defaultValue: Int = DISABLE shl BIT_UPC_E1
+
+                    fun enable() {
+                        register = enable(BIT_UPC_E1, register)
+                    }
+
+                    fun disable() {
+                        register = disable(BIT_UPC_E1, register)
+                    }
+
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_UPC_E1,
+                                register
+                            )
+                        }
                 }
 
-                public static class UPC_A {
-                    static final int BIT_UPC_A = 0;
-                    static final int defaultValue = ENABLE << BIT_UPC_A;
+                object EAN_8 {
+                    const val BIT_EAN_8: Int = 3
+                    val defaultValue: Int = ENABLE shl BIT_EAN_8
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_UPC_A, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_EAN_8, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_UPC_A, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_EAN_8, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_UPC_A, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_EAN_8,
+                                register
+                            )
+                        }
                 }
 
-                public static class UPC_E0 {
-                    static final int BIT_UPC_E0 = 1;
-                    static final int defaultValue = ENABLE << BIT_UPC_E0;
+                object EAN_13 {
+                    const val BIT_EAN_13: Int = 4
+                    val defaultValue: Int = ENABLE shl BIT_EAN_13
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_UPC_E0, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_EAN_13, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_UPC_E0, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_EAN_13, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_UPC_E0, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_EAN_13,
+                                register
+                            )
+                        }
                 }
 
-                public static class UPC_E1 {
-                    static final int BIT_UPC_E1 = 2;
-                    static final int defaultValue = DISABLE << BIT_UPC_E1;
+                object ISBN {
+                    const val BIT_ISBN: Int = 5
+                    val defaultValue: Int = DISABLE shl BIT_ISBN
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_UPC_E1, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_ISBN, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_UPC_E1, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_ISBN, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_UPC_E1, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_ISBN,
+                                register
+                            )
+                        }
                 }
 
-                public static class EAN_8 {
-                    static final int BIT_EAN_8 = 3;
-                    static final int defaultValue = ENABLE << BIT_EAN_8;
+                object ISSN {
+                    const val BIT_ISSN: Int = 6
+                    val defaultValue: Int = DISABLE shl BIT_ISSN
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_EAN_8, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_ISSN, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_EAN_8, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_ISSN, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_EAN_8, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_ISSN,
+                                register
+                            )
+                        }
                 }
 
-                public static class EAN_13 {
-                    static final int BIT_EAN_13 = 4;
-                    static final int defaultValue = ENABLE << BIT_EAN_13;
+                object CODE_128 {
+                    const val BIT_CODE_128: Int = 7
+                    val defaultValue: Int = ENABLE shl BIT_CODE_128
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_EAN_13, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_CODE_128, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_EAN_13, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_CODE_128, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_EAN_13, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_CODE_128,
+                                register
+                            )
+                        }
                 }
 
-                public static class ISBN {
-                    static final int BIT_ISBN = 5;
-                    static final int defaultValue = DISABLE << BIT_ISBN;
+                object GS1_128 {
+                    const val BIT_GS1_128: Int = 8
+                    val defaultValue: Int = ENABLE shl BIT_GS1_128
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_ISBN, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_GS1_128, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_ISBN, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_GS1_128, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_ISBN, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_GS1_128,
+                                register
+                            )
+                        }
                 }
 
-                public static class ISSN {
-                    static final int BIT_ISSN = 6;
-                    static final int defaultValue = DISABLE << BIT_ISSN;
+                object ISBT_128 {
+                    const val BIT_ISBT_128: Int = 9
+                    val defaultValue: Int = ENABLE shl BIT_ISBT_128
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_ISSN, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_ISBT_128, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_ISSN, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_ISBT_128, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_ISSN, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_ISBT_128,
+                                register
+                            )
+                        }
                 }
 
-                public static class CODE_128 {
-                    static final int BIT_CODE_128 = 7;
-                    static final int defaultValue = ENABLE << BIT_CODE_128;
+                object CODE_39 {
+                    const val BIT_CODE_39: Int = 10
+                    val defaultValue: Int = ENABLE shl BIT_CODE_39
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_CODE_128, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_CODE_39, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_CODE_128, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_CODE_39, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_CODE_128, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_CODE_39,
+                                register
+                            )
+                        }
                 }
 
-                public static class GS1_128 {
-                    static final int BIT_GS1_128 = 8;
-                    static final int defaultValue = ENABLE << BIT_GS1_128;
+                object Trioptic_39 {
+                    const val BIT_TRIOPTIC_39: Int = 11
+                    val defaultValue: Int = DISABLE shl BIT_TRIOPTIC_39
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_GS1_128, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_TRIOPTIC_39, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_GS1_128, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_TRIOPTIC_39, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_GS1_128, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_TRIOPTIC_39,
+                                register
+                            )
+                        }
                 }
 
-                public static class ISBT_128 {
-                    static final int BIT_ISBT_128 = 9;
-                    static final int defaultValue = ENABLE << BIT_ISBT_128;
+                object CODE_93 {
+                    const val BIT_CODE_93: Int = 12
+                    val defaultValue: Int = DISABLE shl BIT_CODE_93
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_ISBT_128, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_CODE_93, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_ISBT_128, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_CODE_93, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_ISBT_128, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_CODE_93,
+                                register
+                            )
+                        }
                 }
 
-                public static class CODE_39 {
-                    static final int BIT_CODE_39 = 10;
-                    static final int defaultValue = ENABLE << BIT_CODE_39;
+                object CODE_11 {
+                    const val BIT_CODE_11: Int = 13
+                    val defaultValue: Int = DISABLE shl BIT_CODE_11
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_CODE_39, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_CODE_11, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_CODE_39, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_CODE_11, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_CODE_39, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_CODE_11,
+                                register
+                            )
+                        }
                 }
 
-                public static class Trioptic_39 {
-                    static final int BIT_TRIOPTIC_39 = 11;
-                    static final int defaultValue = DISABLE << BIT_TRIOPTIC_39;
+                object Interleaved_2of5 {
+                    const val BIT_INTERLEAVED_2OF5: Int = 14
+                    val defaultValue: Int = ENABLE shl BIT_INTERLEAVED_2OF5
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_TRIOPTIC_39, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_INTERLEAVED_2OF5, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_TRIOPTIC_39, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_INTERLEAVED_2OF5, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_TRIOPTIC_39, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_INTERLEAVED_2OF5,
+                                register
+                            )
+                        }
                 }
 
-                public static class CODE_93 {
-                    static final int BIT_CODE_93 = 12;
-                    static final int defaultValue = DISABLE << BIT_CODE_93;
+                object Discrete_2of5 {
+                    const val BIT_DISCRETE_2OF5: Int = 15
+                    val defaultValue: Int = ENABLE shl BIT_DISCRETE_2OF5
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_CODE_93, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_DISCRETE_2OF5, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_CODE_93, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_DISCRETE_2OF5, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_CODE_93, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_DISCRETE_2OF5,
+                                register
+                            )
+                        }
                 }
 
-                public static class CODE_11 {
-                    static final int BIT_CODE_11 = 13;
-                    static final int defaultValue = DISABLE << BIT_CODE_11;
+                object Codabar {
+                    const val BIT_CODABAR: Int = 16
+                    val defaultValue: Int = ENABLE shl BIT_CODABAR
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_CODE_11, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_CODABAR, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_CODE_11, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_CODABAR, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_CODE_11, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_CODABAR,
+                                register
+                            )
+                        }
                 }
 
-                public static class Interleaved_2of5 {
-                    static final int BIT_INTERLEAVED_2OF5 = 14;
-                    static final int defaultValue = ENABLE << BIT_INTERLEAVED_2OF5;
+                object MSI {
+                    const val BIT_MSI: Int = 17
+                    val defaultValue: Int = ENABLE shl BIT_MSI
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_INTERLEAVED_2OF5, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_MSI, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_INTERLEAVED_2OF5, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_MSI, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_INTERLEAVED_2OF5, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_MSI,
+                                register
+                            )
+                        }
                 }
 
-                public static class Discrete_2of5 {
-                    static final int BIT_DISCRETE_2OF5 = 15;
-                    static final int defaultValue = ENABLE << BIT_DISCRETE_2OF5;
+                object Chinese_2of5 {
+                    val defaultValue: Int = DISABLE
+                    const val BIT_CHINESE_2OF5: Int = 18
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_DISCRETE_2OF5, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_CHINESE_2OF5, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_DISCRETE_2OF5, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_CHINESE_2OF5, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_DISCRETE_2OF5, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_CHINESE_2OF5,
+                                register
+                            )
+                        }
                 }
 
-                public static class Codabar {
-                    static final int BIT_CODABAR = 16;
-                    static final int defaultValue = ENABLE << BIT_CODABAR;
+                object Matrix_2of5 {
+                    val defaultValue: Int = DISABLE
+                    const val BIT_MATRIX_2OF5: Int = 19
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_CODABAR, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_MATRIX_2OF5, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_CODABAR, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_MATRIX_2OF5, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_CODABAR, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_MATRIX_2OF5,
+                                register
+                            )
+                        }
                 }
 
-                public static class MSI {
-                    static final int BIT_MSI = 17;
-                    static final int defaultValue = ENABLE << BIT_MSI;
+                object Korean_3of5 {
+                    val defaultValue: Int = DISABLE
+                    const val BIT_KOREAN_2OF5: Int = 20
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_MSI, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_KOREAN_2OF5, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_MSI, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_KOREAN_2OF5, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_MSI, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_KOREAN_2OF5,
+                                register
+                            )
+                        }
                 }
 
-                public static class Chinese_2of5 {
-                    static final int defaultValue = DISABLE;
-                    static final int BIT_CHINESE_2OF5 = 18;
+                object GS1Databar {
+                    const val BIT_GS1_DATABAR: Int = 21
+                    val defaultValue: Int = ENABLE shl BIT_GS1_DATABAR
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_CHINESE_2OF5, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_GS1_DATABAR, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_CHINESE_2OF5, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_GS1_DATABAR, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_CHINESE_2OF5, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_GS1_DATABAR,
+                                register
+                            )
+                        }
                 }
 
-                public static class Matrix_2of5 {
-                    static final int defaultValue = DISABLE;
-                    static final int BIT_MATRIX_2OF5 = 19;
+                object GS1DatabarLimited {
+                    const val BIT_GS1_DATABAR_LIMITED: Int = 22
+                    val defaultValue: Int = ENABLE shl BIT_GS1_DATABAR_LIMITED
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_MATRIX_2OF5, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_GS1_DATABAR_LIMITED, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_MATRIX_2OF5, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_GS1_DATABAR_LIMITED, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_MATRIX_2OF5, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_GS1_DATABAR_LIMITED,
+                                register
+                            )
+                        }
                 }
 
-                public static class Korean_3of5 {
-                    static final int defaultValue = DISABLE;
-                    static final int BIT_KOREAN_2OF5 = 20;
+                object GS1DatabarExpanded {
+                    const val BIT_GS1_DATABAR_EXPANDED: Int = 23
+                    val defaultValue: Int = ENABLE shl BIT_GS1_DATABAR_EXPANDED
 
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_KOREAN_2OF5, mOneDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_GS1_DATABAR_EXPANDED, register)
                     }
 
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_KOREAN_2OF5, mOneDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_GS1_DATABAR_EXPANDED, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_KOREAN_2OF5, mOneDRegisterValue);
-                    }
-                }
-
-                public static class GS1Databar {
-                    static final int BIT_GS1_DATABAR = 21;
-                    static final int defaultValue = ENABLE << BIT_GS1_DATABAR;
-
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_GS1_DATABAR, mOneDRegisterValue);
-                    }
-
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_GS1_DATABAR, mOneDRegisterValue);
-                    }
-
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_GS1_DATABAR, mOneDRegisterValue);
-                    }
-                }
-
-                public static class GS1DatabarLimited {
-                    static final int BIT_GS1_DATABAR_LIMITED = 22;
-                    static final int defaultValue = ENABLE << BIT_GS1_DATABAR_LIMITED;
-
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_GS1_DATABAR_LIMITED, mOneDRegisterValue);
-                    }
-
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_GS1_DATABAR_LIMITED, mOneDRegisterValue);
-                    }
-
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_GS1_DATABAR_LIMITED, mOneDRegisterValue);
-                    }
-                }
-
-                public static class GS1DatabarExpanded {
-                    static final int BIT_GS1_DATABAR_EXPANDED = 23;
-                    static final int defaultValue = ENABLE << BIT_GS1_DATABAR_EXPANDED;
-
-                    public static void enable() {
-                        mOneDRegisterValue = Scanner.enable(BIT_GS1_DATABAR_EXPANDED, mOneDRegisterValue);
-                    }
-
-                    public static void disable() {
-                        mOneDRegisterValue = Scanner.disable(BIT_GS1_DATABAR_EXPANDED, mOneDRegisterValue);
-                    }
-
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_GS1_DATABAR_EXPANDED, mOneDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_GS1_DATABAR_EXPANDED,
+                                register
+                            )
+                        }
                 }
             }
 
-            public static class TwoD {
+            object TwoD {
                 //private static int mTwoDRegisterValue = 0x3B800;
-                private static int mTwoDRegisterValue = getDefault();
+                var register: Int =
+                    default
 
-                private static int getDefault() {
-                    return USPostnet.defaultValue
-                            | USPlanet.defaultValue
-                            | UKPostal.defaultValue
-                            | JapanPostal.defaultValue
-                            | AustraliaPost.defaultValue
-                            | NetherlandsKixCode.defaultValue
-                            | InteligentMail.defaultValue
-                            | UPU_FICS_Postal.defaultValue
-                            | CompositeCC_C.defaultValue
-                            | CompositeCC_AB.defaultValue
-                            | CompositeTLC_39.defaultValue
-                            | PDF_417.defaultValue
-                            | MicroPDF_417.defaultValue
-                            | DataMatrix.defaultValue
-                            | MaxiCode.defaultValue
-                            | QRCode.defaultValue
-                            | MicroQR.defaultValue
-                            | Aztec.defaultValue
-                            | HanXin.defaultValue;
+                private val default: Int
+                    get() {
+                        return (USPostnet.defaultValue
+                                or USPlanet.defaultValue
+                                or UKPostal.defaultValue
+                                or JapanPostal.defaultValue
+                                or AustraliaPost.defaultValue
+                                or NetherlandsKixCode.defaultValue
+                                or InteligentMail.defaultValue
+                                or UPU_FICS_Postal.defaultValue
+                                or CompositeCC_C.defaultValue
+                                or CompositeCC_AB.defaultValue
+                                or CompositeTLC_39.defaultValue
+                                or PDF_417.defaultValue
+                                or MicroPDF_417.defaultValue
+                                or DataMatrix.defaultValue
+                                or MaxiCode.defaultValue
+                                or QRCode.defaultValue
+                                or MicroQR.defaultValue
+                                or Aztec.defaultValue
+                                or HanXin.defaultValue)
+                    }
+
+                fun setDefault() {
+                    register =
+                        default
                 }
 
-                public static void setDefault() {
-                    mTwoDRegisterValue = getDefault();
+                object USPostnet {
+                    const val BIT_US_POSTNET: Int = 0
+                    val defaultValue: Int = DISABLE shl BIT_US_POSTNET
+
+                    fun enable() {
+                        register = enable(BIT_US_POSTNET, register)
+                    }
+
+                    fun disable() {
+                        register = disable(BIT_US_POSTNET, register)
+                    }
+
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_US_POSTNET,
+                                register
+                            )
+                        }
                 }
 
-                public static int getRegister() {
-                    return mTwoDRegisterValue;
+                object USPlanet {
+                    const val BIT_US_PLANET: Int = 1
+                    val defaultValue: Int = DISABLE shl BIT_US_PLANET
+
+                    fun enable() {
+                        register = enable(BIT_US_PLANET, register)
+                    }
+
+                    fun disable() {
+                        register = disable(BIT_US_PLANET, register)
+                    }
+
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_US_PLANET,
+                                register
+                            )
+                        }
                 }
 
-                public static void setRegister(int value) {
-                    mTwoDRegisterValue = value;
+                object UKPostal {
+                    const val BIT_UK_POSTAL: Int = 2
+                    val defaultValue: Int = DISABLE shl BIT_UK_POSTAL
+
+                    fun enable() {
+                        register = enable(BIT_UK_POSTAL, register)
+                    }
+
+                    fun disable() {
+                        register = disable(BIT_UK_POSTAL, register)
+                    }
+
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_UK_POSTAL,
+                                register
+                            )
+                        }
                 }
 
-                public static class USPostnet {
-                    static final int BIT_US_POSTNET = 0;
-                    static final int defaultValue = DISABLE << BIT_US_POSTNET;
+                object JapanPostal {
+                    const val BIT_JAPAN_POSTAL: Int = 3
+                    val defaultValue: Int = DISABLE shl BIT_JAPAN_POSTAL
 
-                    public static void enable() {
-                        mTwoDRegisterValue = Scanner.enable(BIT_US_POSTNET, mTwoDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_JAPAN_POSTAL, register)
                     }
 
-                    public static void disable() {
-                        mTwoDRegisterValue = Scanner.disable(BIT_US_POSTNET, mTwoDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_JAPAN_POSTAL, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_US_POSTNET, mTwoDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_JAPAN_POSTAL,
+                                register
+                            )
+                        }
                 }
 
-                public static class USPlanet {
-                    static final int BIT_US_PLANET = 1;
-                    static final int defaultValue = DISABLE << BIT_US_PLANET;
+                object AustraliaPost {
+                    const val BIT_AUSTRALIA_POST: Int = 4
+                    val defaultValue: Int = DISABLE shl BIT_AUSTRALIA_POST
 
-                    public static void enable() {
-                        mTwoDRegisterValue = Scanner.enable(BIT_US_PLANET, mTwoDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_AUSTRALIA_POST, register)
                     }
 
-                    public static void disable() {
-                        mTwoDRegisterValue = Scanner.disable(BIT_US_PLANET, mTwoDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_AUSTRALIA_POST, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_US_PLANET, mTwoDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_AUSTRALIA_POST,
+                                register
+                            )
+                        }
                 }
 
-                public static class UKPostal {
-                    static final int BIT_UK_POSTAL = 2;
-                    static final int defaultValue = DISABLE << BIT_UK_POSTAL;
+                object NetherlandsKixCode {
+                    const val BIT_NETHERLANDS_KIX_CODE: Int = 5
+                    val defaultValue: Int = DISABLE shl BIT_NETHERLANDS_KIX_CODE
 
-                    public static void enable() {
-                        mTwoDRegisterValue = Scanner.enable(BIT_UK_POSTAL, mTwoDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_NETHERLANDS_KIX_CODE, register)
                     }
 
-                    public static void disable() {
-                        mTwoDRegisterValue = Scanner.disable(BIT_UK_POSTAL, mTwoDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_NETHERLANDS_KIX_CODE, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_UK_POSTAL, mTwoDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_NETHERLANDS_KIX_CODE,
+                                register
+                            )
+                        }
                 }
 
-                public static class JapanPostal {
-                    static final int BIT_JAPAN_POSTAL = 3;
-                    static final int defaultValue = DISABLE << BIT_JAPAN_POSTAL;
+                object InteligentMail {
+                    const val BIT_INTELIGENT_MAIL: Int = 6
+                    val defaultValue: Int = DISABLE shl BIT_INTELIGENT_MAIL
 
-                    public static void enable() {
-                        mTwoDRegisterValue = Scanner.enable(BIT_JAPAN_POSTAL, mTwoDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_INTELIGENT_MAIL, register)
                     }
 
-                    public static void disable() {
-                        mTwoDRegisterValue = Scanner.disable(BIT_JAPAN_POSTAL, mTwoDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_INTELIGENT_MAIL, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_JAPAN_POSTAL, mTwoDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_INTELIGENT_MAIL,
+                                register
+                            )
+                        }
                 }
 
-                public static class AustraliaPost {
-                    static final int BIT_AUSTRALIA_POST = 4;
-                    static final int defaultValue = DISABLE << BIT_AUSTRALIA_POST;
+                object UPU_FICS_Postal {
+                    const val BIT_UPU_FICS_POSTAL: Int = 7
+                    val defaultValue: Int = DISABLE shl BIT_UPU_FICS_POSTAL
 
-                    public static void enable() {
-                        mTwoDRegisterValue = Scanner.enable(BIT_AUSTRALIA_POST, mTwoDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_UPU_FICS_POSTAL, register)
                     }
 
-                    public static void disable() {
-                        mTwoDRegisterValue = Scanner.disable(BIT_AUSTRALIA_POST, mTwoDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_UPU_FICS_POSTAL, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_AUSTRALIA_POST, mTwoDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_UPU_FICS_POSTAL,
+                                register
+                            )
+                        }
                 }
 
-                public static class NetherlandsKixCode {
-                    static final int BIT_NETHERLANDS_KIX_CODE = 5;
-                    static final int defaultValue = DISABLE << BIT_NETHERLANDS_KIX_CODE;
+                object CompositeCC_C {
+                    const val BIT_COMPOSITE_CC_C: Int = 8
+                    val defaultValue: Int = DISABLE shl BIT_COMPOSITE_CC_C
 
-                    public static void enable() {
-                        mTwoDRegisterValue = Scanner.enable(BIT_NETHERLANDS_KIX_CODE, mTwoDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_COMPOSITE_CC_C, register)
                     }
 
-                    public static void disable() {
-                        mTwoDRegisterValue = Scanner.disable(BIT_NETHERLANDS_KIX_CODE, mTwoDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_COMPOSITE_CC_C, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_NETHERLANDS_KIX_CODE, mTwoDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_COMPOSITE_CC_C,
+                                register
+                            )
+                        }
                 }
 
-                public static class InteligentMail {
-                    static final int BIT_INTELIGENT_MAIL = 6;
-                    static final int defaultValue = DISABLE << BIT_INTELIGENT_MAIL;
+                object CompositeCC_AB {
+                    const val BIT_COMPOSITE_CC_AB: Int = 9
+                    val defaultValue: Int = DISABLE shl BIT_COMPOSITE_CC_AB
 
-                    public static void enable() {
-                        mTwoDRegisterValue = Scanner.enable(BIT_INTELIGENT_MAIL, mTwoDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_COMPOSITE_CC_AB, register)
                     }
 
-                    public static void disable() {
-                        mTwoDRegisterValue = Scanner.disable(BIT_INTELIGENT_MAIL, mTwoDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_COMPOSITE_CC_AB, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_INTELIGENT_MAIL, mTwoDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_COMPOSITE_CC_AB,
+                                register
+                            )
+                        }
                 }
 
-                public static class UPU_FICS_Postal {
-                    static final int BIT_UPU_FICS_POSTAL = 7;
-                    static final int defaultValue = DISABLE << BIT_UPU_FICS_POSTAL;
+                object CompositeTLC_39 {
+                    const val BIT_COMPOSITE_TLC_39: Int = 10
+                    val defaultValue: Int = DISABLE shl BIT_COMPOSITE_TLC_39
 
-                    public static void enable() {
-                        mTwoDRegisterValue = Scanner.enable(BIT_UPU_FICS_POSTAL, mTwoDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_COMPOSITE_TLC_39, register)
                     }
 
-                    public static void disable() {
-                        mTwoDRegisterValue = Scanner.disable(BIT_UPU_FICS_POSTAL, mTwoDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_COMPOSITE_TLC_39, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_UPU_FICS_POSTAL, mTwoDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_COMPOSITE_TLC_39,
+                                register
+                            )
+                        }
                 }
 
-                public static class CompositeCC_C {
-                    static final int BIT_COMPOSITE_CC_C = 8;
-                    static final int defaultValue = DISABLE << BIT_COMPOSITE_CC_C;
+                object PDF_417 {
+                    const val BIT_PDF_417: Int = 11
+                    val defaultValue: Int = ENABLE shl BIT_PDF_417
 
-                    public static void enable() {
-                        mTwoDRegisterValue = Scanner.enable(BIT_COMPOSITE_CC_C, mTwoDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_PDF_417, register)
                     }
 
-                    public static void disable() {
-                        mTwoDRegisterValue = Scanner.disable(BIT_COMPOSITE_CC_C, mTwoDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_PDF_417, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_COMPOSITE_CC_C, mTwoDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_PDF_417,
+                                register
+                            )
+                        }
                 }
 
-                public static class CompositeCC_AB {
-                    static final int BIT_COMPOSITE_CC_AB = 9;
-                    static final int defaultValue = DISABLE << BIT_COMPOSITE_CC_AB;
+                object MicroPDF_417 {
+                    const val BIT_MICRO_PDF_417: Int = 12
+                    val defaultValue: Int = ENABLE shl BIT_MICRO_PDF_417
 
-                    public static void enable() {
-                        mTwoDRegisterValue = Scanner.enable(BIT_COMPOSITE_CC_AB, mTwoDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_MICRO_PDF_417, register)
                     }
 
-                    public static void disable() {
-                        mTwoDRegisterValue = Scanner.disable(BIT_COMPOSITE_CC_AB, mTwoDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_MICRO_PDF_417, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_COMPOSITE_CC_AB, mTwoDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_MICRO_PDF_417,
+                                register
+                            )
+                        }
                 }
 
-                public static class CompositeTLC_39 {
-                    static final int BIT_COMPOSITE_TLC_39 = 10;
-                    static final int defaultValue = DISABLE << BIT_COMPOSITE_TLC_39;
+                object DataMatrix {
+                    const val BIT_DATA_MATRIX: Int = 13
+                    val defaultValue: Int = ENABLE shl BIT_DATA_MATRIX
 
-                    public static void enable() {
-                        mTwoDRegisterValue = Scanner.enable(BIT_COMPOSITE_TLC_39, mTwoDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_DATA_MATRIX, register)
                     }
 
-                    public static void disable() {
-                        mTwoDRegisterValue = Scanner.disable(BIT_COMPOSITE_TLC_39, mTwoDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_DATA_MATRIX, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_COMPOSITE_TLC_39, mTwoDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_DATA_MATRIX,
+                                register
+                            )
+                        }
                 }
 
-                public static class PDF_417 {
-                    static final int BIT_PDF_417 = 11;
-                    static final int defaultValue = ENABLE << BIT_PDF_417;
+                object MaxiCode {
+                    const val BIT_MAXI_CODE: Int = 14
+                    val defaultValue: Int = DISABLE shl BIT_MAXI_CODE
 
-                    public static void enable() {
-                        mTwoDRegisterValue = Scanner.enable(BIT_PDF_417, mTwoDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_MAXI_CODE, register)
                     }
 
-                    public static void disable() {
-                        mTwoDRegisterValue = Scanner.disable(BIT_PDF_417, mTwoDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_MAXI_CODE, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_PDF_417, mTwoDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_MAXI_CODE,
+                                register
+                            )
+                        }
                 }
 
-                public static class MicroPDF_417 {
-                    static final int BIT_MICRO_PDF_417 = 12;
-                    static final int defaultValue = ENABLE << BIT_MICRO_PDF_417;
+                object QRCode {
+                    const val BIT_QR_CODE: Int = 15
+                    val defaultValue: Int = ENABLE shl BIT_QR_CODE
 
-                    public static void enable() {
-                        mTwoDRegisterValue = Scanner.enable(BIT_MICRO_PDF_417, mTwoDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_QR_CODE, register)
                     }
 
-                    public static void disable() {
-                        mTwoDRegisterValue = Scanner.disable(BIT_MICRO_PDF_417, mTwoDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_QR_CODE, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_MICRO_PDF_417, mTwoDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_QR_CODE,
+                                register
+                            )
+                        }
                 }
 
-                public static class DataMatrix {
-                    static final int BIT_DATA_MATRIX = 13;
-                    static final int defaultValue = ENABLE << BIT_DATA_MATRIX;
+                object MicroQR {
+                    const val BIT_MICRO_QR: Int = 16
+                    val defaultValue: Int = ENABLE shl BIT_MICRO_QR
 
-                    public static void enable() {
-                        mTwoDRegisterValue = Scanner.enable(BIT_DATA_MATRIX, mTwoDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_MICRO_QR, register)
                     }
 
-                    public static void disable() {
-                        mTwoDRegisterValue = Scanner.disable(BIT_DATA_MATRIX, mTwoDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_MICRO_QR, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_DATA_MATRIX, mTwoDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_MICRO_QR,
+                                register
+                            )
+                        }
                 }
 
-                public static class MaxiCode {
-                    static final int BIT_MAXI_CODE = 14;
-                    static final int defaultValue = DISABLE << BIT_MAXI_CODE;
+                object Aztec {
+                    const val BIT_AZTEC: Int = 17
+                    val defaultValue: Int = ENABLE shl BIT_AZTEC
 
-                    public static void enable() {
-                        mTwoDRegisterValue = Scanner.enable(BIT_MAXI_CODE, mTwoDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_AZTEC, register)
                     }
 
-                    public static void disable() {
-                        mTwoDRegisterValue = Scanner.disable(BIT_MAXI_CODE, mTwoDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_AZTEC, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_MAXI_CODE, mTwoDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_AZTEC,
+                                register
+                            )
+                        }
                 }
 
-                public static class QRCode {
-                    static final int BIT_QR_CODE = 15;
-                    static final int defaultValue = ENABLE << BIT_QR_CODE;
+                object HanXin {
+                    const val BIT_HANXIN: Int = 18
+                    val defaultValue: Int = DISABLE shl BIT_HANXIN
 
-                    public static void enable() {
-                        mTwoDRegisterValue = Scanner.enable(BIT_QR_CODE, mTwoDRegisterValue);
+                    fun enable() {
+                        register = enable(BIT_HANXIN, register)
                     }
 
-                    public static void disable() {
-                        mTwoDRegisterValue = Scanner.disable(BIT_QR_CODE, mTwoDRegisterValue);
+                    fun disable() {
+                        register = disable(BIT_HANXIN, register)
                     }
 
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_QR_CODE, mTwoDRegisterValue);
-                    }
-                }
-
-                public static class MicroQR {
-                    static final int BIT_MICRO_QR = 16;
-                    static final int defaultValue = ENABLE << BIT_MICRO_QR;
-
-                    public static void enable() {
-                        mTwoDRegisterValue = Scanner.enable(BIT_MICRO_QR, mTwoDRegisterValue);
-                    }
-
-                    public static void disable() {
-                        mTwoDRegisterValue = Scanner.disable(BIT_MICRO_QR, mTwoDRegisterValue);
-                    }
-
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_MICRO_QR, mTwoDRegisterValue);
-                    }
-                }
-
-                public static class Aztec {
-                    static final int BIT_AZTEC = 17;
-                    static final int defaultValue = ENABLE << BIT_AZTEC;
-
-                    public static void enable() {
-                        mTwoDRegisterValue = Scanner.enable(BIT_AZTEC, mTwoDRegisterValue);
-                    }
-
-                    public static void disable() {
-                        mTwoDRegisterValue = Scanner.disable(BIT_AZTEC, mTwoDRegisterValue);
-                    }
-
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_AZTEC, mTwoDRegisterValue);
-                    }
-                }
-
-                public static class HanXin {
-                    static final int BIT_HANXIN = 18;
-                    static final int defaultValue = DISABLE << BIT_HANXIN;
-
-                    public static void enable() {
-                        mTwoDRegisterValue = Scanner.enable(BIT_HANXIN, mTwoDRegisterValue);
-                    }
-
-                    public static void disable() {
-                        mTwoDRegisterValue = Scanner.disable(BIT_HANXIN, mTwoDRegisterValue);
-                    }
-
-                    public static boolean isEnable() {
-                        return Scanner.isEnable(BIT_HANXIN, mTwoDRegisterValue);
-                    }
+                    val isEnable: Boolean
+                        get() {
+                            return isEnable(
+                                BIT_HANXIN,
+                                register
+                            )
+                        }
                 }
             }
 
-            public static class AdvancedConfig {
-                public static class OneD {
-                    public static class UPCEAN {
+            class AdvancedConfig {
+                class OneD {
+                    object UPCEAN {
                         //private static int mUPCEANRegisterValue = 0x42720AF;
-                        private static int mUPCEANRegisterValue = getDefault();
+                        var register: Int = default
 
-                        private static int getDefault() {
-                            return TransmitCheckDigit.UPC_A.defaultValue
-                                    | TransmitCheckDigit.UPC_E0.defaultValue
-                                    | TransmitCheckDigit.UPC_E1.defaultValue
-                                    | Preamble.UPC_A.defaultValue
-                                    | Preamble.UPC_E0.defaultValue
-                                    | Preamble.UPC_E1.defaultValue
-                                    | Convert.UPC_E0ToA.defaultValue
-                                    | Convert.UPC_E1ToA.defaultValue
-                                    | UPCReducedQuietZone.defaultValue
-                                    | SupplementalRedundancy.defaultValue
-                                    | SupplementalAIMIDFormat.defaultValue
-                                    | DecodeSupplementals.defaultValue
-                                    | EAN8Extend.defaultValue
-                                    | UCCCouponExtendedCode.defaultValue
-                                    | CouponReport.defaultValue;
-                        }
-
-                        public static void setDefault() {
-                            mUPCEANRegisterValue = getDefault();
-                        }
-
-                        public static int getRegister() {
-                            return mUPCEANRegisterValue;
-                        }
-
-                        public static void setRegister(int value) {
-                            mUPCEANRegisterValue = value;
-                        }
-
-                        public static class TransmitCheckDigit {
-                            public static class UPC_A {
-                                static final int BIT_T_UPC_A = 0;
-                                static final int defaultValue = ENABLE << BIT_T_UPC_A;
-
-                                public static void enable() {
-                                    mUPCEANRegisterValue = Scanner.enable(BIT_T_UPC_A, mUPCEANRegisterValue);
-                                }
-
-                                public static void disable() {
-                                    mUPCEANRegisterValue = Scanner.disable(BIT_T_UPC_A, mUPCEANRegisterValue);
-                                }
-
-                                public static boolean isEnable() {
-                                    return Scanner.isEnable(BIT_T_UPC_A, mUPCEANRegisterValue);
-                                }
+                        private val default: Int
+                            get() {
+                                return (TransmitCheckDigit.UPC_A.defaultValue
+                                        or TransmitCheckDigit.UPC_E0.defaultValue
+                                        or TransmitCheckDigit.UPC_E1.defaultValue
+                                        or Preamble.UPC_A.defaultValue
+                                        or Preamble.UPC_E0.defaultValue
+                                        or Preamble.UPC_E1.defaultValue
+                                        or UPC_E0ToA.defaultValue
+                                        or UPC_E1ToA.defaultValue
+                                        or UPCReducedQuietZone.defaultValue
+                                        or SupplementalRedundancy.defaultValue
+                                        or SupplementalAIMIDFormat.defaultValue
+                                        or DecodeSupplementals.defaultValue
+                                        or EAN8Extend.defaultValue
+                                        or UCCCouponExtendedCode.defaultValue
+                                        or CouponReport.defaultValue)
                             }
 
-                            public static class UPC_E0 {
-                                static final int BIT_T_UPC_E0 = 1;
-                                static final int defaultValue = ENABLE << BIT_T_UPC_E0;
-
-                                public static void enable() {
-                                    mUPCEANRegisterValue = Scanner.enable(BIT_T_UPC_E0, mUPCEANRegisterValue);
-                                }
-
-                                public static void disable() {
-                                    mUPCEANRegisterValue = Scanner.disable(BIT_T_UPC_E0, mUPCEANRegisterValue);
-                                }
-
-                                public static boolean isEnable() {
-                                    return Scanner.isEnable(BIT_T_UPC_E0, mUPCEANRegisterValue);
-                                }
-                            }
-
-                            public static class UPC_E1 {
-                                static final int BIT_T_UPC_E1 = 2;
-                                static final int defaultValue = ENABLE << BIT_T_UPC_E1;
-
-                                public static void enable() {
-                                    mUPCEANRegisterValue = Scanner.enable(BIT_T_UPC_E1, mUPCEANRegisterValue);
-                                }
-
-                                public static void disable() {
-                                    mUPCEANRegisterValue = Scanner.disable(BIT_T_UPC_E1, mUPCEANRegisterValue);
-                                }
-
-                                public static boolean isEnable() {
-                                    return Scanner.isEnable(BIT_T_UPC_E1, mUPCEANRegisterValue);
-                                }
-                            }
+                        fun setDefault() {
+                            register = default
                         }
 
-                        public static class Preamble {
-                            public static class UPC_A {
-                                static final int BIT_P_UPC_A = 3;
-                                static final int defaultValue = 1 << BIT_P_UPC_A;
-                                static final int MAX_VALUE = 0x3;
+                        class TransmitCheckDigit {
+                            object UPC_A {
+                                const val BIT_T_UPC_A: Int = 0
+                                val defaultValue: Int = ENABLE shl BIT_T_UPC_A
 
-                                public static void setNo() {
-                                    mUPCEANRegisterValue = Scanner.setValue(BIT_P_UPC_A, 0x0, mUPCEANRegisterValue, MAX_VALUE);
+                                fun enable() {
+                                    register = enable(BIT_T_UPC_A, register)
                                 }
 
-                                public static void setSystemChar() {
-                                    mUPCEANRegisterValue = Scanner.setValue(BIT_P_UPC_A, 0x1, mUPCEANRegisterValue, MAX_VALUE);
+                                fun disable() {
+                                    register = disable(BIT_T_UPC_A, register)
                                 }
 
-                                public static void setSystemCharAndCountryCode() {
-                                    mUPCEANRegisterValue = Scanner.setValue(BIT_P_UPC_A, 0x2, mUPCEANRegisterValue, MAX_VALUE);
-                                }
-
-                                public static int getValue() {
-                                    return Scanner.getValue(BIT_P_UPC_A, mUPCEANRegisterValue, MAX_VALUE);
-                                }
+                                val isEnable: Boolean
+                                    get() {
+                                        return isEnable(
+                                            BIT_T_UPC_A,
+                                            register
+                                        )
+                                    }
                             }
 
-                            public static class UPC_E0 {
-                                static final int BIT_P_UPC_E0 = 5;
-                                static final int defaultValue = 1 << BIT_P_UPC_E0;
-                                static final int MAX_VALUE = 0x3;
+                            object UPC_E0 {
+                                const val BIT_T_UPC_E0: Int = 1
+                                val defaultValue: Int = ENABLE shl BIT_T_UPC_E0
 
-                                public static void setNo() {
-                                    mUPCEANRegisterValue = Scanner.setValue(BIT_P_UPC_E0, 0x0, mUPCEANRegisterValue, MAX_VALUE);
+                                fun enable() {
+                                    register = enable(BIT_T_UPC_E0, register)
                                 }
 
-                                public static void setSystemChar() {
-                                    mUPCEANRegisterValue = Scanner.setValue(BIT_P_UPC_E0, 0x1, mUPCEANRegisterValue, MAX_VALUE);
+                                fun disable() {
+                                    register = disable(BIT_T_UPC_E0, register)
                                 }
 
-                                public static void setSystemCharAndCountryCode() {
-                                    mUPCEANRegisterValue = Scanner.setValue(BIT_P_UPC_E0, 0x2, mUPCEANRegisterValue, MAX_VALUE);
-                                }
-
-                                public static int getValue() {
-                                    return Scanner.getValue(BIT_P_UPC_E0, mUPCEANRegisterValue, MAX_VALUE);
-                                }
+                                val isEnable: Boolean
+                                    get() {
+                                        return isEnable(
+                                            BIT_T_UPC_E0,
+                                            register
+                                        )
+                                    }
                             }
 
-                            public static class UPC_E1 {
-                                static final int BIT_P_UPC_E1 = 7;
-                                static final int defaultValue = 1 << BIT_P_UPC_E1;
-                                static final int MAX_VALUE = 0x3;
+                            object UPC_E1 {
+                                const val BIT_T_UPC_E1: Int = 2
+                                val defaultValue: Int = ENABLE shl BIT_T_UPC_E1
 
-                                public static void setNo() {
-                                    mUPCEANRegisterValue = Scanner.setValue(BIT_P_UPC_E1, 0x0, mUPCEANRegisterValue, MAX_VALUE);
+                                fun enable() {
+                                    register = enable(BIT_T_UPC_E1, register)
                                 }
 
-                                public static void setSystemChar() {
-                                    mUPCEANRegisterValue = Scanner.setValue(BIT_P_UPC_E1, 0x1, mUPCEANRegisterValue, MAX_VALUE);
+                                fun disable() {
+                                    register = disable(BIT_T_UPC_E1, register)
                                 }
 
-                                public static void setSystemCharAndCountryCode() {
-                                    mUPCEANRegisterValue = Scanner.setValue(BIT_P_UPC_E1, 0x2, mUPCEANRegisterValue, MAX_VALUE);
-                                }
-
-                                public static int getValue() {
-                                    return Scanner.getValue(BIT_P_UPC_E1, mUPCEANRegisterValue, MAX_VALUE);
-                                }
+                                val isEnable: Boolean
+                                    get() {
+                                        return isEnable(
+                                            BIT_T_UPC_E1,
+                                            register
+                                        )
+                                    }
                             }
                         }
 
-                        public static class Convert {
-                            public static class UPC_E0ToA {
-                                static final int BIT_T_UPC_E0 = 9;
-                                static final int defaultValue = DISABLE << BIT_T_UPC_E0;
+                        class Preamble {
+                            object UPC_A {
+                                const val BIT_P_UPC_A: Int = 3
+                                val defaultValue: Int = 1 shl BIT_P_UPC_A
+                                const val MAX_VALUE: Int = 0x3
 
-                                public static void enable() {
-                                    mUPCEANRegisterValue = Scanner.enable(BIT_T_UPC_E0, mUPCEANRegisterValue);
+                                fun setNo() {
+                                    register = setValue(BIT_P_UPC_A, 0x0, register, MAX_VALUE)
                                 }
 
-                                public static void disable() {
-                                    mUPCEANRegisterValue = Scanner.disable(BIT_T_UPC_E0, mUPCEANRegisterValue);
+                                fun setSystemChar() {
+                                    register = setValue(BIT_P_UPC_A, 0x1, register, MAX_VALUE)
                                 }
 
-                                public static boolean isEnable() {
-                                    return Scanner.isEnable(BIT_T_UPC_E0, mUPCEANRegisterValue);
-                                }
-                            }
-
-                            public static class UPC_E1ToA {
-                                static final int BIT_T_UPC_E1 = 10;
-                                static final int defaultValue = DISABLE << BIT_T_UPC_E1;
-
-                                public static void enable() {
-                                    mUPCEANRegisterValue = Scanner.enable(BIT_T_UPC_E1, mUPCEANRegisterValue);
+                                fun setSystemCharAndCountryCode() {
+                                    register = setValue(BIT_P_UPC_A, 0x2, register, MAX_VALUE)
                                 }
 
-                                public static void disable() {
-                                    mUPCEANRegisterValue = Scanner.disable(BIT_T_UPC_E1, mUPCEANRegisterValue);
+                                val value: Int
+                                    get() {
+                                        return getValue(
+                                            BIT_P_UPC_A,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                    }
+                            }
+
+                            object UPC_E0 {
+                                const val BIT_P_UPC_E0: Int = 5
+                                val defaultValue: Int = 1 shl BIT_P_UPC_E0
+                                const val MAX_VALUE: Int = 0x3
+
+                                fun setNo() {
+                                    register = setValue(BIT_P_UPC_E0, 0x0, register, MAX_VALUE)
                                 }
 
-                                public static boolean isEnable() {
-                                    return Scanner.isEnable(BIT_T_UPC_E1, mUPCEANRegisterValue);
+                                fun setSystemChar() {
+                                    register = setValue(BIT_P_UPC_E0, 0x1, register, MAX_VALUE)
                                 }
+
+                                fun setSystemCharAndCountryCode() {
+                                    register = setValue(BIT_P_UPC_E0, 0x2, register, MAX_VALUE)
+                                }
+
+                                val value: Int
+                                    get() {
+                                        return getValue(
+                                            BIT_P_UPC_E0,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                    }
+                            }
+
+                            object UPC_E1 {
+                                const val BIT_P_UPC_E1: Int = 7
+                                val defaultValue: Int = 1 shl BIT_P_UPC_E1
+                                const val MAX_VALUE: Int = 0x3
+
+                                fun setNo() {
+                                    register = setValue(BIT_P_UPC_E1, 0x0, register, MAX_VALUE)
+                                }
+
+                                fun setSystemChar() {
+                                    register = setValue(BIT_P_UPC_E1, 0x1, register, MAX_VALUE)
+                                }
+
+                                fun setSystemCharAndCountryCode() {
+                                    register = setValue(BIT_P_UPC_E1, 0x2, register, MAX_VALUE)
+                                }
+
+                                val value: Int
+                                    get() {
+                                        return getValue(
+                                            BIT_P_UPC_E1,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                    }
                             }
                         }
 
-                        public static class UPCReducedQuietZone {
-                            static final int BIT_UPC_REDUCE = 11;
-                            static final int defaultValue = DISABLE << BIT_UPC_REDUCE;
+                        class Convert {
+                            object UPC_E0ToA {
+                                const val BIT_T_UPC_E0: Int = 9
+                                val defaultValue: Int = DISABLE shl BIT_T_UPC_E0
 
-                            public static void enable() {
-                                mUPCEANRegisterValue = Scanner.enable(BIT_UPC_REDUCE, mUPCEANRegisterValue);
+                                fun enable() {
+                                    register = enable(BIT_T_UPC_E0, register)
+                                }
+
+                                fun disable() {
+                                    register = disable(BIT_T_UPC_E0, register)
+                                }
+
+                                val isEnable: Boolean
+                                    get() {
+                                        return isEnable(
+                                            BIT_T_UPC_E0,
+                                            register
+                                        )
+                                    }
                             }
 
-                            public static void disable() {
-                                mUPCEANRegisterValue = Scanner.disable(BIT_UPC_REDUCE, mUPCEANRegisterValue);
-                            }
+                            object UPC_E1ToA {
+                                const val BIT_T_UPC_E1: Int = 10
+                                val defaultValue: Int = DISABLE shl BIT_T_UPC_E1
 
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_UPC_REDUCE, mUPCEANRegisterValue);
-                            }
-                        }
+                                fun enable() {
+                                    register = enable(BIT_T_UPC_E1, register)
+                                }
 
-                        public static class DecodeSupplementals {
-                            static final int BIT_DECODE_SUPP = 12;
-                            static final int defaultValue = 2 << BIT_DECODE_SUPP;
-                            static final int MAX_VALUE = 0xF;
+                                fun disable() {
+                                    register = disable(BIT_T_UPC_E1, register)
+                                }
 
-                            public static void ignoreSuppData() {
-                                mUPCEANRegisterValue = Scanner.setValue(BIT_DECODE_SUPP, 0x0, mUPCEANRegisterValue, MAX_VALUE);
-                            }
-
-                            public static void onlyReadIncludeSuppData() {
-                                mUPCEANRegisterValue = Scanner.setValue(BIT_DECODE_SUPP, 0x1, mUPCEANRegisterValue, MAX_VALUE);
-                            }
-
-                            public static void readDataNoMatterSupp() {
-                                mUPCEANRegisterValue = Scanner.setValue(BIT_DECODE_SUPP, 0x2, mUPCEANRegisterValue, MAX_VALUE);
-                            }
-
-                            public static void allPrefixEnable() {
-                                mUPCEANRegisterValue = Scanner.setValue(BIT_DECODE_SUPP, 0x3, mUPCEANRegisterValue, MAX_VALUE);
-                            }
-
-                            public static void prefix_378_397_ofEAN13() {
-                                mUPCEANRegisterValue = Scanner.setValue(BIT_DECODE_SUPP, 0x4, mUPCEANRegisterValue, MAX_VALUE);
-                            }
-
-                            public static void prefix_978_979_ofEAN13() {
-                                mUPCEANRegisterValue = Scanner.setValue(BIT_DECODE_SUPP, 0x5, mUPCEANRegisterValue, MAX_VALUE);
-                            }
-
-                            public static void prefix_414_419_434_439_ofEAN13() {
-                                mUPCEANRegisterValue = Scanner.setValue(BIT_DECODE_SUPP, 0x6, mUPCEANRegisterValue, MAX_VALUE);
-                            }
-
-                            public static void prefix_977_ofEAN13() {
-                                mUPCEANRegisterValue = Scanner.setValue(BIT_DECODE_SUPP, 0x7, mUPCEANRegisterValue, MAX_VALUE);
-                            }
-
-                            public static void prefix_491_ofEAN13() {
-                                mUPCEANRegisterValue = Scanner.setValue(BIT_DECODE_SUPP, 0x8, mUPCEANRegisterValue, MAX_VALUE);
-                            }
-
-                            public static int getValue() {
-                                return Scanner.getValue(BIT_DECODE_SUPP, mUPCEANRegisterValue, MAX_VALUE);
+                                val isEnable: Boolean
+                                    get() {
+                                        return isEnable(
+                                            BIT_T_UPC_E1,
+                                            register
+                                        )
+                                    }
                             }
                         }
 
-                        public static class SupplementalRedundancy {
-                            static final int BIT_SUPP_REDUNDANCY = 16;
-                            static final int defaultValue = 7 << BIT_SUPP_REDUNDANCY;
-                            static final int MAX_VALUE = 0x1F;
+                        object UPCReducedQuietZone {
+                            const val BIT_UPC_REDUCE: Int = 11
+                            val defaultValue: Int = DISABLE shl BIT_UPC_REDUCE
 
-                            public static int getRedundancy() {
-                                return Scanner.getValue(BIT_SUPP_REDUNDANCY, mUPCEANRegisterValue, MAX_VALUE);
+                            fun enable() {
+                                register = enable(BIT_UPC_REDUCE, register)
                             }
 
-                            public static void setRedundancy(int value) {
-                                mUPCEANRegisterValue = Scanner.setValue(BIT_SUPP_REDUNDANCY, value, mUPCEANRegisterValue, MAX_VALUE);
+                            fun disable() {
+                                register = disable(BIT_UPC_REDUCE, register)
                             }
+
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_UPC_REDUCE,
+                                        register
+                                    )
+                                }
                         }
 
-                        public static class SupplementalAIMIDFormat {
-                            static final int BIT_SUPP_AIM_ID_FORMAT = 21;
-                            static final int defaultValue = 1 << BIT_SUPP_AIM_ID_FORMAT;
-                            static final int MAX_VALUE = 0x3;
+                        object DecodeSupplementals {
+                            const val BIT_DECODE_SUPP: Int = 12
+                            val defaultValue: Int = 2 shl BIT_DECODE_SUPP
+                            const val MAX_VALUE: Int = 0xF
 
-                            public static void setSeparate() {
-                                mUPCEANRegisterValue = Scanner.setValue(BIT_SUPP_AIM_ID_FORMAT, 0x0, mUPCEANRegisterValue, MAX_VALUE);
+                            fun ignoreSuppData() {
+                                register = setValue(BIT_DECODE_SUPP, 0x0, register, MAX_VALUE)
                             }
 
-                            public static void setCombined() {
-                                mUPCEANRegisterValue = Scanner.setValue(BIT_SUPP_AIM_ID_FORMAT, 0x1, mUPCEANRegisterValue, MAX_VALUE);
+                            fun onlyReadIncludeSuppData() {
+                                register = setValue(BIT_DECODE_SUPP, 0x1, register, MAX_VALUE)
                             }
 
-                            public static void setSeparateTransmissions() {
-                                mUPCEANRegisterValue = Scanner.setValue(BIT_SUPP_AIM_ID_FORMAT, 0x2, mUPCEANRegisterValue, MAX_VALUE);
+                            fun readDataNoMatterSupp() {
+                                register = setValue(BIT_DECODE_SUPP, 0x2, register, MAX_VALUE)
                             }
 
-                            public static int getValue() {
-                                return Scanner.getValue(BIT_SUPP_AIM_ID_FORMAT, mUPCEANRegisterValue, MAX_VALUE);
+                            fun allPrefixEnable() {
+                                register = setValue(BIT_DECODE_SUPP, 0x3, register, MAX_VALUE)
                             }
+
+                            fun prefix_378_397_ofEAN13() {
+                                register = setValue(BIT_DECODE_SUPP, 0x4, register, MAX_VALUE)
+                            }
+
+                            fun prefix_978_979_ofEAN13() {
+                                register = setValue(BIT_DECODE_SUPP, 0x5, register, MAX_VALUE)
+                            }
+
+                            fun prefix_414_419_434_439_ofEAN13() {
+                                register = setValue(BIT_DECODE_SUPP, 0x6, register, MAX_VALUE)
+                            }
+
+                            fun prefix_977_ofEAN13() {
+                                register = setValue(BIT_DECODE_SUPP, 0x7, register, MAX_VALUE)
+                            }
+
+                            fun prefix_491_ofEAN13() {
+                                register = setValue(BIT_DECODE_SUPP, 0x8, register, MAX_VALUE)
+                            }
+
+                            val value: Int
+                                get() {
+                                    return getValue(
+                                        BIT_DECODE_SUPP,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
                         }
 
-                        public static class EAN8Extend {
-                            static final int BIT_EAN8_EXT = 23;
-                            static final int defaultValue = DISABLE << BIT_EAN8_EXT;
+                        object SupplementalRedundancy {
+                            const val BIT_SUPP_REDUNDANCY: Int = 16
+                            val defaultValue: Int = 7 shl BIT_SUPP_REDUNDANCY
+                            const val MAX_VALUE: Int = 0x1F
 
-                            public static void enable() {
-                                mUPCEANRegisterValue = Scanner.enable(BIT_EAN8_EXT, mUPCEANRegisterValue);
-                            }
-
-                            public static void disable() {
-                                mUPCEANRegisterValue = Scanner.disable(BIT_EAN8_EXT, mUPCEANRegisterValue);
-                            }
-
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_EAN8_EXT, mUPCEANRegisterValue);
-                            }
+                            var redundancy: Int
+                                get() {
+                                    return getValue(
+                                        BIT_SUPP_REDUNDANCY,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_SUPP_REDUNDANCY,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
                         }
 
-                        public static class UCCCouponExtendedCode {
-                            static final int BIT_UCC_COUPON_EXT = 24;
-                            static final int defaultValue = DISABLE << BIT_UCC_COUPON_EXT;
+                        object SupplementalAIMIDFormat {
+                            const val BIT_SUPP_AIM_ID_FORMAT: Int = 21
+                            val defaultValue: Int = 1 shl BIT_SUPP_AIM_ID_FORMAT
+                            const val MAX_VALUE: Int = 0x3
 
-                            public static void enable() {
-                                mUPCEANRegisterValue = Scanner.enable(BIT_UCC_COUPON_EXT, mUPCEANRegisterValue);
+                            fun setSeparate() {
+                                register =
+                                    setValue(BIT_SUPP_AIM_ID_FORMAT, 0x0, register, MAX_VALUE)
                             }
 
-                            public static void disable() {
-                                mUPCEANRegisterValue = Scanner.disable(BIT_UCC_COUPON_EXT, mUPCEANRegisterValue);
+                            fun setCombined() {
+                                register =
+                                    setValue(BIT_SUPP_AIM_ID_FORMAT, 0x1, register, MAX_VALUE)
                             }
 
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_UCC_COUPON_EXT, mUPCEANRegisterValue);
+                            fun setSeparateTransmissions() {
+                                register =
+                                    setValue(BIT_SUPP_AIM_ID_FORMAT, 0x2, register, MAX_VALUE)
                             }
+
+                            val value: Int
+                                get() {
+                                    return getValue(
+                                        BIT_SUPP_AIM_ID_FORMAT,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
                         }
 
-                        public static class CouponReport {
-                            static final int BIT_COUPON_REPORT = 25;
-                            static final int defaultValue = 2 << BIT_COUPON_REPORT;
-                            static final int MAX_VALUE = 0x3;
+                        object EAN8Extend {
+                            const val BIT_EAN8_EXT: Int = 23
+                            val defaultValue: Int = DISABLE shl BIT_EAN8_EXT
 
-                            public static void setOldCouponSymbols() {
-                                mUPCEANRegisterValue = Scanner.setValue(BIT_COUPON_REPORT, 0x0, mUPCEANRegisterValue, MAX_VALUE);
+                            fun enable() {
+                                register = enable(BIT_EAN8_EXT, register)
                             }
 
-                            public static void setNewCouponSymbols() {
-                                mUPCEANRegisterValue = Scanner.setValue(BIT_COUPON_REPORT, 0x1, mUPCEANRegisterValue, MAX_VALUE);
+                            fun disable() {
+                                register = disable(BIT_EAN8_EXT, register)
                             }
 
-                            public static void setBothCouponSymbols() {
-                                mUPCEANRegisterValue = Scanner.setValue(BIT_COUPON_REPORT, 0x2, mUPCEANRegisterValue, MAX_VALUE);
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_EAN8_EXT,
+                                        register
+                                    )
+                                }
+                        }
+
+                        object UCCCouponExtendedCode {
+                            const val BIT_UCC_COUPON_EXT: Int = 24
+                            val defaultValue: Int = DISABLE shl BIT_UCC_COUPON_EXT
+
+                            fun enable() {
+                                register = enable(BIT_UCC_COUPON_EXT, register)
                             }
 
-                            public static int getReport() {
-                                return Scanner.getValue(BIT_COUPON_REPORT, mUPCEANRegisterValue, MAX_VALUE);
+                            fun disable() {
+                                register = disable(BIT_UCC_COUPON_EXT, register)
                             }
+
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_UCC_COUPON_EXT,
+                                        register
+                                    )
+                                }
+                        }
+
+                        object CouponReport {
+                            const val BIT_COUPON_REPORT: Int = 25
+                            val defaultValue: Int = 2 shl BIT_COUPON_REPORT
+                            const val MAX_VALUE: Int = 0x3
+
+                            fun setOldCouponSymbols() {
+                                register = setValue(BIT_COUPON_REPORT, 0x0, register, MAX_VALUE)
+                            }
+
+                            fun setNewCouponSymbols() {
+                                register = setValue(BIT_COUPON_REPORT, 0x1, register, MAX_VALUE)
+                            }
+
+                            fun setBothCouponSymbols() {
+                                register = setValue(BIT_COUPON_REPORT, 0x2, register, MAX_VALUE)
+                            }
+
+                            val report: Int
+                                get() {
+                                    return getValue(
+                                        BIT_COUPON_REPORT,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
                         }
                     }
 
-                    public static class ISBN {
-                        static final int defaultValue = 0;
+                    object ISBN {
+                        private const val default: Int = 0
+
                         //private static int mBooklandRegister = 0;
-                        private static int mBooklandRegister = getDefault();
+                        var format: Int =
+                            default
 
-                        private static int getDefault() {
-                            return defaultValue;
+                        fun setDefault() {
+                            format =
+                                default
                         }
 
-                        public static void setDefault() {
-                            mBooklandRegister = getDefault();
+                        fun setISBN10() {
+                            format = 0
                         }
 
-                        public static int getRegister() {
-                            return mBooklandRegister;
-                        }
-
-                        public static void setRegister(int value) {
-                            mBooklandRegister = value;
-                        }
-
-                        public static void setISBN10() {
-                            mBooklandRegister = 0;
-                        }
-
-                        public static void setISBN13() {
-                            mBooklandRegister = 1;
-                        }
-
-                        public static int getFormat() {
-                            return mBooklandRegister;
+                        fun setISBN13() {
+                            format = 1
                         }
                     }
 
-                    public static class Code128 {
+                    object Code128 {
                         //private static int mCode128Register = 0;
-                        private static int mCode128Register = getDefault();
+                        var register: Int = default
 
-                        private static int getDefault() {
-                            return Length.defaultLengtheadlineMedium
-                                    | Length.defaultLength2
-                                    | ReducedQuietZone.defaultValue
-                                    | IgnoreCode128FNC4.defaultValue;
+                        private val default: Int
+                            get() {
+                                return (Length.defaultLengtheadlineMedium
+                                        or Length.defaultLength2
+                                        or ReducedQuietZone.defaultValue
+                                        or IgnoreCode128FNC4.defaultValue)
+                            }
+
+                        fun setDefault() {
+                            register = default
                         }
 
-                        public static void setDefault() {
-                            mCode128Register = getDefault();
+                        object IgnoreCode128FNC4 {
+                            const val BIT_CODE128_FNC4: Int = 17
+                            val defaultValue: Int = DISABLE shl BIT_CODE128_FNC4
+
+                            fun enable() {
+                                register = enable(BIT_CODE128_FNC4, register)
+                            }
+
+                            fun disable() {
+                                register = disable(BIT_CODE128_FNC4, register)
+                            }
+
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_CODE128_FNC4,
+                                        register
+                                    )
+                                }
                         }
 
-                        public static int getRegister() {
-                            return mCode128Register;
+                        object ReducedQuietZone {
+                            const val BIT_CODE128_FNC4: Int = 16
+                            val defaultValue: Int = DISABLE shl BIT_CODE128_FNC4
+
+                            fun enable() {
+                                register = enable(BIT_CODE128_FNC4, register)
+                            }
+
+                            fun disable() {
+                                register = disable(BIT_CODE128_FNC4, register)
+                            }
+
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_CODE128_FNC4,
+                                        register
+                                    )
+                                }
                         }
 
-                        public static void setRegister(int value) {
-                            mCode128Register = value;
-                        }
+                        object Length {
+                            const val BIT_LENGTheadlineMedium: Int = 0
+                            const val BIT_LENGTH2: Int = 8
+                            val defaultLengtheadlineMedium: Int = 1 shl BIT_LENGTheadlineMedium
+                            val defaultLength2: Int = 55 shl BIT_LENGTH2
+                            const val MAX_VALUE: Int = 0xFF
 
-                        public static class IgnoreCode128FNC4 {
-                            static final int BIT_CODE128_FNC4 = 17;
-                            static final int defaultValue = DISABLE << BIT_CODE128_FNC4;
+                            var l1: Int
+                                get() {
+                                    return getValue(
+                                        BIT_LENGTheadlineMedium,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_LENGTheadlineMedium,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
 
-                            public static void enable() {
-                                mCode128Register = Scanner.enable(BIT_CODE128_FNC4, mCode128Register);
-                            }
-
-                            public static void disable() {
-                                mCode128Register = Scanner.disable(BIT_CODE128_FNC4, mCode128Register);
-                            }
-
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_CODE128_FNC4, mCode128Register);
-                            }
-                        }
-
-                        public static class ReducedQuietZone {
-                            static final int BIT_CODE128_FNC4 = 16;
-                            static final int defaultValue = DISABLE << BIT_CODE128_FNC4;
-
-                            public static void enable() {
-                                mCode128Register = Scanner.enable(BIT_CODE128_FNC4, mCode128Register);
-                            }
-
-                            public static void disable() {
-                                mCode128Register = Scanner.disable(BIT_CODE128_FNC4, mCode128Register);
-                            }
-
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_CODE128_FNC4, mCode128Register);
-                            }
-                        }
-
-                        public static class Length {
-                            static final int BIT_LENGTheadlineMedium = 0;
-                            static final int BIT_LENGTH2 = 8;
-                            static final int defaultLengtheadlineMedium = 1 << BIT_LENGTheadlineMedium;
-                            static final int defaultLength2 = 55 << BIT_LENGTH2;
-                            static final int MAX_VALUE = 0xFF;
-
-                            public static int getL1() {
-                                return Scanner.getValue(BIT_LENGTheadlineMedium, mCode128Register, MAX_VALUE);
-                            }
-
-                            public static void setL1(int value) {
-                                mCode128Register = Scanner.setValue(BIT_LENGTheadlineMedium, value, mCode128Register, MAX_VALUE);
-                            }
-
-                            public static int getL2() {
-                                return Scanner.getValue(BIT_LENGTH2, mCode128Register, MAX_VALUE);
-                            }
-
-                            public static void setL2(int value) {
-                                mCode128Register = Scanner.setValue(BIT_LENGTH2, value, mCode128Register, MAX_VALUE);
-                            }
+                            var l2: Int
+                                get() {
+                                    return getValue(
+                                        BIT_LENGTH2,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_LENGTH2,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
                         }
                     }
 
-                    public static class ISBT {
+                    object ISBT {
                         //private static int mISBTRegister = 0x54;
-                        private static int mISBTRegister = getDefault();
+                        var register: Int = default
 
-                        private static int getDefault() {
-                            return ISBTConcatenation.defaultValue
-                                    | ISBTConcatenationRedundancy.defaultValue
-                                    | CheckISBTTable.defaultValue;
+                        private val default: Int
+                            get() {
+                                return (ISBTConcatenation.defaultValue
+                                        or ISBTConcatenationRedundancy.defaultValue
+                                        or CheckISBTTable.defaultValue)
+                            }
+
+                        fun setDefault() {
+                            register = default
                         }
 
-                        public static void setDefault() {
-                            mISBTRegister = getDefault();
+                        object ISBTConcatenationRedundancy {
+                            const val BIT_ISBT_REDUNDANCY: Int = 3
+                            val defaultValue: Int = 10 shl BIT_ISBT_REDUNDANCY
+                            const val MAX_VALUE: Int = 0x1F
+
+                            var value: Int
+                                get() {
+                                    return getValue(
+                                        BIT_ISBT_REDUNDANCY,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_ISBT_REDUNDANCY,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
                         }
 
-                        public static int getRegister() {
-                            return mISBTRegister;
+                        object CheckISBTTable {
+                            const val BIT_ISBT_TABLE: Int = 2
+                            val defaultValue: Int = ENABLE shl BIT_ISBT_TABLE
+
+                            fun enable() {
+                                register = enable(BIT_ISBT_TABLE, register)
+                            }
+
+                            fun disable() {
+                                register = disable(BIT_ISBT_TABLE, register)
+                            }
+
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_ISBT_TABLE,
+                                        register
+                                    )
+                                }
                         }
 
-                        public static void setRegister(int value) {
-                            mISBTRegister = value;
-                        }
+                        object ISBTConcatenation {
+                            const val BIT_ISBT_CONCATENATION: Int = 0
+                            val defaultValue: Int = 0 shl BIT_ISBT_CONCATENATION
+                            const val MAX_VALUE: Int = 0x3
 
-                        public static class ISBTConcatenationRedundancy {
-                            static final int BIT_ISBT_REDUNDANCY = 3;
-                            static final int defaultValue = 10 << BIT_ISBT_REDUNDANCY;
-                            static final int MAX_VALUE = 0x1F;
-
-                            public static int getValue() {
-                                return Scanner.getValue(BIT_ISBT_REDUNDANCY, mISBTRegister, MAX_VALUE);
+                            fun disable() {
+                                register =
+                                    setValue(BIT_ISBT_CONCATENATION, 0x0, register, MAX_VALUE)
                             }
 
-                            public static void setValue(int value) {
-                                mISBTRegister = Scanner.setValue(BIT_ISBT_REDUNDANCY, value, mISBTRegister, MAX_VALUE);
-                            }
-                        }
-
-                        public static class CheckISBTTable {
-                            static final int BIT_ISBT_TABLE = 2;
-                            static final int defaultValue = ENABLE << BIT_ISBT_TABLE;
-
-                            public static void enable() {
-                                mISBTRegister = Scanner.enable(BIT_ISBT_TABLE, mISBTRegister);
+                            fun enable() {
+                                register =
+                                    setValue(BIT_ISBT_CONCATENATION, 0x1, register, MAX_VALUE)
                             }
 
-                            public static void disable() {
-                                mISBTRegister = Scanner.disable(BIT_ISBT_TABLE, mISBTRegister);
+                            fun setAutodiscriminate() {
+                                register =
+                                    setValue(BIT_ISBT_CONCATENATION, 0x2, register, MAX_VALUE)
                             }
 
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_ISBT_TABLE, mISBTRegister);
-                            }
-                        }
-
-                        public static class ISBTConcatenation {
-                            static final int BIT_ISBT_CONCATENATION = 0;
-                            static final int defaultValue = 0 << BIT_ISBT_CONCATENATION;
-                            static final int MAX_VALUE = 0x3;
-
-                            public static void disable() {
-                                mISBTRegister = Scanner.setValue(BIT_ISBT_CONCATENATION, 0x0, mISBTRegister, MAX_VALUE);
-                            }
-
-                            public static void enable() {
-                                mISBTRegister = Scanner.setValue(BIT_ISBT_CONCATENATION, 0x1, mISBTRegister, MAX_VALUE);
-                            }
-
-                            public static void setAutodiscriminate() {
-                                mISBTRegister = Scanner.setValue(BIT_ISBT_CONCATENATION, 0x2, mISBTRegister, MAX_VALUE);
-                            }
-
-                            public static int getValue() {
-                                return Scanner.getValue(BIT_ISBT_CONCATENATION, mISBTRegister, MAX_VALUE);
-                            }
+                            val value: Int
+                                get() {
+                                    return getValue(
+                                        BIT_ISBT_CONCATENATION,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
                         }
                     }
 
-                    public static class Code39 {
+                    object Code39 {
                         //private static int mCode39RegisterValue = 0x80000;
-                        private static int mCode39RegisterValue = getDefault();
+                        var register: Int = default
 
-                        private static int getDefault() {
-                            return ConvertCode39to32.defaultValue
-                                    | Code32AddPrefix_A.defaultValue
-                                    | Length.defaultLengtheadlineMedium
-                                    | Length.defaultLength2
-                                    | CheckDigitVerification.defaultValue
-                                    | Code39FullASCIIConversion.defaultValue
-                                    | Code39BufferingScanStore.defaultValue
-                                    | Code39ReducedQuietZone.defaultValue;
+                        private val default: Int
+                            get() {
+                                return (ConvertCode39to32.defaultValue
+                                        or Code32AddPrefix_A.defaultValue
+                                        or Length.defaultLengtheadlineMedium
+                                        or Length.defaultLength2
+                                        or CheckDigitVerification.defaultValue
+                                        or Code39FullASCIIConversion.defaultValue
+                                        or Code39BufferingScanStore.defaultValue
+                                        or Code39ReducedQuietZone.defaultValue)
+                            }
+
+                        fun setDefault() {
+                            register = default
                         }
 
-                        public static void setDefault() {
-                            mCode39RegisterValue = getDefault();
+                        object ConvertCode39to32 {
+                            const val BIT_CONVERT_CODE39_TO_32: Int = 0
+                            val defaultValue: Int = DISABLE shl BIT_CONVERT_CODE39_TO_32
+
+                            fun enable() {
+                                register = enable(BIT_CONVERT_CODE39_TO_32, register)
+                            }
+
+                            fun disable() {
+                                register = disable(BIT_CONVERT_CODE39_TO_32, register)
+                            }
+
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_CONVERT_CODE39_TO_32,
+                                        register
+                                    )
+                                }
                         }
 
-                        public static int getRegister() {
-                            return mCode39RegisterValue;
+                        object Code32AddPrefix_A {
+                            const val BIT_CODE32_ADDPREFIX_A: Int = 1
+                            val defaultValue: Int = DISABLE shl BIT_CODE32_ADDPREFIX_A
+
+                            fun enable() {
+                                register = enable(BIT_CODE32_ADDPREFIX_A, register)
+                            }
+
+                            fun disable() {
+                                register = disable(BIT_CODE32_ADDPREFIX_A, register)
+                            }
+
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_CODE32_ADDPREFIX_A,
+                                        register
+                                    )
+                                }
                         }
 
-                        public static void setRegister(int value) {
-                            mCode39RegisterValue = value;
+                        object Length {
+                            const val BIT_LENGTheadlineMedium: Int = 2
+                            const val BIT_LENGTH2: Int = 10
+                            val defaultLengtheadlineMedium: Int = 1 shl BIT_LENGTheadlineMedium
+                            val defaultLength2: Int = 55 shl BIT_LENGTH2
+                            const val MAX_VALUE: Int = 0xFF
+
+                            var l1: Int
+                                get() {
+                                    return getValue(
+                                        BIT_LENGTheadlineMedium,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_LENGTheadlineMedium,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
+
+                            var l2: Int
+                                get() {
+                                    return getValue(
+                                        BIT_LENGTH2,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_LENGTH2,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
                         }
 
-                        public static class ConvertCode39to32 {
-                            static final int BIT_CONVERT_CODE39_TO_32 = 0;
-                            static final int defaultValue = DISABLE << BIT_CONVERT_CODE39_TO_32;
+                        object CheckDigitVerification {
+                            const val BIT_CODE39_VERIFICATION_CHECKDIGIT: Int = 18
+                            val defaultValue: Int = DISABLE shl BIT_CODE39_VERIFICATION_CHECKDIGIT
+                            const val MAX_VALUE: Int = 0x3
 
-                            public static void enable() {
-                                mCode39RegisterValue = Scanner.enable(BIT_CONVERT_CODE39_TO_32, mCode39RegisterValue);
+                            fun disable() {
+                                register = setValue(
+                                    BIT_CODE39_VERIFICATION_CHECKDIGIT,
+                                    0x0,
+                                    register,
+                                    MAX_VALUE
+                                )
                             }
 
-                            public static void disable() {
-                                mCode39RegisterValue = Scanner.disable(BIT_CONVERT_CODE39_TO_32, mCode39RegisterValue);
+                            fun setDoNotTransmit() {
+                                register = setValue(
+                                    BIT_CODE39_VERIFICATION_CHECKDIGIT,
+                                    0x1,
+                                    register,
+                                    MAX_VALUE
+                                )
                             }
 
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_CONVERT_CODE39_TO_32, mCode39RegisterValue);
+                            fun setTransmit() {
+                                register = setValue(
+                                    BIT_CODE39_VERIFICATION_CHECKDIGIT,
+                                    0x2,
+                                    register,
+                                    MAX_VALUE
+                                )
                             }
+
+                            val value: Int
+                                get() {
+                                    return getValue(
+                                        BIT_CODE39_VERIFICATION_CHECKDIGIT,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
                         }
 
-                        public static class Code32AddPrefix_A {
-                            static final int BIT_CODE32_ADDPREFIX_A = 1;
-                            static final int defaultValue = DISABLE << BIT_CODE32_ADDPREFIX_A;
+                        object Code39FullASCIIConversion {
+                            const val BIT_CODE39_ASCII_CONVERSION: Int = 20
+                            val defaultValue: Int = DISABLE shl BIT_CODE39_ASCII_CONVERSION
 
-                            public static void enable() {
-                                mCode39RegisterValue = Scanner.enable(BIT_CODE32_ADDPREFIX_A, mCode39RegisterValue);
+                            fun enable() {
+                                register = enable(BIT_CODE39_ASCII_CONVERSION, register)
                             }
 
-                            public static void disable() {
-                                mCode39RegisterValue = Scanner.disable(BIT_CODE32_ADDPREFIX_A, mCode39RegisterValue);
+                            fun disable() {
+                                register = disable(BIT_CODE39_ASCII_CONVERSION, register)
                             }
 
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_CODE32_ADDPREFIX_A, mCode39RegisterValue);
-                            }
-
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_CODE39_ASCII_CONVERSION,
+                                        register
+                                    )
+                                }
                         }
 
-                        public static class Length {
-                            static final int BIT_LENGTheadlineMedium = 2;
-                            static final int BIT_LENGTH2 = 10;
-                            static final int defaultLengtheadlineMedium = 1 << BIT_LENGTheadlineMedium;
-                            static final int defaultLength2 = 55 << BIT_LENGTH2;
-                            static final int MAX_VALUE = 0xFF;
+                        object Code39BufferingScanStore {
+                            const val BIT_CODE39_BUFFERING: Int = 21
+                            val defaultValue: Int = DISABLE shl BIT_CODE39_BUFFERING
 
-                            public static int getL1() {
-                                return Scanner.getValue(BIT_LENGTheadlineMedium, mCode39RegisterValue, MAX_VALUE);
+                            fun enable() {
+                                register = enable(BIT_CODE39_BUFFERING, register)
                             }
 
-                            public static void setL1(int value) {
-                                mCode39RegisterValue = Scanner.setValue(BIT_LENGTheadlineMedium, value, mCode39RegisterValue, MAX_VALUE);
+                            fun disable() {
+                                register = disable(BIT_CODE39_BUFFERING, register)
                             }
 
-                            public static int getL2() {
-                                return Scanner.getValue(BIT_LENGTH2, mCode39RegisterValue, MAX_VALUE);
-                            }
-
-                            public static void setL2(int value) {
-                                mCode39RegisterValue = Scanner.setValue(BIT_LENGTH2, value, mCode39RegisterValue, MAX_VALUE);
-                            }
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_CODE39_BUFFERING,
+                                        register
+                                    )
+                                }
                         }
 
-                        public static class CheckDigitVerification {
-                            static final int BIT_CODE39_VERIFICATION_CHECKDIGIT = 18;
-                            static final int defaultValue = DISABLE << BIT_CODE39_VERIFICATION_CHECKDIGIT;
-                            static final int MAX_VALUE = 0x3;
+                        object Code39ReducedQuietZone {
+                            const val BIT_CODE39_QUIET_ZONE: Int = 22
+                            val defaultValue: Int = DISABLE shl BIT_CODE39_QUIET_ZONE
 
-                            public static void disable() {
-                                mCode39RegisterValue = Scanner.setValue(BIT_CODE39_VERIFICATION_CHECKDIGIT, 0x0, mCode39RegisterValue, MAX_VALUE);
+                            fun enable() {
+                                register = enable(BIT_CODE39_QUIET_ZONE, register)
                             }
 
-                            public static void setDoNotTransmit() {
-                                mCode39RegisterValue = Scanner.setValue(BIT_CODE39_VERIFICATION_CHECKDIGIT, 0x1, mCode39RegisterValue, MAX_VALUE);
+                            fun disable() {
+                                register = disable(BIT_CODE39_QUIET_ZONE, register)
                             }
 
-                            public static void setTransmit() {
-                                mCode39RegisterValue = Scanner.setValue(BIT_CODE39_VERIFICATION_CHECKDIGIT, 0x2, mCode39RegisterValue, MAX_VALUE);
-                            }
-
-                            public static int getValue() {
-                                return Scanner.getValue(BIT_CODE39_VERIFICATION_CHECKDIGIT, mCode39RegisterValue, MAX_VALUE);
-                            }
-                        }
-
-                        public static class Code39FullASCIIConversion {
-                            static final int BIT_CODE39_ASCII_CONVERSION = 20;
-                            static final int defaultValue = DISABLE << BIT_CODE39_ASCII_CONVERSION;
-
-                            public static void enable() {
-                                mCode39RegisterValue = Scanner.enable(BIT_CODE39_ASCII_CONVERSION, mCode39RegisterValue);
-                            }
-
-                            public static void disable() {
-                                mCode39RegisterValue = Scanner.disable(BIT_CODE39_ASCII_CONVERSION, mCode39RegisterValue);
-                            }
-
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_CODE39_ASCII_CONVERSION, mCode39RegisterValue);
-                            }
-                        }
-
-                        public static class Code39BufferingScanStore {
-                            static final int BIT_CODE39_BUFFERING = 21;
-                            static final int defaultValue = DISABLE << BIT_CODE39_BUFFERING;
-
-                            public static void enable() {
-                                mCode39RegisterValue = Scanner.enable(BIT_CODE39_BUFFERING, mCode39RegisterValue);
-                            }
-
-                            public static void disable() {
-                                mCode39RegisterValue = Scanner.disable(BIT_CODE39_BUFFERING, mCode39RegisterValue);
-                            }
-
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_CODE39_BUFFERING, mCode39RegisterValue);
-                            }
-                        }
-
-                        public static class Code39ReducedQuietZone {
-                            static final int BIT_CODE39_QUIET_ZONE = 22;
-                            static final int defaultValue = DISABLE << BIT_CODE39_QUIET_ZONE;
-
-                            public static void enable() {
-                                mCode39RegisterValue = Scanner.enable(BIT_CODE39_QUIET_ZONE, mCode39RegisterValue);
-                            }
-
-                            public static void disable() {
-                                mCode39RegisterValue = Scanner.disable(BIT_CODE39_QUIET_ZONE, mCode39RegisterValue);
-                            }
-
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_CODE39_QUIET_ZONE, mCode39RegisterValue);
-                            }
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_CODE39_QUIET_ZONE,
+                                        register
+                                    )
+                                }
                         }
                     }
 
-                    public static class Code93 {
+                    object Code93 {
                         //private static int mCode93RegisterValue = 0;
-                        private static int mCode93RegisterValue = getDefault();
+                        var register: Int = default
 
-                        private static int getDefault() {
-                            return Length.defaultLengtheadlineMedium
-                                    | Length.defaultLength2;
-                        }
-
-                        public static void setDefault() {
-                            mCode93RegisterValue = getDefault();
-                        }
-
-                        public static int getRegister() {
-                            return mCode93RegisterValue;
-                        }
-
-                        public static void setRegister(int value) {
-                            mCode93RegisterValue = value;
-                        }
-
-                        public static class Length {
-                            static final int BIT_LENGTheadlineMedium = 0;
-                            static final int BIT_LENGTH2 = 8;
-                            static final int defaultLengtheadlineMedium = 1 << BIT_LENGTheadlineMedium;
-                            static final int defaultLength2 = 55 << BIT_LENGTH2;
-                            static final int MAX_VALUE = 0xFF;
-
-                            public static int getL1() {
-                                return Scanner.getValue(BIT_LENGTheadlineMedium, mCode93RegisterValue, MAX_VALUE);
+                        private val default: Int
+                            get() {
+                                return (Length.defaultLengtheadlineMedium
+                                        or Length.defaultLength2)
                             }
 
-                            public static void setL1(int value) {
-                                mCode93RegisterValue = Scanner.setValue(BIT_LENGTheadlineMedium, value, mCode93RegisterValue, MAX_VALUE);
-                            }
+                        fun setDefault() {
+                            register = default
+                        }
 
-                            public static int getL2() {
-                                return Scanner.getValue(BIT_LENGTH2, mCode93RegisterValue, MAX_VALUE);
-                            }
+                        object Length {
+                            const val BIT_LENGTheadlineMedium: Int = 0
+                            const val BIT_LENGTH2: Int = 8
+                            val defaultLengtheadlineMedium: Int = 1 shl BIT_LENGTheadlineMedium
+                            val defaultLength2: Int = 55 shl BIT_LENGTH2
+                            const val MAX_VALUE: Int = 0xFF
 
-                            public static void setL2(int value) {
-                                mCode93RegisterValue = Scanner.setValue(BIT_LENGTH2, value, mCode93RegisterValue, MAX_VALUE);
-                            }
+                            var l1: Int
+                                get() {
+                                    return getValue(
+                                        BIT_LENGTheadlineMedium,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_LENGTheadlineMedium,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
+
+                            var l2: Int
+                                get() {
+                                    return getValue(
+                                        BIT_LENGTH2,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_LENGTH2,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
                         }
                     }
 
-                    public static class Code11 {
+                    object Code11 {
                         //private static int mCode11RegisterValue = 0x40000;
-                        private static int mCode11RegisterValue = getDefault();
+                        var register: Int = default
 
-                        private static int getDefault() {
-                            return Length.defaultLengtheadlineMedium
-                                    | Length.defaultLength2
-                                    | CheckDigitVerification.defaultValue
-                                    | TransmitCheckDigit.defaultValue;
+                        private val default: Int
+                            get() {
+                                return (Length.defaultLengtheadlineMedium
+                                        or Length.defaultLength2
+                                        or CheckDigitVerification.defaultValue
+                                        or TransmitCheckDigit.defaultValue)
+                            }
+
+                        fun setDefault() {
+                            register = default
                         }
 
-                        public static void setDefault() {
-                            mCode11RegisterValue = getDefault();
+                        object Length {
+                            const val BIT_LENGTheadlineMedium: Int = 0
+                            const val BIT_LENGTH2: Int = 8
+                            val defaultLengtheadlineMedium: Int = 1 shl BIT_LENGTheadlineMedium
+                            val defaultLength2: Int = 55 shl BIT_LENGTH2
+                            const val MAX_VALUE: Int = 0xFF
+
+                            var l1: Int
+                                get() {
+                                    return getValue(
+                                        BIT_LENGTheadlineMedium,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_LENGTheadlineMedium,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
+
+                            var l2: Int
+                                get() {
+                                    return getValue(
+                                        BIT_LENGTH2,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_LENGTH2,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
                         }
 
-                        public static int getRegister() {
-                            return mCode11RegisterValue;
+                        object CheckDigitVerification {
+                            const val BIT_CODE11_VERIFICATION_CHECKDIGIT: Int = 16
+                            val defaultValue: Int = DISABLE shl BIT_CODE11_VERIFICATION_CHECKDIGIT
+                            const val MAX_VALUE: Int = 0x3
+
+                            fun disable() {
+                                register = setValue(
+                                    BIT_CODE11_VERIFICATION_CHECKDIGIT,
+                                    0x0,
+                                    register,
+                                    MAX_VALUE
+                                )
+                            }
+
+                            fun oneCheckDigit() {
+                                register = setValue(
+                                    BIT_CODE11_VERIFICATION_CHECKDIGIT,
+                                    0x1,
+                                    register,
+                                    MAX_VALUE
+                                )
+                            }
+
+                            fun twoCheckDigit() {
+                                register = setValue(
+                                    BIT_CODE11_VERIFICATION_CHECKDIGIT,
+                                    0x2,
+                                    register,
+                                    MAX_VALUE
+                                )
+                            }
+
+                            val value: Int
+                                get() {
+                                    return getValue(
+                                        BIT_CODE11_VERIFICATION_CHECKDIGIT,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
                         }
 
-                        public static void setRegister(int value) {
-                            mCode11RegisterValue = value;
-                        }
+                        object TransmitCheckDigit {
+                            const val BIT_CODE11_TRANSMIT_CHECKDIGIT: Int = 18
+                            val defaultValue: Int = ENABLE shl BIT_CODE11_TRANSMIT_CHECKDIGIT
 
-                        public static class Length {
-                            static final int BIT_LENGTheadlineMedium = 0;
-                            static final int BIT_LENGTH2 = 8;
-                            static final int defaultLengtheadlineMedium = 1 << BIT_LENGTheadlineMedium;
-                            static final int defaultLength2 = 55 << BIT_LENGTH2;
-                            static final int MAX_VALUE = 0xFF;
-
-                            public static int getL1() {
-                                return Scanner.getValue(BIT_LENGTheadlineMedium, mCode11RegisterValue, MAX_VALUE);
+                            fun enable() {
+                                register = enable(BIT_CODE11_TRANSMIT_CHECKDIGIT, register)
                             }
 
-                            public static void setL1(int value) {
-                                mCode11RegisterValue = Scanner.setValue(BIT_LENGTheadlineMedium, value, mCode11RegisterValue, MAX_VALUE);
+                            fun disable() {
+                                register = disable(BIT_CODE11_TRANSMIT_CHECKDIGIT, register)
                             }
 
-                            public static int getL2() {
-                                return Scanner.getValue(BIT_LENGTH2, mCode11RegisterValue, MAX_VALUE);
-                            }
-
-                            public static void setL2(int value) {
-                                mCode11RegisterValue = Scanner.setValue(BIT_LENGTH2, value, mCode11RegisterValue, MAX_VALUE);
-                            }
-                        }
-
-                        public static class CheckDigitVerification {
-                            static final int BIT_CODE11_VERIFICATION_CHECKDIGIT = 16;
-                            static final int defaultValue = DISABLE << BIT_CODE11_VERIFICATION_CHECKDIGIT;
-                            static final int MAX_VALUE = 0x3;
-
-                            public static void disable() {
-                                mCode11RegisterValue = Scanner.setValue(BIT_CODE11_VERIFICATION_CHECKDIGIT, 0x0, mCode11RegisterValue, MAX_VALUE);
-                            }
-
-                            public static void oneCheckDigit() {
-                                mCode11RegisterValue = Scanner.setValue(BIT_CODE11_VERIFICATION_CHECKDIGIT, 0x1, mCode11RegisterValue, MAX_VALUE);
-                            }
-
-                            public static void twoCheckDigit() {
-                                mCode11RegisterValue = Scanner.setValue(BIT_CODE11_VERIFICATION_CHECKDIGIT, 0x2, mCode11RegisterValue, MAX_VALUE);
-                            }
-
-                            public static int getValue() {
-                                return Scanner.getValue(BIT_CODE11_VERIFICATION_CHECKDIGIT, mCode11RegisterValue, MAX_VALUE);
-                            }
-                        }
-
-                        public static class TransmitCheckDigit {
-                            static final int BIT_CODE11_TRANSMIT_CHECKDIGIT = 18;
-                            static final int defaultValue = ENABLE << BIT_CODE11_TRANSMIT_CHECKDIGIT;
-
-                            public static void enable() {
-                                mCode11RegisterValue = Scanner.enable(BIT_CODE11_TRANSMIT_CHECKDIGIT, mCode11RegisterValue);
-                            }
-
-                            public static void disable() {
-                                mCode11RegisterValue = Scanner.disable(BIT_CODE11_TRANSMIT_CHECKDIGIT, mCode11RegisterValue);
-                            }
-
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_CODE11_TRANSMIT_CHECKDIGIT, mCode11RegisterValue);
-                            }
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_CODE11_TRANSMIT_CHECKDIGIT,
+                                        register
+                                    )
+                                }
                         }
                     }
 
-                    public static class Interleaved2of5 {
+                    object Interleaved2of5 {
                         //private static int mI2of5RegisterValue = 0x140000;
-                        private static int mI2of5RegisterValue = getDefault();
+                        var register: Int = default
 
-                        private static int getDefault() {
-                            return Length.defaultLengtheadlineMedium
-                                    | Length.defaultLength2
-                                    | CheckDigitVerification.defaultValue
-                                    | ConvertI2of5ToEAN13.defaultValue
-                                    | SecurityLevel.defaultValue
-                                    | ReducedQuietZone.defaultValue;
+                        private val default: Int
+                            get() {
+                                return (Length.defaultLengtheadlineMedium
+                                        or Length.defaultLength2
+                                        or CheckDigitVerification.defaultValue
+                                        or ConvertI2of5ToEAN13.defaultValue
+                                        or SecurityLevel.defaultValue
+                                        or ReducedQuietZone.defaultValue)
+                            }
+
+                        fun setDefault() {
+                            register = default
                         }
 
-                        public static void setDefault() {
-                            mI2of5RegisterValue = getDefault();
+                        object Length {
+                            const val BIT_LENGTheadlineMedium: Int = 0
+                            const val BIT_LENGTH2: Int = 8
+                            val defaultLengtheadlineMedium: Int = 1 shl BIT_LENGTheadlineMedium
+                            val defaultLength2: Int = 55 shl BIT_LENGTH2
+                            const val MAX_VALUE: Int = 0xFF
+
+                            var l1: Int
+                                get() {
+                                    return getValue(
+                                        BIT_LENGTheadlineMedium,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_LENGTheadlineMedium,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
+
+                            var l2: Int
+                                get() {
+                                    return getValue(
+                                        BIT_LENGTH2,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_LENGTH2,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
                         }
 
-                        public static int getRegister() {
-                            return mI2of5RegisterValue;
+                        object CheckDigitVerification {
+                            const val BIT_I2OF5_VERIFICATION_CHECKDIGIT: Int = 16
+                            val defaultValue: Int = 0 shl BIT_I2OF5_VERIFICATION_CHECKDIGIT
+                            const val MAX_VALUE: Int = 0x7
+
+                            fun disable() {
+                                register = setValue(
+                                    BIT_I2OF5_VERIFICATION_CHECKDIGIT,
+                                    0x0,
+                                    register,
+                                    MAX_VALUE
+                                )
+                            }
+
+                            fun setDoNotTransmitUSS() {
+                                register = setValue(
+                                    BIT_I2OF5_VERIFICATION_CHECKDIGIT,
+                                    0x1,
+                                    register,
+                                    MAX_VALUE
+                                )
+                            }
+
+                            fun setTransmitUSS() {
+                                register = setValue(
+                                    BIT_I2OF5_VERIFICATION_CHECKDIGIT,
+                                    0x2,
+                                    register,
+                                    MAX_VALUE
+                                )
+                            }
+
+                            fun setDoNotTransmitOPCC() {
+                                register = setValue(
+                                    BIT_I2OF5_VERIFICATION_CHECKDIGIT,
+                                    0x3,
+                                    register,
+                                    MAX_VALUE
+                                )
+                            }
+
+                            fun setTransmitOPCC() {
+                                register = setValue(
+                                    BIT_I2OF5_VERIFICATION_CHECKDIGIT,
+                                    0x4,
+                                    register,
+                                    MAX_VALUE
+                                )
+                            }
+
+                            val value: Int
+                                get() {
+                                    return getValue(
+                                        BIT_I2OF5_VERIFICATION_CHECKDIGIT,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
                         }
 
-                        public static void setRegister(int value) {
-                            mI2of5RegisterValue = value;
+                        object ConvertI2of5ToEAN13 {
+                            const val BIT_I2OF5_TO_EAN13: Int = 19
+                            val defaultValue: Int = DISABLE shl BIT_I2OF5_TO_EAN13
+
+                            fun enable() {
+                                register = enable(BIT_I2OF5_TO_EAN13, register)
+                            }
+
+                            fun disable() {
+                                register = disable(BIT_I2OF5_TO_EAN13, register)
+                            }
+
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_I2OF5_TO_EAN13,
+                                        register
+                                    )
+                                }
                         }
 
-                        public static class Length {
-                            static final int BIT_LENGTheadlineMedium = 0;
-                            static final int BIT_LENGTH2 = 8;
-                            static final int defaultLengtheadlineMedium = 1 << BIT_LENGTheadlineMedium;
-                            static final int defaultLength2 = 55 << BIT_LENGTH2;
-                            static final int MAX_VALUE = 0xFF;
+                        object SecurityLevel {
+                            const val BIT_I2OF5_SECURITY: Int = 20
+                            val defaultValue: Int = 1 shl BIT_I2OF5_SECURITY
+                            const val MAX_VALUE: Int = 0x3
 
-                            public static int getL1() {
-                                return Scanner.getValue(BIT_LENGTheadlineMedium, mI2of5RegisterValue, MAX_VALUE);
+                            fun level0() {
+                                register = setValue(BIT_I2OF5_SECURITY, 0x0, register, MAX_VALUE)
                             }
 
-                            public static void setL1(int value) {
-                                mI2of5RegisterValue = Scanner.setValue(BIT_LENGTheadlineMedium, value, mI2of5RegisterValue, MAX_VALUE);
+                            fun level1() {
+                                register = setValue(BIT_I2OF5_SECURITY, 0x1, register, MAX_VALUE)
                             }
 
-                            public static int getL2() {
-                                return Scanner.getValue(BIT_LENGTH2, mI2of5RegisterValue, MAX_VALUE);
+                            fun level2() {
+                                register = setValue(BIT_I2OF5_SECURITY, 0x2, register, MAX_VALUE)
                             }
 
-                            public static void setL2(int value) {
-                                mI2of5RegisterValue = Scanner.setValue(BIT_LENGTH2, value, mI2of5RegisterValue, MAX_VALUE);
+                            fun level3() {
+                                register = setValue(BIT_I2OF5_SECURITY, 0x3, register, MAX_VALUE)
                             }
+
+                            val value: Int
+                                get() {
+                                    return getValue(
+                                        BIT_I2OF5_SECURITY,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
                         }
 
-                        public static class CheckDigitVerification {
-                            static final int BIT_I2OF5_VERIFICATION_CHECKDIGIT = 16;
-                            static final int defaultValue = 0 << BIT_I2OF5_VERIFICATION_CHECKDIGIT;
-                            static final int MAX_VALUE = 0x7;
+                        object ReducedQuietZone {
+                            const val BIT_I2OF5_QUIET_ZONE: Int = 22
+                            val defaultValue: Int = DISABLE shl BIT_I2OF5_QUIET_ZONE
 
-                            public static void disable() {
-                                mI2of5RegisterValue = Scanner.setValue(BIT_I2OF5_VERIFICATION_CHECKDIGIT, 0x0, mI2of5RegisterValue, MAX_VALUE);
+                            fun enable() {
+                                register = enable(BIT_I2OF5_QUIET_ZONE, register)
                             }
 
-                            public static void setDoNotTransmitUSS() {
-                                mI2of5RegisterValue = Scanner.setValue(BIT_I2OF5_VERIFICATION_CHECKDIGIT, 0x1, mI2of5RegisterValue, MAX_VALUE);
+                            fun disable() {
+                                register = disable(BIT_I2OF5_QUIET_ZONE, register)
                             }
 
-                            public static void setTransmitUSS() {
-                                mI2of5RegisterValue = Scanner.setValue(BIT_I2OF5_VERIFICATION_CHECKDIGIT, 0x2, mI2of5RegisterValue, MAX_VALUE);
-                            }
-
-                            public static void setDoNotTransmitOPCC() {
-                                mI2of5RegisterValue = Scanner.setValue(BIT_I2OF5_VERIFICATION_CHECKDIGIT, 0x3, mI2of5RegisterValue, MAX_VALUE);
-                            }
-
-                            public static void setTransmitOPCC() {
-                                mI2of5RegisterValue = Scanner.setValue(BIT_I2OF5_VERIFICATION_CHECKDIGIT, 0x4, mI2of5RegisterValue, MAX_VALUE);
-                            }
-
-                            public static int getValue() {
-                                return Scanner.getValue(BIT_I2OF5_VERIFICATION_CHECKDIGIT, mI2of5RegisterValue, MAX_VALUE);
-                            }
-                        }
-
-                        public static class ConvertI2of5ToEAN13 {
-                            static final int BIT_I2OF5_TO_EAN13 = 19;
-                            static final int defaultValue = DISABLE << BIT_I2OF5_TO_EAN13;
-
-                            public static void enable() {
-                                mI2of5RegisterValue = Scanner.enable(BIT_I2OF5_TO_EAN13, mI2of5RegisterValue);
-                            }
-
-                            public static void disable() {
-                                mI2of5RegisterValue = Scanner.disable(BIT_I2OF5_TO_EAN13, mI2of5RegisterValue);
-                            }
-
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_I2OF5_TO_EAN13, mI2of5RegisterValue);
-                            }
-                        }
-
-                        public static class SecurityLevel {
-                            static final int BIT_I2OF5_SECURITY = 20;
-                            static final int defaultValue = 1 << BIT_I2OF5_SECURITY;
-                            static final int MAX_VALUE = 0x3;
-
-                            public static void level0() {
-                                mI2of5RegisterValue = Scanner.setValue(BIT_I2OF5_SECURITY, 0x0, mI2of5RegisterValue, MAX_VALUE);
-                            }
-
-                            public static void level1() {
-                                mI2of5RegisterValue = Scanner.setValue(BIT_I2OF5_SECURITY, 0x1, mI2of5RegisterValue, MAX_VALUE);
-                            }
-
-                            public static void level2() {
-                                mI2of5RegisterValue = Scanner.setValue(BIT_I2OF5_SECURITY, 0x2, mI2of5RegisterValue, MAX_VALUE);
-                            }
-
-                            public static void level3() {
-                                mI2of5RegisterValue = Scanner.setValue(BIT_I2OF5_SECURITY, 0x3, mI2of5RegisterValue, MAX_VALUE);
-                            }
-
-                            public static int getValue() {
-                                return Scanner.getValue(BIT_I2OF5_SECURITY, mI2of5RegisterValue, MAX_VALUE);
-                            }
-                        }
-
-                        public static class ReducedQuietZone {
-                            static final int BIT_I2OF5_QUIET_ZONE = 22;
-                            static final int defaultValue = DISABLE << BIT_I2OF5_QUIET_ZONE;
-
-                            public static void enable() {
-                                mI2of5RegisterValue = Scanner.enable(BIT_I2OF5_QUIET_ZONE, mI2of5RegisterValue);
-                            }
-
-                            public static void disable() {
-                                mI2of5RegisterValue = Scanner.disable(BIT_I2OF5_QUIET_ZONE, mI2of5RegisterValue);
-                            }
-
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_I2OF5_QUIET_ZONE, mI2of5RegisterValue);
-                            }
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_I2OF5_QUIET_ZONE,
+                                        register
+                                    )
+                                }
                         }
                     }
 
-                    public static class Discrete2of5 {
+                    object Discrete2of5 {
                         //private static int mD2of5RegisterValue = 0;
-                        private static int mD2of5RegisterValue = getDefault();
+                        var register: Int = default
 
-                        private static int getDefault() {
-                            return Length.defaultLengtheadlineMedium
-                                    | Length.defaultLength2;
-                        }
-
-                        public static void setDefault() {
-                            mD2of5RegisterValue = getDefault();
-                        }
-
-                        public static int getRegister() {
-                            return mD2of5RegisterValue;
-                        }
-
-                        public static void setRegister(int value) {
-                            mD2of5RegisterValue = value;
-                        }
-
-                        public static class Length {
-                            static final int BIT_LENGTheadlineMedium = 0;
-                            static final int BIT_LENGTH2 = 8;
-                            static final int defaultLengtheadlineMedium = 1 << BIT_LENGTheadlineMedium;
-                            static final int defaultLength2 = 55 << BIT_LENGTH2;
-                            static final int MAX_VALUE = 0xFF;
-
-                            public static int getL1() {
-                                return Scanner.getValue(BIT_LENGTheadlineMedium, mD2of5RegisterValue, MAX_VALUE);
+                        private val default: Int
+                            get() {
+                                return (Length.defaultLengtheadlineMedium
+                                        or Length.defaultLength2)
                             }
 
-                            public static void setL1(int value) {
-                                mD2of5RegisterValue = Scanner.setValue(BIT_LENGTheadlineMedium, value, mD2of5RegisterValue, MAX_VALUE);
-                            }
+                        fun setDefault() {
+                            register = default
+                        }
 
-                            public static int getL2() {
-                                return Scanner.getValue(BIT_LENGTH2, mD2of5RegisterValue, MAX_VALUE);
-                            }
+                        object Length {
+                            const val BIT_LENGTheadlineMedium: Int = 0
+                            const val BIT_LENGTH2: Int = 8
+                            val defaultLengtheadlineMedium: Int = 1 shl BIT_LENGTheadlineMedium
+                            val defaultLength2: Int = 55 shl BIT_LENGTH2
+                            const val MAX_VALUE: Int = 0xFF
 
-                            public static void setL2(int value) {
-                                mD2of5RegisterValue = Scanner.setValue(BIT_LENGTH2, value, mD2of5RegisterValue, MAX_VALUE);
-                            }
+                            var l1: Int
+                                get() {
+                                    return getValue(
+                                        BIT_LENGTheadlineMedium,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_LENGTheadlineMedium,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
+
+                            var l2: Int
+                                get() {
+                                    return getValue(
+                                        BIT_LENGTH2,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_LENGTH2,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
                         }
                     }
 
-                    public static class Codabar {
+                    object Codabar {
                         //private static int mCodabarRegisterValue = 0x40000;
-                        private static int mCodabarRegisterValue = getDefault();
+                        var register: Int =
+                            default
 
-                        private static int getDefault() {
-                            return Length.defaultLengtheadlineMedium
-                                    | Length.defaultLength2
-                                    | CLSIEditing.defaultValue
-                                    | NOTISEditing.defaultValue
-                                    | StartStopCharacters.defaultValue;
+                        private val default: Int
+                            get() {
+                                return (Length.defaultLengtheadlineMedium
+                                        or Length.defaultLength2
+                                        or CLSIEditing.defaultValue
+                                        or NOTISEditing.defaultValue
+                                        or StartStopCharacters.defaultValue)
+                            }
+
+                        fun setDefault() {
+                            register =
+                                default
                         }
 
-                        public static void setDefault() {
-                            mCodabarRegisterValue = getDefault();
+                        object Length {
+                            const val BIT_LENGTheadlineMedium: Int = 0
+                            const val BIT_LENGTH2: Int = 8
+                            val defaultLengtheadlineMedium: Int = 1 shl BIT_LENGTheadlineMedium
+                            val defaultLength2: Int = 55 shl BIT_LENGTH2
+                            const val MAX_VALUE: Int = 0xFF
+
+                            var l1: Int
+                                get() {
+                                    return getValue(
+                                        BIT_LENGTheadlineMedium,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_LENGTheadlineMedium,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
+
+                            var l2: Int
+                                get() {
+                                    return getValue(
+                                        BIT_LENGTH2,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_LENGTH2,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
                         }
 
-                        public static int getRegister() {
-                            return mCodabarRegisterValue;
+                        object CLSIEditing {
+                            const val BIT_CLSI_EDIDING: Int = 16
+                            val defaultValue: Int = DISABLE shl BIT_CLSI_EDIDING
+
+                            fun enable() {
+                                register = enable(BIT_CLSI_EDIDING, register)
+                            }
+
+                            fun disable() {
+                                register = disable(BIT_CLSI_EDIDING, register)
+                            }
+
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_CLSI_EDIDING,
+                                        register
+                                    )
+                                }
                         }
 
-                        public static void setRegister(int value) {
-                            mCodabarRegisterValue = value;
+                        object NOTISEditing {
+                            const val BIT_NOTIS_EDIDING: Int = 17
+                            val defaultValue: Int = DISABLE shl BIT_NOTIS_EDIDING
+
+                            fun enable() {
+                                register = enable(BIT_NOTIS_EDIDING, register)
+                            }
+
+                            fun disable() {
+                                register = disable(BIT_NOTIS_EDIDING, register)
+                            }
+
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_NOTIS_EDIDING,
+                                        register
+                                    )
+                                }
                         }
 
-                        public static class Length {
-                            static final int BIT_LENGTheadlineMedium = 0;
-                            static final int BIT_LENGTH2 = 8;
-                            static final int defaultLengtheadlineMedium = 1 << BIT_LENGTheadlineMedium;
-                            static final int defaultLength2 = 55 << BIT_LENGTH2;
-                            static final int MAX_VALUE = 0xFF;
+                        object StartStopCharacters {
+                            const val BIT_STARTSTOP_CHAR: Int = 18
+                            val defaultValue: Int = 1 shl BIT_STARTSTOP_CHAR
 
-                            public static int getL1() {
-                                return Scanner.getValue(BIT_LENGTheadlineMedium, mCodabarRegisterValue, MAX_VALUE);
+                            fun setUpperCase() {
+                                register = disable(BIT_STARTSTOP_CHAR, register)
                             }
 
-                            public static void setL1(int value) {
-                                mCodabarRegisterValue = Scanner.setValue(BIT_LENGTheadlineMedium, value, mCodabarRegisterValue, MAX_VALUE);
+                            fun setLowerCase() {
+                                register = enable(BIT_STARTSTOP_CHAR, register)
                             }
 
-                            public static int getL2() {
-                                return Scanner.getValue(BIT_LENGTH2, mCodabarRegisterValue, MAX_VALUE);
-                            }
-
-                            public static void setL2(int value) {
-                                mCodabarRegisterValue = Scanner.setValue(BIT_LENGTH2, value, mCodabarRegisterValue, MAX_VALUE);
-                            }
-                        }
-
-                        public static class CLSIEditing {
-                            final static int BIT_CLSI_EDIDING = 16;
-                            static final int defaultValue = DISABLE << BIT_CLSI_EDIDING;
-
-                            public static void enable() {
-                                mCodabarRegisterValue = Scanner.enable(BIT_CLSI_EDIDING, mCodabarRegisterValue);
-                            }
-
-                            public static void disable() {
-                                mCodabarRegisterValue = Scanner.disable(BIT_CLSI_EDIDING, mCodabarRegisterValue);
-                            }
-
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_CLSI_EDIDING, mCodabarRegisterValue);
-                            }
-                        }
-
-                        public static class NOTISEditing {
-                            final static int BIT_NOTIS_EDIDING = 17;
-                            static final int defaultValue = DISABLE << BIT_NOTIS_EDIDING;
-
-                            public static void enable() {
-                                mCodabarRegisterValue = Scanner.enable(BIT_NOTIS_EDIDING, mCodabarRegisterValue);
-                            }
-
-                            public static void disable() {
-                                mCodabarRegisterValue = Scanner.disable(BIT_NOTIS_EDIDING, mCodabarRegisterValue);
-                            }
-
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_NOTIS_EDIDING, mCodabarRegisterValue);
-                            }
-                        }
-
-                        public static class StartStopCharacters {
-                            final static int BIT_STARTSTOP_CHAR = 18;
-                            static final int defaultValue = 1 << BIT_STARTSTOP_CHAR;
-
-                            public static void setUpperCase() {
-                                mCodabarRegisterValue = Scanner.disable(BIT_STARTSTOP_CHAR, mCodabarRegisterValue);
-                            }
-
-                            public static void setLowerCase() {
-                                mCodabarRegisterValue = Scanner.enable(BIT_STARTSTOP_CHAR, mCodabarRegisterValue);
-                            }
-
-                            public static boolean isLowerCase() {
-                                return Scanner.isEnable(BIT_STARTSTOP_CHAR, mCodabarRegisterValue);
-                            }
+                            val isLowerCase: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_STARTSTOP_CHAR,
+                                        register
+                                    )
+                                }
                         }
                     }
 
-                    public static class MSI {
+                    object MSI {
                         //private static int mMSIRegisterValue = 0x60000;
-                        private static int mMSIRegisterValue = getDefault();
+                        var register: Int =
+                            default
 
-                        private static int getDefault() {
-                            return Length.defaultLengtheadlineMedium
-                                    | Length.defaultLength2
-                                    | CheckDigitVerification.defaultValue
-                                    | TransmitCheckDigit.defaultValue;
+                        private val default: Int
+                            get() {
+                                return (Length.defaultLengtheadlineMedium
+                                        or Length.defaultLength2
+                                        or CheckDigitVerification.defaultValue
+                                        or TransmitCheckDigit.defaultValue)
+                            }
+
+                        fun setDefault() {
+                            register =
+                                default
                         }
 
-                        public static void setDefault() {
-                            mMSIRegisterValue = getDefault();
+                        object Length {
+                            const val BIT_LENGTheadlineMedium: Int = 0
+                            const val BIT_LENGTH2: Int = 8
+                            val defaultLengtheadlineMedium: Int = 1 shl BIT_LENGTheadlineMedium
+                            val defaultLength2: Int = 55 shl BIT_LENGTH2
+                            const val MAX_VALUE: Int = 0xFF
+
+                            var l1: Int
+                                get() {
+                                    return getValue(
+                                        BIT_LENGTheadlineMedium,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_LENGTheadlineMedium,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
+
+                            var l2: Int
+                                get() {
+                                    return getValue(
+                                        BIT_LENGTH2,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_LENGTH2,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
                         }
 
-                        public static int getRegister() {
-                            return mMSIRegisterValue;
+                        object CheckDigitVerification {
+                            const val BIT_CHECKDIGIT_ALGORITHM: Int = 16
+                            val defaultValue: Int = 0 shl BIT_CHECKDIGIT_ALGORITHM
+                            const val MAX_VALUE: Int = 0x3
+
+                            fun setOneCheckDigitMOD10() {
+                                register =
+                                    setValue(BIT_CHECKDIGIT_ALGORITHM, 0x0, register, MAX_VALUE)
+                            }
+
+                            fun setTwoCheckDigitMOD10MOD10() {
+                                register =
+                                    setValue(BIT_CHECKDIGIT_ALGORITHM, 0x1, register, MAX_VALUE)
+                            }
+
+                            fun setTwoCheckDigitMOD10MOD11() {
+                                register =
+                                    setValue(BIT_CHECKDIGIT_ALGORITHM, 0x2, register, MAX_VALUE)
+                            }
+
+                            val value: Int
+                                get() {
+                                    return getValue(
+                                        BIT_CHECKDIGIT_ALGORITHM,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
                         }
 
-                        public static void setRegister(int value) {
-                            mMSIRegisterValue = value;
-                        }
+                        object TransmitCheckDigit {
+                            const val BIT_TRANSMIT_CHECKDIGIT: Int = 18
+                            val defaultValue: Int = ENABLE shl BIT_TRANSMIT_CHECKDIGIT
 
-                        public static class Length {
-                            static final int BIT_LENGTheadlineMedium = 0;
-                            static final int BIT_LENGTH2 = 8;
-                            static final int defaultLengtheadlineMedium = 1 << BIT_LENGTheadlineMedium;
-                            static final int defaultLength2 = 55 << BIT_LENGTH2;
-                            static final int MAX_VALUE = 0xFF;
-
-                            public static int getL1() {
-                                return Scanner.getValue(BIT_LENGTheadlineMedium, mMSIRegisterValue, MAX_VALUE);
+                            fun disable() {
+                                register = disable(BIT_TRANSMIT_CHECKDIGIT, register)
                             }
 
-                            public static void setL1(int value) {
-                                mMSIRegisterValue = Scanner.setValue(BIT_LENGTheadlineMedium, value, mMSIRegisterValue, MAX_VALUE);
+                            fun enable() {
+                                register = enable(BIT_TRANSMIT_CHECKDIGIT, register)
                             }
 
-                            public static int getL2() {
-                                return Scanner.getValue(BIT_LENGTH2, mMSIRegisterValue, MAX_VALUE);
-                            }
-
-                            public static void setL2(int value) {
-                                mMSIRegisterValue = Scanner.setValue(BIT_LENGTH2, value, mMSIRegisterValue, MAX_VALUE);
-                            }
-                        }
-
-                        public static class CheckDigitVerification {
-                            static final int BIT_CHECKDIGIT_ALGORITHM = 16;
-                            static final int defaultValue = 0 << BIT_CHECKDIGIT_ALGORITHM;
-                            static final int MAX_VALUE = 0x3;
-
-                            public static void setOneCheckDigitMOD10() {
-                                mMSIRegisterValue = Scanner.setValue(BIT_CHECKDIGIT_ALGORITHM, 0x0, mMSIRegisterValue, MAX_VALUE);
-                            }
-
-                            public static void setTwoCheckDigitMOD10MOD10() {
-                                mMSIRegisterValue = Scanner.setValue(BIT_CHECKDIGIT_ALGORITHM, 0x1, mMSIRegisterValue, MAX_VALUE);
-                            }
-
-                            public static void setTwoCheckDigitMOD10MOD11() {
-                                mMSIRegisterValue = Scanner.setValue(BIT_CHECKDIGIT_ALGORITHM, 0x2, mMSIRegisterValue, MAX_VALUE);
-                            }
-
-                            public static int getValue() {
-                                return Scanner.getValue(BIT_CHECKDIGIT_ALGORITHM, mMSIRegisterValue, MAX_VALUE);
-                            }
-                        }
-
-                        public static class TransmitCheckDigit {
-                            static final int BIT_TRANSMIT_CHECKDIGIT = 18;
-                            static final int defaultValue = ENABLE << BIT_TRANSMIT_CHECKDIGIT;
-
-                            public static void disable() {
-                                mMSIRegisterValue = Scanner.disable(BIT_TRANSMIT_CHECKDIGIT, mMSIRegisterValue);
-                            }
-
-                            public static void enable() {
-                                mMSIRegisterValue = Scanner.enable(BIT_TRANSMIT_CHECKDIGIT, mMSIRegisterValue);
-                            }
-
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_TRANSMIT_CHECKDIGIT, mMSIRegisterValue);
-                            }
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_TRANSMIT_CHECKDIGIT,
+                                        register
+                                    )
+                                }
                         }
                     }
 
-                    public static class Matrix2of5 {
+                    object Matrix2of5 {
                         //private static int mM2of5RegisterValue = 0x20000;
-                        private static int mM2of5RegisterValue = getDefault();
+                        var register: Int = default
 
-                        private static int getDefault() {
-                            return Length.defaultLengtheadlineMedium
-                                    | Length.defaultLength2
-                                    | CheckDigitVerification.defaultValue
-                                    | Redundancy.defaultValue;
+                        private val default: Int
+                            get() {
+                                return (Length.defaultLengtheadlineMedium
+                                        or Length.defaultLength2
+                                        or CheckDigitVerification.defaultValue
+                                        or Redundancy.defaultValue)
+                            }
+
+                        fun setDefault() {
+                            register = default
                         }
 
-                        public static void setDefault() {
-                            mM2of5RegisterValue = getDefault();
+                        object Length {
+                            const val BIT_LENGTheadlineMedium: Int = 0
+                            const val BIT_LENGTH2: Int = 8
+                            val defaultLengtheadlineMedium: Int = 1 shl BIT_LENGTheadlineMedium
+                            val defaultLength2: Int = 55 shl BIT_LENGTH2
+                            const val MAX_VALUE: Int = 0xFF
+
+                            var l1: Int
+                                get() {
+                                    return getValue(
+                                        BIT_LENGTheadlineMedium,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_LENGTheadlineMedium,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
+
+                            var l2: Int
+                                get() {
+                                    return getValue(
+                                        BIT_LENGTH2,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
+                                set(value) {
+                                    register =
+                                        setValue(
+                                            BIT_LENGTH2,
+                                            value,
+                                            register,
+                                            MAX_VALUE
+                                        )
+                                }
                         }
 
-                        public static int getRegister() {
-                            return mM2of5RegisterValue;
+                        object CheckDigitVerification {
+                            const val BIT_CHECK_DIGIT_VERIFICATION: Int = 16
+                            val defaultValue: Int = DISABLE shl BIT_CHECK_DIGIT_VERIFICATION
+                            const val MAX_VALUE: Int = 0x3
+
+                            fun disable() {
+                                register =
+                                    setValue(BIT_CHECK_DIGIT_VERIFICATION, 0x0, register, MAX_VALUE)
+                            }
+
+                            fun setDoNotTransmit() {
+                                register =
+                                    setValue(BIT_CHECK_DIGIT_VERIFICATION, 0x1, register, MAX_VALUE)
+                            }
+
+                            fun setTransmit() {
+                                register =
+                                    setValue(BIT_CHECK_DIGIT_VERIFICATION, 0x2, register, MAX_VALUE)
+                            }
+
+                            val value: Int
+                                get() {
+                                    return getValue(
+                                        BIT_CHECK_DIGIT_VERIFICATION,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
                         }
 
-                        public static void setRegister(int value) {
-                            mM2of5RegisterValue = value;
-                        }
+                        object Redundancy {
+                            const val BIT_REDUNDANCY: Int = 18
+                            val defaultValue: Int = DISABLE shl BIT_REDUNDANCY
 
-                        public static class Length {
-                            static final int BIT_LENGTheadlineMedium = 0;
-                            static final int BIT_LENGTH2 = 8;
-                            static final int defaultLengtheadlineMedium = 1 << BIT_LENGTheadlineMedium;
-                            static final int defaultLength2 = 55 << BIT_LENGTH2;
-                            static final int MAX_VALUE = 0xFF;
-
-                            public static int getL1() {
-                                return Scanner.getValue(BIT_LENGTheadlineMedium, mM2of5RegisterValue, MAX_VALUE);
+                            fun disable() {
+                                register = disable(BIT_REDUNDANCY, register)
                             }
 
-                            public static void setL1(int value) {
-                                mM2of5RegisterValue = Scanner.setValue(BIT_LENGTheadlineMedium, value, mM2of5RegisterValue, MAX_VALUE);
+                            fun enable() {
+                                register = enable(BIT_REDUNDANCY, register)
                             }
 
-                            public static int getL2() {
-                                return Scanner.getValue(BIT_LENGTH2, mM2of5RegisterValue, MAX_VALUE);
-                            }
-
-                            public static void setL2(int value) {
-                                mM2of5RegisterValue = Scanner.setValue(BIT_LENGTH2, value, mM2of5RegisterValue, MAX_VALUE);
-                            }
-                        }
-
-                        public static class CheckDigitVerification {
-                            static final int BIT_CHECK_DIGIT_VERIFICATION = 16;
-                            static final int defaultValue = DISABLE << BIT_CHECK_DIGIT_VERIFICATION;
-                            static final int MAX_VALUE = 0x3;
-
-                            public static void disable() {
-                                mM2of5RegisterValue = Scanner.setValue(BIT_CHECK_DIGIT_VERIFICATION, 0x0, mM2of5RegisterValue, MAX_VALUE);
-                            }
-
-                            public static void setDoNotTransmit() {
-                                mM2of5RegisterValue = Scanner.setValue(BIT_CHECK_DIGIT_VERIFICATION, 0x1, mM2of5RegisterValue, MAX_VALUE);
-                            }
-
-                            public static void setTransmit() {
-                                mM2of5RegisterValue = Scanner.setValue(BIT_CHECK_DIGIT_VERIFICATION, 0x2, mM2of5RegisterValue, MAX_VALUE);
-                            }
-
-                            public static int getValue() {
-                                return Scanner.getValue(BIT_CHECK_DIGIT_VERIFICATION, mM2of5RegisterValue, MAX_VALUE);
-                            }
-                        }
-
-                        public static class Redundancy {
-                            static final int BIT_REDUNDANCY = 18;
-                            static final int defaultValue = DISABLE << BIT_REDUNDANCY;
-
-                            public static void disable() {
-                                mM2of5RegisterValue = Scanner.disable(BIT_REDUNDANCY, mM2of5RegisterValue);
-                            }
-
-                            public static void enable() {
-                                mM2of5RegisterValue = Scanner.enable(BIT_REDUNDANCY, mM2of5RegisterValue);
-
-                            }
-
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_REDUNDANCY, mM2of5RegisterValue);
-                            }
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_REDUNDANCY,
+                                        register
+                                    )
+                                }
                         }
                     }
 
-                    public static class GS1Databar {
+                    object GS1Databar {
                         //private static int mGs1DatabarRegisterValue = 0x2;
-                        private static int mGs1DatabarRegisterValue = getDefault();
+                        var register: Int =
+                            default
 
-                        private static int getDefault() {
-                            return SecurityLevel.defaultValue
-                                    | ConvertGS1DatabarToUPCEAN.defaultValue;
+                        private val default: Int
+                            get() {
+                                return (SecurityLevel.defaultValue
+                                        or ConvertGS1DatabarToUPCEAN.defaultValue)
+                            }
+
+                        fun setDefault() {
+                            register =
+                                default
                         }
 
-                        public static void setDefault() {
-                            mGs1DatabarRegisterValue = getDefault();
+                        object SecurityLevel {
+                            const val BIT_SECURITY: Int = 0
+                            val defaultValue: Int = 2 shl BIT_SECURITY
+                            const val MAX_VALUE: Int = 0x3
+
+                            fun level1() {
+                                register = setValue(BIT_SECURITY, 0x0, register, MAX_VALUE)
+                            }
+
+                            fun level2() {
+                                register = setValue(BIT_SECURITY, 0x1, register, MAX_VALUE)
+                            }
+
+                            fun level3() {
+                                register = setValue(BIT_SECURITY, 0x2, register, MAX_VALUE)
+                            }
+
+                            fun level4() {
+                                register = setValue(BIT_SECURITY, 0x3, register, MAX_VALUE)
+                            }
+
+                            val level: Int
+                                get() {
+                                    return getValue(
+                                        BIT_SECURITY,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
                         }
 
-                        public static int getRegister() {
-                            return mGs1DatabarRegisterValue;
-                        }
+                        object ConvertGS1DatabarToUPCEAN {
+                            const val BIT_GS1DATABAR_TO_UPCEAN: Int = 2
+                            val defaultValue: Int = DISABLE shl BIT_GS1DATABAR_TO_UPCEAN
 
-                        public static void setRegister(int value) {
-                            mGs1DatabarRegisterValue = value;
-                        }
-
-                        public static class SecurityLevel {
-                            static final int BIT_SECURITY = 0;
-                            static final int defaultValue = 2 << BIT_SECURITY;
-                            static final int MAX_VALUE = 0x3;
-
-                            public static void level1() {
-                                mGs1DatabarRegisterValue = Scanner.setValue(BIT_SECURITY, 0x0, mGs1DatabarRegisterValue, MAX_VALUE);
+                            fun disable() {
+                                register = disable(BIT_GS1DATABAR_TO_UPCEAN, register)
                             }
 
-                            public static void level2() {
-                                mGs1DatabarRegisterValue = Scanner.setValue(BIT_SECURITY, 0x1, mGs1DatabarRegisterValue, MAX_VALUE);
+                            fun enable() {
+                                register = enable(BIT_GS1DATABAR_TO_UPCEAN, register)
                             }
 
-                            public static void level3() {
-                                mGs1DatabarRegisterValue = Scanner.setValue(BIT_SECURITY, 0x2, mGs1DatabarRegisterValue, MAX_VALUE);
-                            }
-
-                            public static void level4() {
-                                mGs1DatabarRegisterValue = Scanner.setValue(BIT_SECURITY, 0x3, mGs1DatabarRegisterValue, MAX_VALUE);
-                            }
-
-                            public static int getLevel() {
-                                return Scanner.getValue(BIT_SECURITY, mGs1DatabarRegisterValue, MAX_VALUE);
-                            }
-                        }
-
-                        public static class ConvertGS1DatabarToUPCEAN {
-                            static final int BIT_GS1DATABAR_TO_UPCEAN = 2;
-                            static final int defaultValue = DISABLE << BIT_GS1DATABAR_TO_UPCEAN;
-
-                            public static void disable() {
-                                mGs1DatabarRegisterValue = Scanner.disable(BIT_GS1DATABAR_TO_UPCEAN, mGs1DatabarRegisterValue);
-                            }
-
-                            public static void enable() {
-                                mGs1DatabarRegisterValue = Scanner.enable(BIT_GS1DATABAR_TO_UPCEAN, mGs1DatabarRegisterValue);
-                            }
-
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_GS1DATABAR_TO_UPCEAN, mGs1DatabarRegisterValue);
-                            }
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_GS1DATABAR_TO_UPCEAN,
+                                        register
+                                    )
+                                }
                         }
                     }
                 }
 
-                public static class TwoD {
-                    public static class PostalCodes {
+                class TwoD {
+                    object PostalCodes {
                         //private static int mPotalCodeRegisterValue = 0x3;
-                        private static int mPotalCodeRegisterValue = getDefault();
+                        var register: Int = default
 
-                        private static int getDefault() {
-                            return TransmitUKCheckDigit.defaultValue
-                                    | TransmitUSCheckDigit.defaultValue
-                                    | AustraliaPostFormat.defaultValue;
+                        private val default: Int
+                            get() {
+                                return (TransmitUKCheckDigit.defaultValue
+                                        or TransmitUSCheckDigit.defaultValue
+                                        or AustraliaPostFormat.defaultValue)
+                            }
+
+                        fun setDefault() {
+                            register = default
                         }
 
-                        public static void setDefault() {
-                            mPotalCodeRegisterValue = getDefault();
+                        object TransmitUSCheckDigit {
+                            const val BIT_2D_POSTAL_TRANSMIT_US: Int = 0
+                            val defaultValue: Int = ENABLE shl BIT_2D_POSTAL_TRANSMIT_US
+
+                            fun enable() {
+                                register = enable(BIT_2D_POSTAL_TRANSMIT_US, register)
+                            }
+
+                            fun disable() {
+                                register = disable(BIT_2D_POSTAL_TRANSMIT_US, register)
+                            }
+
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_2D_POSTAL_TRANSMIT_US,
+                                        register
+                                    )
+                                }
                         }
 
-                        public static int getRegister() {
-                            return mPotalCodeRegisterValue;
+                        object TransmitUKCheckDigit {
+                            const val BIT_2D_POSTAL_TRANSMIT_UK: Int = 1
+                            val defaultValue: Int = ENABLE shl BIT_2D_POSTAL_TRANSMIT_UK
+
+                            fun enable() {
+                                register = enable(BIT_2D_POSTAL_TRANSMIT_UK, register)
+                            }
+
+                            fun disable() {
+                                register = disable(BIT_2D_POSTAL_TRANSMIT_UK, register)
+                            }
+
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_2D_POSTAL_TRANSMIT_UK,
+                                        register
+                                    )
+                                }
                         }
 
-                        public static void setRegister(int value) {
-                            mPotalCodeRegisterValue = value;
-                        }
+                        object AustraliaPostFormat {
+                            const val BIT_2D_POSTAL_FORMAT: Int = 2
+                            val defaultValue: Int = 0 shl BIT_2D_POSTAL_FORMAT
+                            const val MAX_VALUE: Int = 0x3
 
-                        public static class TransmitUSCheckDigit {
-                            static final int BIT_2D_POSTAL_TRANSMIT_US = 0;
-                            static final int defaultValue = ENABLE << BIT_2D_POSTAL_TRANSMIT_US;
-
-                            public static void enable() {
-                                mPotalCodeRegisterValue = Scanner.enable(BIT_2D_POSTAL_TRANSMIT_US, mPotalCodeRegisterValue);
+                            fun auto() {
+                                register = setValue(BIT_2D_POSTAL_FORMAT, 0x0, register, MAX_VALUE)
                             }
 
-                            public static void disable() {
-                                mPotalCodeRegisterValue = Scanner.disable(BIT_2D_POSTAL_TRANSMIT_US, mPotalCodeRegisterValue);
+                            fun raw() {
+                                register = setValue(BIT_2D_POSTAL_FORMAT, 0x1, register, MAX_VALUE)
                             }
 
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_2D_POSTAL_TRANSMIT_US, mPotalCodeRegisterValue);
-                            }
-                        }
-
-                        public static class TransmitUKCheckDigit {
-                            static final int BIT_2D_POSTAL_TRANSMIT_UK = 1;
-                            static final int defaultValue = ENABLE << BIT_2D_POSTAL_TRANSMIT_UK;
-
-                            public static void enable() {
-                                mPotalCodeRegisterValue = Scanner.enable(BIT_2D_POSTAL_TRANSMIT_UK, mPotalCodeRegisterValue);
+                            fun alphanemeric() {
+                                register = setValue(BIT_2D_POSTAL_FORMAT, 0x2, register, MAX_VALUE)
                             }
 
-                            public static void disable() {
-                                mPotalCodeRegisterValue = Scanner.disable(BIT_2D_POSTAL_TRANSMIT_UK, mPotalCodeRegisterValue);
+                            fun numeric() {
+                                register = setValue(BIT_2D_POSTAL_FORMAT, 0x3, register, MAX_VALUE)
                             }
 
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_2D_POSTAL_TRANSMIT_UK, mPotalCodeRegisterValue);
-                            }
-                        }
-
-                        public static class AustraliaPostFormat {
-                            static final int BIT_2D_POSTAL_FORMAT = 2;
-                            static final int defaultValue = 0 << BIT_2D_POSTAL_FORMAT;
-                            static final int MAX_VALUE = 0x3;
-
-                            public static void auto() {
-                                mPotalCodeRegisterValue = Scanner.setValue(BIT_2D_POSTAL_FORMAT, 0x0, mPotalCodeRegisterValue, MAX_VALUE);
-                            }
-
-                            public static void raw() {
-                                mPotalCodeRegisterValue = Scanner.setValue(BIT_2D_POSTAL_FORMAT, 0x1, mPotalCodeRegisterValue, MAX_VALUE);
-                            }
-
-                            public static void alphanemeric() {
-                                mPotalCodeRegisterValue = Scanner.setValue(BIT_2D_POSTAL_FORMAT, 0x2, mPotalCodeRegisterValue, MAX_VALUE);
-                            }
-
-                            public static void numeric() {
-                                mPotalCodeRegisterValue = Scanner.setValue(BIT_2D_POSTAL_FORMAT, 0x3, mPotalCodeRegisterValue, MAX_VALUE);
-                            }
-
-                            public static int getFormat() {
-                                return Scanner.getValue(BIT_2D_POSTAL_FORMAT, mPotalCodeRegisterValue, MAX_VALUE);
-                            }
+                            val format: Int
+                                get() {
+                                    return getValue(
+                                        BIT_2D_POSTAL_FORMAT,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
                         }
                     }
 
-                    public static class Composite {
+                    object Composite {
                         //private static int mCompositeRegisterValue = 0x1;
-                        private static int mCompositeRegisterValue = getDefault();
+                        var register: Int =
+                            default
 
-                        private static int getDefault() {
-                            return UPCCompositeMode.defaultValue
-                                    | GS1128EmulationMode.defaultValue;
+                        private val default: Int
+                            get() {
+                                return (UPCCompositeMode.defaultValue
+                                        or GS1128EmulationMode.defaultValue)
+                            }
+
+                        fun setDefault() {
+                            register =
+                                default
                         }
 
-                        public static void setDefault() {
-                            mCompositeRegisterValue = getDefault();
+                        object GS1128EmulationMode {
+                            const val BIT_2D_COMPOSITE_GS1_128_EMUL: Int = 2
+                            val defaultValue: Int = DISABLE shl BIT_2D_COMPOSITE_GS1_128_EMUL
+
+                            fun enable() {
+                                register = enable(BIT_2D_COMPOSITE_GS1_128_EMUL, register)
+                            }
+
+                            fun disable() {
+                                register = disable(BIT_2D_COMPOSITE_GS1_128_EMUL, register)
+                            }
+
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_2D_COMPOSITE_GS1_128_EMUL,
+                                        register
+                                    )
+                                }
                         }
 
-                        public static int getRegister() {
-                            return mCompositeRegisterValue;
-                        }
+                        object UPCCompositeMode {
+                            const val BIT_2D_COMPOSITE_UPC_MODE: Int = 0
+                            val defaultValue: Int = 1 shl BIT_2D_COMPOSITE_UPC_MODE
+                            const val MAX_VALUE: Int = 0x3
 
-                        public static void setRegister(int value) {
-                            mCompositeRegisterValue = value;
-                        }
-
-                        public static class GS1128EmulationMode {
-                            static final int BIT_2D_COMPOSITE_GS1_128_EMUL = 2;
-                            static final int defaultValue = DISABLE << BIT_2D_COMPOSITE_GS1_128_EMUL;
-
-                            public static void enable() {
-                                mCompositeRegisterValue = Scanner.enable(BIT_2D_COMPOSITE_GS1_128_EMUL, mCompositeRegisterValue);
+                            fun setNeverLinked() {
+                                register =
+                                    setValue(BIT_2D_COMPOSITE_UPC_MODE, 0x0, register, MAX_VALUE)
                             }
 
-                            public static void disable() {
-                                mCompositeRegisterValue = Scanner.disable(BIT_2D_COMPOSITE_GS1_128_EMUL, mCompositeRegisterValue);
+                            fun setAlwaysLinked() {
+                                register =
+                                    setValue(BIT_2D_COMPOSITE_UPC_MODE, 0x1, register, MAX_VALUE)
                             }
 
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_2D_COMPOSITE_GS1_128_EMUL, mCompositeRegisterValue);
-                            }
-                        }
-
-                        public static class UPCCompositeMode {
-                            static final int BIT_2D_COMPOSITE_UPC_MODE = 0;
-                            static final int defaultValue = 1 << BIT_2D_COMPOSITE_UPC_MODE;
-                            static final int MAX_VALUE = 0x3;
-
-                            public static void setNeverLinked() {
-                                mCompositeRegisterValue = Scanner.setValue(BIT_2D_COMPOSITE_UPC_MODE, 0x0, mCompositeRegisterValue, MAX_VALUE);
+                            fun setAutoDiscriminate() {
+                                register =
+                                    setValue(BIT_2D_COMPOSITE_UPC_MODE, 0x2, register, MAX_VALUE)
                             }
 
-                            public static void setAlwaysLinked() {
-                                mCompositeRegisterValue = Scanner.setValue(BIT_2D_COMPOSITE_UPC_MODE, 0x1, mCompositeRegisterValue, MAX_VALUE);
-                            }
-
-                            public static void setAutoDiscriminate() {
-                                mCompositeRegisterValue = Scanner.setValue(BIT_2D_COMPOSITE_UPC_MODE, 0x2, mCompositeRegisterValue, MAX_VALUE);
-                            }
-
-                            public static int getFormat() {
-                                return Scanner.getValue(BIT_2D_COMPOSITE_UPC_MODE, mCompositeRegisterValue, MAX_VALUE);
-                            }
+                            val format: Int
+                                get() {
+                                    return getValue(
+                                        BIT_2D_COMPOSITE_UPC_MODE,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
                         }
                     }
 
-                    public static class MicroPDF417 {
+                    object MicroPDF417 {
                         //private static int mMPDF417RegisterValue = 0x0;
-                        private static int mMPDF417RegisterValue = getDefault();
+                        var register: Int = MicroPDF417.getDefault()
 
-                        private static int getDefault() {
-                            return Code128Emulation.defaultValue;
+                        fun getDefault(): Int {
+                            return Code128Emulation.default
                         }
 
-                        public static void setDefault() {
-                            mMPDF417RegisterValue = getDefault();
+                        fun setDefault() {
+                            register = MicroPDF417.getDefault()
                         }
 
-                        public static int getRegister() {
-                            return mMPDF417RegisterValue;
-                        }
+                        object Code128Emulation {
+                            const val BIT_2D_MPDF417_CODE128_EMUL: Int = 0
+                            const val default: Int = DISABLE shl BIT_2D_MPDF417_CODE128_EMUL
 
-                        public static void setRegister(int value) {
-                            mMPDF417RegisterValue = value;
-                        }
-
-                        public static class Code128Emulation {
-                            static final int BIT_2D_MPDF417_CODE128_EMUL = 0;
-                            static final int defaultValue = DISABLE << BIT_2D_MPDF417_CODE128_EMUL;
-
-                            public static void enable() {
-                                mMPDF417RegisterValue = Scanner.enable(BIT_2D_MPDF417_CODE128_EMUL, mMPDF417RegisterValue);
+                            fun enable() {
+                                register = enable(BIT_2D_MPDF417_CODE128_EMUL, register)
                             }
 
-                            public static void disable() {
-                                mMPDF417RegisterValue = Scanner.disable(BIT_2D_MPDF417_CODE128_EMUL, mMPDF417RegisterValue);
+                            fun disable() {
+                                register = disable(BIT_2D_MPDF417_CODE128_EMUL, register)
                             }
 
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_2D_MPDF417_CODE128_EMUL, mMPDF417RegisterValue);
-                            }
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_2D_MPDF417_CODE128_EMUL,
+                                        register
+                                    )
+                                }
                         }
                     }
 
-                    public static class MacroPDF {
+                    object MacroPDF {
                         //private static int mMacroPdfRegisterValue = 0x6;
-                        private static int mMacroPdfRegisterValue = getDefault();
+                        var register: Int = default
 
-                        private static int getDefault() {
-                            return TransmitDecodeModeSymbols.defaultValue
-                                    | TransmitControlHeader.defaultValue
-                                    | EscapeCharacter.defaultValue;
+                        private val default: Int
+                            get() {
+                                return (TransmitDecodeModeSymbols.defaultValue
+                                        or TransmitControlHeader.defaultValue
+                                        or EscapeCharacter.defaultValue)
+                            }
+
+                        fun setDefault() {
+                            register = default
                         }
 
-                        public static void setDefault() {
-                            mMacroPdfRegisterValue = getDefault();
+                        object TransmitDecodeModeSymbols {
+                            const val BIT_2D_MACROPDF_MODE_SYMBOL: Int = 0
+                            val defaultValue: Int = 2 shl BIT_2D_MACROPDF_MODE_SYMBOL
+                            const val MAX_VALUE: Int = 0x3
+
+                            fun setBufferAllSymbols() {
+                                register =
+                                    setValue(BIT_2D_MACROPDF_MODE_SYMBOL, 0x0, register, MAX_VALUE)
+                            }
+
+                            fun setAnySymbolNoOrder() {
+                                register =
+                                    setValue(BIT_2D_MACROPDF_MODE_SYMBOL, 0x1, register, MAX_VALUE)
+                            }
+
+                            fun setPassthroughAllSymbols() {
+                                register =
+                                    setValue(BIT_2D_MACROPDF_MODE_SYMBOL, 0x2, register, MAX_VALUE)
+                            }
+
+                            val mode: Int
+                                get() {
+                                    return getValue(
+                                        BIT_2D_MACROPDF_MODE_SYMBOL,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
                         }
 
-                        public static int getRegister() {
-                            return mMacroPdfRegisterValue;
+                        object TransmitControlHeader {
+                            const val BIT_2D_MACRO417_CONTROL_HEADER: Int = 2
+                            val defaultValue: Int = ENABLE shl BIT_2D_MACRO417_CONTROL_HEADER
+
+                            fun enable() {
+                                register = enable(BIT_2D_MACRO417_CONTROL_HEADER, register)
+                            }
+
+                            fun disable() {
+                                register = disable(BIT_2D_MACRO417_CONTROL_HEADER, register)
+                            }
+
+                            val isEnable: Boolean
+                                get() {
+                                    return isEnable(
+                                        BIT_2D_MACRO417_CONTROL_HEADER,
+                                        register
+                                    )
+                                }
                         }
 
-                        public static void setRegister(int value) {
-                            mMacroPdfRegisterValue = value;
-                        }
+                        object EscapeCharacter {
+                            const val BIT_2D_MACRO417_ESC_CHAR: Int = 3
+                            val defaultValue: Int = 0 shl BIT_2D_MACRO417_ESC_CHAR
 
-                        public static class TransmitDecodeModeSymbols {
-                            static final int BIT_2D_MACROPDF_MODE_SYMBOL = 0;
-                            static final int defaultValue = 2 << BIT_2D_MACROPDF_MODE_SYMBOL;
-                            static final int MAX_VALUE = 0x3;
-
-                            public static void setBufferAllSymbols() {
-                                mMacroPdfRegisterValue = Scanner.setValue(BIT_2D_MACROPDF_MODE_SYMBOL, 0x0, mMacroPdfRegisterValue, MAX_VALUE);
+                            fun setNone() {
+                                register = disable(BIT_2D_MACRO417_ESC_CHAR, register)
                             }
 
-                            public static void setAnySymbolNoOrder() {
-                                mMacroPdfRegisterValue = Scanner.setValue(BIT_2D_MACROPDF_MODE_SYMBOL, 0x1, mMacroPdfRegisterValue, MAX_VALUE);
+                            fun setGLIProtocol() {
+                                register = enable(BIT_2D_MACRO417_ESC_CHAR, register)
                             }
 
-                            public static void setPassthroughAllSymbols() {
-                                mMacroPdfRegisterValue = Scanner.setValue(BIT_2D_MACROPDF_MODE_SYMBOL, 0x2, mMacroPdfRegisterValue, MAX_VALUE);
-                            }
-
-                            public static int getMode() {
-                                return Scanner.getValue(BIT_2D_MACROPDF_MODE_SYMBOL, mMacroPdfRegisterValue, MAX_VALUE);
-                            }
-                        }
-
-                        public static class TransmitControlHeader {
-                            static final int BIT_2D_MACRO417_CONTROL_HEADER = 2;
-                            static final int defaultValue = ENABLE << BIT_2D_MACRO417_CONTROL_HEADER;
-
-                            public static void enable() {
-                                mMacroPdfRegisterValue = Scanner.enable(BIT_2D_MACRO417_CONTROL_HEADER, mMacroPdfRegisterValue);
-                            }
-
-                            public static void disable() {
-                                mMacroPdfRegisterValue = Scanner.disable(BIT_2D_MACRO417_CONTROL_HEADER, mMacroPdfRegisterValue);
-                            }
-
-                            public static boolean isEnable() {
-                                return Scanner.isEnable(BIT_2D_MACRO417_CONTROL_HEADER, mMacroPdfRegisterValue);
-                            }
-                        }
-
-                        public static class EscapeCharacter {
-                            static final int BIT_2D_MACRO417_ESC_CHAR = 3;
-                            static final int defaultValue = 0 << BIT_2D_MACRO417_ESC_CHAR;
-
-                            public static void setNone() {
-                                mMacroPdfRegisterValue = Scanner.disable(BIT_2D_MACRO417_ESC_CHAR, mMacroPdfRegisterValue);
-                            }
-
-                            public static void setGLIProtocol() {
-                                mMacroPdfRegisterValue = Scanner.enable(BIT_2D_MACRO417_ESC_CHAR, mMacroPdfRegisterValue);
-                            }
-
-                            public static int getValue() {
-                                return Scanner.getValue(BIT_2D_MACRO417_ESC_CHAR, mMacroPdfRegisterValue, 0x1);
-                            }
+                            val value: Int
+                                get() {
+                                    return getValue(
+                                        BIT_2D_MACRO417_ESC_CHAR,
+                                        register,
+                                        0x1
+                                    )
+                                }
                         }
                     }
 
-                    public static class DataMatrix {
+                    object DataMatrix {
                         //private static int mDataMatrixRegisterValue = 0x2;
-                        private static int mDataMatrixRegisterValue = getDefault();
+                        var register: Int = getDefault()
 
-                        private static int getDefault() {
-                            return DecodeMirrorImages.defaultValue;
+                        private fun getDefault(): Int {
+                            return DecodeMirrorImages.default
                         }
 
-                        public static void setDefault() {
-                            mDataMatrixRegisterValue = getDefault();
+                        fun setDefault() {
+                            register = getDefault()
                         }
 
-                        public static int getRegister() {
-                            return mDataMatrixRegisterValue;
-                        }
+                        object DecodeMirrorImages {
+                            const val BIT_2D_MATRIX_DECODE_MIRROR_IMG: Int = 0
+                            val default: Int = 2 shl BIT_2D_MATRIX_DECODE_MIRROR_IMG
+                            const val MAX_VALUE: Int = 0x3
 
-                        public static void setRegister(int value) {
-                            mDataMatrixRegisterValue = value;
-                        }
-
-                        public static class DecodeMirrorImages {
-                            static final int BIT_2D_MATRIX_DECODE_MIRROR_IMG = 0;
-                            static final int defaultValue = 2 << BIT_2D_MATRIX_DECODE_MIRROR_IMG;
-                            static final int MAX_VALUE = 0x3;
-
-                            public static void setUnMirror() {
-                                mDataMatrixRegisterValue = Scanner.setValue(BIT_2D_MATRIX_DECODE_MIRROR_IMG, 0x0, mDataMatrixRegisterValue, MAX_VALUE);
+                            fun setUnMirror() {
+                                register = setValue(
+                                    BIT_2D_MATRIX_DECODE_MIRROR_IMG,
+                                    0x0,
+                                    register,
+                                    MAX_VALUE
+                                )
                             }
 
-                            public static void setOnly() {
-                                mDataMatrixRegisterValue = Scanner.setValue(BIT_2D_MATRIX_DECODE_MIRROR_IMG, 0x1, mDataMatrixRegisterValue, MAX_VALUE);
+                            fun setOnly() {
+                                register = setValue(
+                                    BIT_2D_MATRIX_DECODE_MIRROR_IMG,
+                                    0x1,
+                                    register,
+                                    MAX_VALUE
+                                )
                             }
 
-                            public static void setBoth() {
-                                mDataMatrixRegisterValue = Scanner.setValue(BIT_2D_MATRIX_DECODE_MIRROR_IMG, 0x2, mDataMatrixRegisterValue, MAX_VALUE);
+                            fun setBoth() {
+                                register = setValue(
+                                    BIT_2D_MATRIX_DECODE_MIRROR_IMG,
+                                    0x2,
+                                    register,
+                                    MAX_VALUE
+                                )
                             }
 
-                            public static int getValue() {
-                                return Scanner.getValue(BIT_2D_MATRIX_DECODE_MIRROR_IMG, mDataMatrixRegisterValue, MAX_VALUE);
-                            }
+                            val value: Int
+                                get() {
+                                    return getValue(
+                                        BIT_2D_MATRIX_DECODE_MIRROR_IMG,
+                                        register,
+                                        MAX_VALUE
+                                    )
+                                }
                         }
                     }
                 }
@@ -3067,540 +3743,341 @@ public class DeviceState {
         }
     }
 
-    public static class Device {
-        public static class Bluetooth {
-            private static boolean isConnected = false;
-            private static String mCurrentDeviceMacAddress = null;
-            private static String mCurrentDeviceName = null;
-            private static String mPrevDeviceMacAddress = null;
-            private static String mPrevDeviceName = null;
+    class Device {
+        object Bluetooth {
+            var isConnect: Boolean = false
+                private set
+            var connectedDeviceMacAddress: String? = null
+                private set
+            var connectedDeviceName: String? = null
+                private set
+            var prevDeviceMacAddress: String? = null
+                private set
+            var prevDeviceName: String? = null
+                private set
 
-            public static void connect() {
-                isConnected = true;
+            fun connect() {
+                isConnect = true
             }
 
-            public static void disconnect() {
-                isConnected = false;
+            fun disconnect() {
+                isConnect = false
             }
 
-            public static boolean isConnect() {
-                return isConnected;
+            fun setConnectedDevice(sMacAddress: String?, sDeviceName: String?) {
+                connectedDeviceMacAddress = sMacAddress
+                connectedDeviceName = sDeviceName
             }
 
-            public static void setConnectedDevice(String sMacAddress, String sDeviceName) {
-                mCurrentDeviceMacAddress = sMacAddress;
-                mCurrentDeviceName = sDeviceName;
+            fun backupConnectedDevice() {
+                prevDeviceMacAddress = connectedDeviceMacAddress
+                prevDeviceName = connectedDeviceName
             }
 
-            public static void backupConnectedDevice() {
-                mPrevDeviceMacAddress = mCurrentDeviceMacAddress;
-                mPrevDeviceName = mCurrentDeviceName;
-            }
+            object Power {
+                private val bluetoothAdapter: BluetoothAdapter? =
+                    BluetoothAdapter.getDefaultAdapter()
 
-            public static String getConnectedDeviceMacAddress() {
-                return mCurrentDeviceMacAddress;
-            }
+                val isOn: Boolean
+                    get() {
+                        return bluetoothAdapter != null && bluetoothAdapter.isEnabled
+                    }
 
-            public static String getConnectedDeviceName() {
-                return mCurrentDeviceName;
-            }
-
-            public static String getPrevDeviceMacAddress() {
-                return mPrevDeviceMacAddress;
-            }
-
-            public static String getPrevDeviceName() {
-                return mPrevDeviceName;
-            }
-
-            public static class Power {
-                private static final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-                public static boolean isOn() {
-                    return bluetoothAdapter != null && bluetoothAdapter.isEnabled();
+                fun setOn() {
+                    bluetoothAdapter!!.enable()
                 }
 
-                public static void setOn() {
-                    bluetoothAdapter.enable();
-                }
-
-                public static void setOff() {
-                    bluetoothAdapter.disable();
+                fun setOff() {
+                    bluetoothAdapter!!.disable()
                 }
             }
         }
 
-        public static class App {
-            public static class Mode {
-                public static class Tab {
-                    public static final int TAB_CONFIG = 0;
-                    public static final int TAB_SCAN = 1;
-                    public static final int TAB_APP = 2;
-                    private static int mTabMode = TAB_CONFIG;
-
-                    public static int getTabMode() {
-                        return mTabMode;
-                    }
-
-                    public static void setTabMode(int tabMode) {
-                        mTabMode = tabMode;
-                    }
+        class App {
+            class Mode {
+                object Tab {
+                    const val TAB_CONFIG: Int = 0
+                    const val TAB_SCAN: Int = 1
+                    const val TAB_APP: Int = 2
+                    var tabMode: Int = TAB_CONFIG
                 }
 
-                public static class ActivityName {
-                    private static String activityName = null;
-
-                    public static String getCurrentActivity() {
-                        return activityName;
-                    }
-
-                    public static void setCurrentActivity(String name) {
-                        activityName = name;
-                    }
+                object ActivityName {
+                    var currentActivity: String? = null
                 }
 
-                public static class Scan {
-                    public static final int SCAN_DATA_RFID = 0;
-                    public static final int SCAN_DATA_BARCODE = 1;
-                    private static boolean mIsInventoryRunning = false;
-                    private static int mInventoryDataType = SCAN_DATA_RFID;
+                object Scan {
+                    const val SCAN_DATA_RFID: Int = 0
+                    const val SCAN_DATA_BARCODE: Int = 1
+                    var isRunning: Boolean = false
+                        private set
+                    var dataType: Int = SCAN_DATA_RFID
+                        private set
 
-                    public static void run(int DataType) {
-                        mIsInventoryRunning = true;
-                        mInventoryDataType = DataType;
+                    fun run(DataType: Int) {
+                        isRunning = true
+                        dataType = DataType
                     }
 
-                    public static void stop() {
-                        mIsInventoryRunning = false;
-                    }
-
-                    public static boolean isRunning() {
-                        return mIsInventoryRunning;
-                    }
-
-                    public static int getDataType() {
-                        return mInventoryDataType;
+                    fun stop() {
+                        isRunning = false
                     }
                 }
             }
         }
 
-        public static class Config {
-            public static void setDefault() {
-                Buzzer.mBuzzerMode = Buzzer.BUZZER_HIGH;
-                PowerOffDelay.mPowerOffDelayTime = 0;
-                Sync.mSyncMode = Sync.SYNC_FROM_DEVICE_TO_APP;
+        object Config {
+            fun setDefault() {
+                Buzzer.mode = Buzzer.BUZZER_HIGH
+                PowerOffDelay.time = 0
+                Sync.mode = Sync.SYNC_FROM_DEVICE_TO_APP
             }
 
-            public static class Battery {
-                private static int mBatteryLevel = 0;
-
-                public static int getLevel() {
-                    return mBatteryLevel;
-                }
-
-                public static void setLevel(int Level) {
-                    mBatteryLevel = Level;
-                }
+            object Battery {
+                var level: Int = 0
             }
 
-            public static class Buzzer {
-                public static final int BUZZER_HIGH = 2;
-                public static final int BUZZER_LOW = 1;
-                public static final int BUZZER_MUTE = 0;
-                private static int mBuzzerMode = BUZZER_HIGH;
+            object Buzzer {
+                const val BUZZER_HIGH: Int = 2
+                const val BUZZER_LOW: Int = 1
+                const val BUZZER_MUTE: Int = 0
+                var mode: Int = BUZZER_HIGH
+            }
 
-                public static int getMode() {
-                    return mBuzzerMode;
+            object Vibration {
+                var isEnable: Boolean = false
+                    private set
+
+                fun enable() {
+                    isEnable = true
                 }
 
-                public static void setMode(int Mode) {
-                    mBuzzerMode = Mode;
+                fun disable() {
+                    isEnable = false
                 }
             }
 
-            public static class Vibration {
-                private static boolean isVibratorOn = false;
-
-                public static void enable() {
-                    isVibratorOn = true;
-                }
-
-                public static void disable() {
-                    isVibratorOn = false;
-                }
-
-                public static boolean isEnable() {
-                    return isVibratorOn;
-                }
+            object PowerOffDelay {
+                var time: Int = 0
             }
 
-            public static class PowerOffDelay {
-                private static int mPowerOffDelayTime = 0;
-
-                public static int getTime() {
-                    return mPowerOffDelayTime;
-                }
-
-                public static void setTime(int Time) {
-                    mPowerOffDelayTime = Time;
-                }
-            }
-
-            public static class Sync {
-                public static final int SYNC_FROM_DEVICE_TO_APP = 0;
-                public static final int SYNC_FROM_APP_TO_DEVICE = 1;
-                private static int mSyncMode = SYNC_FROM_DEVICE_TO_APP;
-
-                public static int getMode() {
-                    return mSyncMode;
-                }
-
-                public static void setMode(int Mode) {
-                    mSyncMode = Mode;
-                }
+            object Sync {
+                const val SYNC_FROM_DEVICE_TO_APP: Int = 0
+                const val SYNC_FROM_APP_TO_DEVICE: Int = 1
+                var mode: Int = SYNC_FROM_DEVICE_TO_APP
             }
         }
 
-        public static class Info {
-            public static class Firmware {
-                private static String firmwareString;
-
-                public static String getFirmwareVersion() {
-                    return firmwareString;
-                }
-
-                public static void setFirmwareVersion(String firmware) {
-                    firmwareString = firmware;
-                }
+        class Info {
+            object Firmware {
+                var firmwareVersion: String? = null
             }
         }
     }
 
-    public static class RFID {
-        public static class Config {
-            public static void setDefault() {
-                TxCycle.mOffTime = 40;
-                TxCycle.mOnTime = 160;
-                TxCycle.mPercent = 20;
-                RadioPower.mMaxRadioPower = 30;
-                RadioPower.mRadioPower = 0;
-                Queue.mQueue = 5;
-                Target.mTargetMode = Target.TARGET_A;
-                Session.mSessionMode = Session.SESSION_1;
-                FastID.mFastID = false;
-                TagFocus.mTagFocus = true;
-                Inventory.Mode.mInventoryMode = Inventory.Mode.INVENTORY_CONTINUOUS_MODE;
-                Inventory.Timeout.mInventoryTimeOut = Inventory.Timeout.INVENTORY_TIMEOUT_INFINITE;
-                LinkProfile.mLinkProfile = LinkProfile.LINK_PROFILE_1;
+    class RFID {
+        object Config {
+            fun setDefault() {
+                TxCycle.offTime = 40
+                TxCycle.mOnTime = 160
+                TxCycle.percent = 20
+                RadioPower.maxPower = 30
+                RadioPower.attenuatePower = 0
+                Queue.value = 5
+                Target.mode = Target.TARGET_A
+                Session.session = Session.SESSION_1
+                FastID.isEnable = false
+                TagFocus.isEnable = true
+                Inventory.Mode.mode = Inventory.Mode.INVENTORY_CONTINUOUS_MODE
+                Inventory.Timeout.timeout = Inventory.Timeout.INVENTORY_TIMEOUT_INFINITE
+                LinkProfile.profile = LinkProfile.LINK_PROFILE_1
             }
 
-            public static class Session {
-                public static final int SESSION_0 = 0;
-                public static final int SESSION_1 = 1;
-                public static final int SESSION_2 = 2;
-                public static final int SESSION_3 = 3;
-                private static int mSessionMode = SESSION_1;
-
-                public static int getSession() {
-                    return mSessionMode;
-                }
-
-                public static void setSession(int Mode) {
-                    mSessionMode = Mode;
-                }
+            object Session {
+                const val SESSION_0: Int = 0
+                const val SESSION_1: Int = 1
+                const val SESSION_2: Int = 2
+                const val SESSION_3: Int = 3
+                var session: Int = SESSION_1
             }
 
-            public static class Queue {
-                private static int mQueue = 5;
-
-                public static int getValue() {
-                    return mQueue;
-                }
-
-                public static void setValue(int Value) {
-                    mQueue = Value;
-                }
+            object Queue {
+                var value: Int = 5
             }
 
-            public static class Target {
-                public static final int TARGET_A = 0;
-                public static final int TARGET_B = 1;
-                public static final int TARGET_AB = 2;
-                private static int mTargetMode = TARGET_A;
+            object Target {
+                const val TARGET_A: Int = 0
+                const val TARGET_B: Int = 1
+                const val TARGET_AB: Int = 2
+                var mode: Int = TARGET_A
 
-                public static void setTargetA() {
-                    mTargetMode = TARGET_A;
+                fun setTargetA() {
+                    mode = TARGET_A
                 }
 
-                public static void setTargetB() {
-                    mTargetMode = TARGET_B;
+                fun setTargetB() {
+                    mode = TARGET_B
                 }
 
-                public static void setTargetAB() {
-                    mTargetMode = TARGET_AB;
-                }
-
-                public static int getMode() {
-                    return mTargetMode;
-                }
-
-                public static void setMode(int Mode) {
-                    mTargetMode = Mode;
+                fun setTargetAB() {
+                    mode = TARGET_AB
                 }
             }
 
-            public static class RadioPower {
-                private static int mRadioPower = 0;
-                private static int mMaxRadioPower = 30;
+            object RadioPower {
+                var attenuatePower: Int = 0
+                var maxPower: Int = 30
 
-                public static int getMaxPower() {
-                    return mMaxRadioPower;
-                }
-
-                public static void setMaxPower(int Power) {
-                    mMaxRadioPower = Power;
-                }
-
-                public static int getAttenuatePower() {
-                    return mRadioPower;
-                }
-
-                public static void setAttenuatePower(int Power) {
-                    mRadioPower = Power;
-                }
-
-                public static int getPower() {
-                    return mMaxRadioPower + mRadioPower;
-                }
+                val power: Int
+                    get() {
+                        return maxPower + attenuatePower
+                    }
             }
 
-            public static class TxCycle {
-                private static final int MAX_TIME = 200;
+            object TxCycle {
+                private const val MAX_TIME: Int = 200
+
                 //!< On TIme : 40ms = 20%, 50ms = 25%, 60ms = 30%, ... 190ms = 95%, 200ms = 100%;
                 //!< Off Time : 40ms/160ms, 50ms/150ms ... 190ms/10ms, 200ms/0ms
                 //!< ( On TIme / (On Time + Off Time) ) *100 = TxCycle Percent
-                private static int mOnTime = 40;
-                private static int mOffTime = 160;
-                private static int mPercent = 20;
+                var mOnTime: Int = 40
+                var offTime: Int = 160
+                var percent: Int = 20
 
-                public static int getOnTime() {
-                    return mOnTime;
-                }
-
-                public static void setOnTime(int Time) {
-                    mOnTime = Time;
-                    mOffTime = MAX_TIME - mOnTime;
-                    mPercent = (int) (((float) mOnTime / ((float) mOnTime + (float) mOffTime)) * 100);
-                }
-
-                public static int getOffTime() {
-                    return mOffTime;
-                }
-
-                public static int getPercent() {
-                    return mPercent;
-                }
+                var onTime: Int
+                    get() {
+                        return mOnTime
+                    }
+                    set(Time) {
+                        mOnTime =
+                            Time
+                        offTime =
+                            MAX_TIME - mOnTime
+                        percent =
+                            ((mOnTime.toFloat() / (mOnTime.toFloat() + offTime.toFloat())) * 100).toInt()
+                    }
             }
 
-            public static class Inventory {
-                public static class Mode {
-                    public static final int INVENTORY_CONTINUOUS_MODE = 0;
-                    public static final int INVENTORY_SINGLE_MODE = 1;
-                    private static int mInventoryMode = INVENTORY_CONTINUOUS_MODE;
+            class Inventory {
+                object Mode {
+                    const val INVENTORY_CONTINUOUS_MODE: Int = 0
+                    const val INVENTORY_SINGLE_MODE: Int = 1
+                    var mode: Int = INVENTORY_CONTINUOUS_MODE
 
-                    public static void setContinuousMode() {
-                        mInventoryMode = INVENTORY_CONTINUOUS_MODE;
+                    fun setContinuousMode() {
+                        mode = INVENTORY_CONTINUOUS_MODE
                     }
 
-                    public static void setSingleMode() {
-                        mInventoryMode = INVENTORY_SINGLE_MODE;
-                    }
-
-                    public static int getMode() {
-                        return mInventoryMode;
-                    }
-
-                    public static void setMode(int Mode) {
-                        mInventoryMode = Mode;
+                    fun setSingleMode() {
+                        mode = INVENTORY_SINGLE_MODE
                     }
                 }
 
-                public static class Timeout {
-                    public static final int INVENTORY_TIMEOUT_INFINITE = 0;
-                    private static int mInventoryTimeOut = INVENTORY_TIMEOUT_INFINITE;
-
-                    public static int getTimeout() {
-                        return mInventoryTimeOut;
-                    }
-
-                    public static void setTimeout(int Time) {
-                        mInventoryTimeOut = Time;
-                    }
+                object Timeout {
+                    const val INVENTORY_TIMEOUT_INFINITE: Int = 0
+                    var timeout: Int = INVENTORY_TIMEOUT_INFINITE
                 }
 
-                public static class Report {
-                    public static class Time {
-                        private static boolean isTimeReport = false;
+                class Report {
+                    object Time {
+                        var isEnable: Boolean = false
+                            private set
 
-                        public static void enable() {
-                            isTimeReport = true;
+                        fun enable() {
+                            isEnable = true
                         }
 
-                        public static void disable() {
-                            isTimeReport = false;
-                        }
-
-                        public static boolean isEnable() {
-                            return isTimeReport;
+                        fun disable() {
+                            isEnable = false
                         }
                     }
 
-                    public static class RSSI {
-                        private static boolean isRssiReport = false;
+                    object RSSI {
+                        var isEnable: Boolean = false
+                            private set
 
-                        public static void enable() {
-                            isRssiReport = true;
+                        fun enable() {
+                            isEnable = true
                         }
 
-                        public static void disable() {
-                            isRssiReport = false;
-                        }
-
-                        public static boolean isEnable() {
-                            return isRssiReport;
+                        fun disable() {
+                            isEnable = false
                         }
                     }
                 }
             }
 
-            public static class TagFocus {
-                private static boolean mTagFocus = true;
+            object TagFocus {
+                var isEnable: Boolean = true
 
-                public static void enable() {
-                    mTagFocus = true;
+                fun enable() {
+                    isEnable = true
                 }
 
-                public static void disable() {
-                    mTagFocus = false;
-                }
-
-                public static boolean isEnable() {
-                    return mTagFocus;
+                fun disable() {
+                    isEnable = false
                 }
             }
 
-            public static class FastID {
-                private static boolean mFastID = false;
+            object FastID {
+                var isEnable: Boolean = false
 
-                public static void enable() {
-                    mFastID = true;
+                fun enable() {
+                    isEnable = true
                 }
 
-                public static void disable() {
-                    mFastID = false;
-                }
-
-                public static boolean isEnable() {
-                    return mFastID;
+                fun disable() {
+                    isEnable = false
                 }
             }
 
-            public static class LinkProfile {
-                public static final int LINK_PROFILE_0 = 0;
-                public static final int LINK_PROFILE_1 = 1;
-                public static final int LINK_PROFILE_2 = 2;
-                public static final int LINK_PROFILE_3 = 3;
-                private static int mLinkProfile = LINK_PROFILE_1;
-
-                public static int getProfile() {
-                    return mLinkProfile;
-                }
-
-                public static void setProfile(int Profile) {
-                    mLinkProfile = Profile;
-                }
+            object LinkProfile {
+                const val LINK_PROFILE_0: Int = 0
+                const val LINK_PROFILE_1: Int = 1
+                const val LINK_PROFILE_2: Int = 2
+                const val LINK_PROFILE_3: Int = 3
+                var profile: Int = LINK_PROFILE_1
             }
 
-            public static class Format {
-                public static void setDefault() {
-                    DataFormat.dataFormatType = 0;
-                    FixDataFormat.fixDataFormatType = 0;
-                    Prefix.prefixData = 0;
-                    Suffix1.suffix1Data = 0;
-                    Suffix2.suffix2Data = 0;
+            object Format {
+                fun setDefault() {
+                    DataFormat.format = 0
+                    FixDataFormat.format = 0
+                    Prefix.data = 0
+                    Suffix1.data = 0
+                    Suffix2.data = 0
                 }
 
-                public static class DataFormat {
-                    public static final int PC_EPC_CRC = 0;
-                    public static final int PC_EPC = 1;
-                    public static final int EPC_CRC = 2;
-                    public static final int EPC_ONLY = 3;
-                    private static int dataFormatType = 0;
-
-                    public static int getFormat() {
-                        return dataFormatType;
-                    }
-
-                    public static void setFormat(int type) {
-                        dataFormatType = type;
-                    }
+                object DataFormat {
+                    const val PC_EPC_CRC: Int = 0
+                    const val PC_EPC: Int = 1
+                    const val EPC_CRC: Int = 2
+                    const val EPC_ONLY: Int = 3
+                    var format: Int = 0
                 }
 
-                public static class FixDataFormat {
-                    public static final int TAG_DATA = 0;
-                    public static final int DATA_SUFFIX1 = 1;
-                    public static final int DATA_SUFFFIX2 = 2;
-                    public static final int DATA_SUFFIX1_SUFFIX2 = 3;
-                    public static final int PREFIX_DATA = 4;
-                    public static final int PREFIX_DATA_SUFFIX1 = 5;
-                    public static final int PREFIX_DATA_SUFFIX2 = 6;
-                    public static final int PREFIX_DATA_SUFFIX1_SUFFIX2 = 7;
-                    private static int fixDataFormatType = 0;
-
-                    public static int getFormat() {
-                        return fixDataFormatType;
-                    }
-
-                    public static void setFormat(int type) {
-                        fixDataFormatType = type;
-                    }
+                object FixDataFormat {
+                    const val TAG_DATA: Int = 0
+                    const val DATA_SUFFIX1: Int = 1
+                    const val DATA_SUFFFIX2: Int = 2
+                    const val DATA_SUFFIX1_SUFFIX2: Int = 3
+                    const val PREFIX_DATA: Int = 4
+                    const val PREFIX_DATA_SUFFIX1: Int = 5
+                    const val PREFIX_DATA_SUFFIX2: Int = 6
+                    const val PREFIX_DATA_SUFFIX1_SUFFIX2: Int = 7
+                    var format: Int = 0
                 }
 
-                public static class Prefix {
-                    private static int prefixData = 0;
-
-                    public static int getData() {
-                        return prefixData;
-                    }
-
-                    public static void setData(int asciiData) {
-                        prefixData = asciiData;
-                    }
+                object Prefix {
+                    var data: Int = 0
                 }
 
-                public static class Suffix1 {
-                    private static int suffix1Data = 0;
-
-                    public static int getData() {
-                        return suffix1Data;
-                    }
-
-                    public static void setData(int asciiData) {
-                        suffix1Data = asciiData;
-                    }
+                object Suffix1 {
+                    var data: Int = 0
                 }
 
-                public static class Suffix2 {
-                    private static int suffix2Data = 0;
-
-                    public static int getData() {
-                        return suffix2Data;
-                    }
-
-                    public static void setData(int asciiData) {
-                        suffix2Data = asciiData;
-                    }
+                object Suffix2 {
+                    var data: Int = 0
                 }
             }
         }

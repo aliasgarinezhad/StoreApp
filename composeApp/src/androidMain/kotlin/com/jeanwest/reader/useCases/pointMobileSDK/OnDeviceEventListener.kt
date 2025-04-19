@@ -1,14 +1,14 @@
-package com.jeanwest.reader.useCases.pointMobileSDK;
+package com.jeanwest.reader.useCases.pointMobileSDK
 
 /**
  * Created by NG on 2016-07-07.
  */
-public interface OnDeviceEventListener {
-    void onNotifyDataReceive();
+interface OnDeviceEventListener {
+    fun onNotifyDataReceive()
 
-    void onNotifyDataWriteFail();
+    fun onNotifyDataWriteFail()
 
-    void onBtDeviceConnected();
+    fun onBtDeviceConnected()
 
-    void onBtDeviceConnectFail();
+    fun onBtDeviceConnectFail()
 }

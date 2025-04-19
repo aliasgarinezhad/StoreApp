@@ -896,7 +896,7 @@ class RFID(var context: Context, var state: SnackbarHostState, var scanTrigger: 
     }
 
     override fun onNotifyDataReceive() {
-        val packetParser: RecvPacketParser = deviceManager.recvPacketParser
+        val packetParser: RecvPacketParser = DeviceManager.recvPacketParser
         while (true) {
             val parameter = packetParser.popPacket()
             Log.i("p85", "Recv :: [$parameter]")

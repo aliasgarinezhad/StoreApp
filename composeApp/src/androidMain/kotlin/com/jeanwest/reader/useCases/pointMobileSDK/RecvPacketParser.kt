@@ -1,63 +1,69 @@
-package com.jeanwest.reader.useCases.pointMobileSDK;
+package com.jeanwest.reader.useCases.pointMobileSDK
 
-import android.util.Log;
-
-import java.util.StringTokenizer;
+import android.util.Log
+import java.util.StringTokenizer
+import kotlin.math.min
 
 /**
  * Created by NG on 2016-04-06.
  */
-public class RecvPacketParser {
-    private final StringBuilder mPacket = new StringBuilder();
-    private char[] mCharBuff = null;
-    private int mCharBuffSize = 0;
+class RecvPacketParser {
+    private val mPacket = StringBuilder()
+    private var mCharBuff: CharArray? = null
+    private var mCharBuffSize = 0
 
-    synchronized public void reset() {
-        mPacket.setLength(0);
+    @Synchronized
+    fun reset() {
+        mPacket.setLength(0)
     }
 
-    synchronized public void pushPacket(byte[] buffer, int len) {
+    @Synchronized
+    fun pushPacket(buffer: ByteArray, len: Int) {
         if (mCharBuffSize < len) {
-            mCharBuffSize = (len << 1);
-            mCharBuff = new char[mCharBuffSize];
+            mCharBuffSize = (len shl 1)
+            mCharBuff = CharArray(mCharBuffSize)
         }
 
-        for (int i = 0; i < len; ++i)
-            mCharBuff[i] = (char) (buffer[i] & 0xff);
-        mPacket.append(mCharBuff, 0, len);
+        for (i in 0 until len) mCharBuff!![i] = (buffer[i].toInt() and 0xff).toChar()
+        mPacket.append(mCharBuff, 0, len)
     }
 
-    synchronized public String popPacket(int offset, int len) {
-        String pop = mPacket.substring(offset, offset + len);
-        mPacket.delete(0, offset + len);
-        return pop;
+    @Synchronized
+    fun popPacket(offset: Int, len: Int): String {
+        val pop = mPacket.substring(offset, offset + len)
+        mPacket.delete(0, offset + len)
+        return pop
     }
 
-    synchronized public String popPacket() {
-        final String STR_PACKET = mPacket.toString();
-        final String DELIMETER = DeviceProtocol.getDelimeter();
+    @Synchronized
+    fun popPacket(): String? {
+        val STR_PACKET = mPacket.toString()
+        val DELIMETER = DeviceProtocol.delimeter
 
-        int cmdIndex = STR_PACKET.indexOf("$>");
+        val cmdIndex = STR_PACKET.indexOf("$>")
         if (cmdIndex >= 0) {
-            if (STR_PACKET.replace("\n", "").indexOf("$>") == 0)
-                return popPacket(cmdIndex, 2);
+            if (STR_PACKET.replace("\n", "").indexOf("$>") == 0) return popPacket(cmdIndex, 2)
         }
 
-        StringTokenizer st = new StringTokenizer(STR_PACKET, DELIMETER);
+        val st = StringTokenizer(STR_PACKET, DELIMETER)
         if (st.hasMoreTokens()) {
-            final String str = st.nextToken();
-            if (str != null && str.length() > 0) {
-                if (str.length() + DELIMETER.length() > mPacket.length())
-                    return null;
-                if (str.length() == 1 || str.length() > 40)
-                    Log.d("RecvPacketParser", "Data is too long. String Length : " + str.length());
+            val str = st.nextToken()
+            if (str != null && str.length > 0) {
+                if (str.length + DELIMETER.length > mPacket.length) return null
+                if (str.length == 1 || str.length > 40) Log.d(
+                    "RecvPacketParser",
+                    "Data is too long. String Length : " + str.length
+                )
                 mPacket.delete(
-                        0,
-                        Math.min(mPacket.length(),
-                                str.length() + DELIMETER.length()));
-                return str;
+                    0,
+                    min(
+                        mPacket.length.toDouble(),
+                        (str.length + DELIMETER.length).toDouble()
+                    ).toInt()
+                )
+                return str
             }
         }
-        return null;
+        return null
     }
 }
