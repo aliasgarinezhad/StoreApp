@@ -22,8 +22,13 @@ import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.input.KeyboardType
@@ -60,8 +65,9 @@ fun FeatureListScreen(
     factoryUser: FactoryUser,
     textFieldValue: String,
     onTextFieldChanged: (value: String) -> Unit,
-    onFeatureIconClick: (screen: Any) -> Unit
-) {
+    onFeatureIconClick: (screen: Any) -> Unit,
+    onTextFieldFocused: () -> Unit,
+    ) {
 
     MyApplicationTheme {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
@@ -73,7 +79,8 @@ fun FeatureListScreen(
                         onFeatureIconClick = onFeatureIconClick,
                         factoryUser = factoryUser,
                         textFieldValue = textFieldValue,
-                        onTextFieldChanged = onTextFieldChanged
+                        onTextFieldChanged = onTextFieldChanged,
+                        onTextFieldFocused = onTextFieldFocused,
                     )
                 },
                 snackbarHost = { ErrorSnackBar(state) },
@@ -89,7 +96,8 @@ fun MainContent(
     factoryUser: FactoryUser,
     textFieldValue: String,
     onTextFieldChanged: (value: String) -> Unit,
-    onFeatureIconClick: (screen: Any) -> Unit
+    onFeatureIconClick: (screen: Any) -> Unit,
+    onTextFieldFocused: () -> Unit,
 ) {
 
     Column {
@@ -104,6 +112,7 @@ fun MainContent(
                         .align(Alignment.CenterVertically)
                 )
 
+                var isFocused by remember { mutableStateOf(false) }
                 OutlinedTextField(
                     value = textFieldValue,
                     onValueChange = { newValue ->
@@ -115,6 +124,12 @@ fun MainContent(
                     modifier = Modifier
                         .padding(start = 16.dp, end = 16.dp, top = 16.dp)
                         .fillMaxWidth()
+                        .onFocusChanged {
+                            isFocused = it.isFocused
+                            if (isFocused) {
+                                onTextFieldFocused()
+                            }
+                        },
                 )
             }
 

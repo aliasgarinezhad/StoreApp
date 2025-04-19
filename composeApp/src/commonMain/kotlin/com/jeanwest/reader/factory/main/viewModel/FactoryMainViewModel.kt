@@ -106,6 +106,10 @@ class FactoryMainViewModel {
         password = value
     }
 
+    fun onTextFieldFocused() {
+        machineCodeTextFieldValue = ""
+    }
+
     fun changeMachineCode(value: String) {
         machineCodeTextFieldValue = value
         if (value.toIntOrNull() == null) {

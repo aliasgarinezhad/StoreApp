@@ -1,6 +1,7 @@
 package com.jeanwest.reader.factory
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -72,7 +73,8 @@ fun FactoryApp(
                 featuresList = factoryMainViewModel.featureList,
                 factoryUser = RemoteConnection.factoryUser,
                 textFieldValue = factoryMainViewModel.machineCodeTextFieldValue,
-                onTextFieldChanged = { factoryMainViewModel.changeMachineCode(it) }
+                onTextFieldChanged = { factoryMainViewModel.changeMachineCode(it) },
+                onTextFieldFocused = { factoryMainViewModel.onTextFieldFocused() }
             )
         }
 
