@@ -3087,7 +3087,7 @@ fun ScanBox(item: String, modifier: Modifier) {
 
             Text(
                 item,
-                style = Typography.headlineLarge,
+                style = Typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(

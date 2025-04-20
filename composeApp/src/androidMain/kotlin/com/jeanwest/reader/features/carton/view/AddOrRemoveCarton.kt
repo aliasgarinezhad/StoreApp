@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.carton.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
@@ -258,7 +257,6 @@ class AddOrRemoveCarton : ComponentActivity() {
         }
     }
 
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
     @ExperimentalFoundationApi
     @Composable
     fun Page() {
@@ -385,17 +383,18 @@ class AddOrRemoveCarton : ComponentActivity() {
                 text4 = "جمع اجناس: " + uiList[i].numberOfItems,
             )
 
-            Box(modifier = Modifier
-                .padding(top = topPaddingClearButton, end = 8.dp)
-                .background(
-                    shape = RoundedCornerShape(36.dp), color = errorContainerLight
-                )
-                .size(30.dp)
-                .align(Alignment.TopEnd)
-                .testTag("clear")
-                .clickable {
-                    clear(uiList[i])
-                }) {
+            Box(
+                modifier = Modifier
+                    .padding(top = topPaddingClearButton, end = 8.dp)
+                    .background(
+                        shape = RoundedCornerShape(36.dp), color = errorContainerLight
+                    )
+                    .size(30.dp)
+                    .align(Alignment.TopEnd)
+                    .testTag("clear")
+                    .clickable {
+                        clear(uiList[i])
+                    }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_baseline_clear_24),
                     contentDescription = "",
@@ -410,7 +409,8 @@ class AddOrRemoveCarton : ComponentActivity() {
 
     @Composable
     fun Content2() {
-        ScanOrTypeNumberPage(loading = loading, onClick = {
+        ScanOrTypeNumberPage(
+            loading = loading, onClick = {
             if (!cageNumber.startsWith("SH")) {
                 showLog(state = state, data = "شماره قفسه نامعتبر است.")
                 barcode.barcode = ""

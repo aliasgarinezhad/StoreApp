@@ -39,6 +39,19 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel for writing RFID tags.
+ *
+ * This ViewModel handles the logic for scanning barcodes, identifying nearby RFID tags,
+ * writing data to the tags, and interacting with the API and local storage.  It utilizes
+ * RFID and barcode scanning capabilities, manages user feedback through snackbars and
+ * popups, and logs events for debugging and monitoring.
+ *
+ * @property state A [SnackbarHostState] for displaying snackbar messages to the user.
+ * @property memory A [SharedPreference] instance for accessing shared preferences, including user and device information.
+ * @property api An [API] instance for making network requests to the backend.
+ * @property context The application [Context].
+ */
 @HiltViewModel
 class WriteTagViewModel @Inject constructor(
     val state: SnackbarHostState,

@@ -338,8 +338,7 @@ class ShelfExit : ComponentActivity() {
             finish()
         }
     }
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+    
     @ExperimentalFoundationApi
     @Composable
     fun Page() {

@@ -16,6 +16,18 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
+/**
+ * ViewModel for managing the creation of shelves within a store.
+ *
+ * This ViewModel handles user interactions for creating new shelves, including selecting shelf types,
+ * entering shelf descriptions, and communicating with the backend API. It also manages the display of existing shelves
+ * and handles barcode scanning functionality.
+ *
+ * @property state The state of the SnackbarHost for displaying messages to the user.
+ * @property memory Shared preferences for accessing user data and settings.
+ * @property api The API service for interacting with the backend.
+ * @property context The application context.
+ */
 @HiltViewModel
 class CreateShelfStoreViewModel @Inject constructor(
     val state: SnackbarHostState,

@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.shared
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,8 +10,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material.Text
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -27,8 +26,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.jeanwest.reader.R
 
-
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ScanOrTypeNumberScreen(
     loading: Boolean,
@@ -52,14 +49,16 @@ fun ScanOrTypeNumberScreen(
                     )
                 },
                 content = {
-                    ContentScanOrTypeNumberScreen(
-                        loading,
-                        onClick,
-                        value,
-                        onValueChange,
-                        item,
-                        popupHost
-                    )
+                    Box(Modifier.padding(it)) {
+                        ContentScanOrTypeNumberScreen(
+                            loading,
+                            onClick,
+                            value,
+                            onValueChange,
+                            item,
+                            popupHost
+                        )
+                    }
                 },
                 snackbarHost = { ErrorSnackBar(state) },
             )
@@ -108,31 +107,8 @@ fun ContentScanOrTypeNumberScreen(
                             .align(Alignment.Center)
                             .width(256.dp)
                     ) {
-                        Box(
 
-                            modifier = Modifier
-                                .background(color = Color.White, shape = Shapes.medium)
-                                .size(256.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_big_barcode_scan),
-                                contentDescription = "",
-                                tint = Color.Unspecified,
-                                modifier = Modifier
-                                    .align(Alignment.Center)
-                            )
-                        }
-
-                        Text(
-                            "$item را اسکن یا در کادر جستجو وارد کنید",
-                            style = Typography.headlineMedium,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(
-                                top = 16.dp,
-                                start = 4.dp,
-                                end = 4.dp
-                            ),
-                        )
+                        ScanBox(item = "$item را اسکن یا در کادر جستجو وارد کنید", modifier = Modifier)
                     }
                 }
             }

@@ -22,6 +22,18 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
+/**
+ * ViewModel for managing the content of a shelf, including product display, editing, and clearing.
+ *
+ * This ViewModel handles interactions related to displaying products on a shelf, scanning barcodes,
+ * editing product quantities, and clearing the shelf's contents.  It utilizes a SnackbarHostState
+ * for displaying messages to the user and interacts with an API for data retrieval and updates.
+ *
+ * @property state The SnackbarHostState for managing snackbar messages.
+ * @property memory An instance of SharedPreference for accessing user-related data, such as the current warehouse.
+ * @property api The API interface for communicating with the backend.
+ * @property context The application context.
+ */
 @HiltViewModel
 class ShelfContentViewModel @Inject constructor(
     val state: SnackbarHostState,

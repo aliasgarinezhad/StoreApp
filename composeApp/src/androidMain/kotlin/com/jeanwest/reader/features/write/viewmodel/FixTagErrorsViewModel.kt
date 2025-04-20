@@ -30,6 +30,16 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel for fixing tag errors.  Handles RFID and barcode scanning,
+ * communication with the API, and logic for identifying and correcting
+ * incorrect tag data.
+ *
+ * @property state SnackbarHostState for displaying snackbar messages to the user.
+ * @property memory SharedPreference for accessing user and device information.
+ * @property api API for communicating with the backend.
+ * @property context Application context.
+ */
 @HiltViewModel
 class FixTagErrorsViewModel @Inject constructor(
     val state: SnackbarHostState,

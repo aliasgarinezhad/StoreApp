@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.stockDraft.view
 
-import android.annotation.SuppressLint
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -76,7 +75,19 @@ class ReverseRefillViewModel @Inject constructor(
 
 }
 
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+/**
+ * Composable function that represents the main page of the Reverse Refill application.
+ * It manages the overall layout, including the top app bar, content area, snackbar for error messages,
+ * and the bottom navigation bar.  It also handles RTL layout direction and applies the app's theme.
+ *
+ * The content of the page switches between two different composables, `Content` and `Content2`,
+ * based on the `scanningMode` state within the `ReverseRefillViewModel`.
+ *
+ * @param viewModel The [ReverseRefillViewModel] instance that holds the application's state
+ * and logic.  This ViewModel is the single source of truth for data and interactions within
+ * the page.
+ */
+
 @ExperimentalFoundationApi
 @Composable
 fun Page(viewModel: ReverseRefillViewModel) {

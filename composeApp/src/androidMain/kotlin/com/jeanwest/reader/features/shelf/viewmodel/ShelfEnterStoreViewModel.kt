@@ -18,6 +18,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
+/**
+ * ViewModel for the Shelf Enter Store screen.
+ *
+ * This ViewModel manages the UI state and logic for the screen where users enter a store shelf,
+ * scan products, and add them to the shelf.
+ *
+ * @property state The state of the Snackbar host for displaying messages to the user.
+ * @property memory Shared preferences for storing data.
+ * @property api The API interface for interacting with the backend.
+ * @property context The application context.
+ */
 @HiltViewModel
 class ShelfEnterStoreViewModel @Inject constructor(
     val state: SnackbarHostState,

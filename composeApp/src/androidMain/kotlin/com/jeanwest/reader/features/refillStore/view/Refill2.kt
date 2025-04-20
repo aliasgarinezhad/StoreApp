@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.refillStore.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
@@ -48,6 +47,13 @@ import com.jeanwest.reader.features.shared.errorLight
 import com.jeanwest.reader.useCases.ExceptionHandler
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ *  Refill2 Activity.
+ *
+ *  This activity manages the refill process, including loading and saving data to memory,
+ *  handling user interaction with the UI (provided by the `Page` composable), and managing activity lifecycle events.
+ *  It uses a [RefillViewModel2] to handle the underlying logic and state.  It also includes an exception handler for unhandled exceptions.
+ */
 @AndroidEntryPoint
 class Refill2 : ComponentActivity() {
 
@@ -101,7 +107,6 @@ class Refill2 : ComponentActivity() {
 
 }
 
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @Composable
 fun Page(viewModel: RefillViewModel2, onBackPressed: () -> Unit) {
     MyApplicationTheme {
@@ -165,7 +170,8 @@ fun Content(viewModel: RefillViewModel2) {
                         .align(Alignment.CenterVertically)
                         .weight(1.3F)
                 ) {
-                    FilterDropDownList(icon = { }, text = {
+                    FilterDropDownList(
+                        icon = { }, text = {
                         Text(
                             text = viewModel.selectedDepartmentFilter,
                             style = MaterialTheme.typography.bodyMedium,

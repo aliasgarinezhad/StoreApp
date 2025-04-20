@@ -127,8 +127,6 @@ private fun ComposableHost(
     )
 }
 
-
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @Composable
 private fun Page(
     state: SnackbarHostState,

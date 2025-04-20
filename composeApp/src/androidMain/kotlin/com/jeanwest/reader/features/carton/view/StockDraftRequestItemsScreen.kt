@@ -4,6 +4,7 @@ package com.jeanwest.reader.features.carton.view
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,7 +36,6 @@ import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.models.StockDraftRequestItem
 
 @OptIn(ExperimentalFoundationApi::class)
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun StockDraftRequestItemScreen(
     topBarTitle: String,
@@ -60,14 +60,16 @@ fun StockDraftRequestItemScreen(
                     )
                 },
                 content = {
-                    Content(
-                        loading = loading,
-                        uiListProduct = uiListProduct,
-                        popupState = popupState,
-                        onProductClick = onProductClick,
-                        stockDraftRequestNumber = stockDraftRequestNumber,
-                        shortageNumber = shortageNumber
-                    )
+                    Box(Modifier.padding(it)) {
+                        Content(
+                            loading = loading,
+                            uiListProduct = uiListProduct,
+                            popupState = popupState,
+                            onProductClick = onProductClick,
+                            stockDraftRequestNumber = stockDraftRequestNumber,
+                            shortageNumber = shortageNumber
+                        )
+                    }
                 },
                 snackbarHost = { ErrorSnackBar(state) },
                 bottomBar = {

@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.shelf.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -44,6 +43,27 @@ import com.jeanwest.reader.models.StoreShelf
 import com.jeanwest.reader.useCases.ExceptionHandler
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ *  Activity responsible for displaying and managing the product shelf associated with a specific address.
+ *  This activity uses a ViewModel ([AddressProductShelfViewModel]) to handle data and business logic,
+ *  and a composable ([Page]) to render the user interface.
+ *
+ *  Key Features:
+ *      - Displays products available at a given address.
+ *      - Allows interaction with products (e.g., viewing details, adding to cart). (Functionality implemented in the associated ViewModel and composable).
+ *      - Handles exceptions using a custom [ExceptionHandler].
+ *      - Manages activity lifecycle events (onPause, onResume) to synchronize with ViewModel state.
+ *
+ *  Usage:
+ *      This activity is typically launched with address information as intent extras (though not explicitly shown in this code snippet.  The specifics of how the address is passed are handled within the ViewModel and calling code).
+ *      The [Page] composable function should handle the display and interaction with the product shelf data provided by the [AddressProductShelfViewModel].
+ *
+ *  Dependencies:
+ *      - Dagger Hilt for dependency injection (ViewModel instantiation).
+ *      - [AddressProductShelfViewModel] (ViewModel) for data management.
+ *      - [Page] (Composable function) for UI rendering.
+ *      - [ExceptionHandler] (Custom exception handler, implementation not shown).
+ */
 @AndroidEntryPoint
 class AddressProductShelf : ComponentActivity() {
 
@@ -79,7 +99,6 @@ class AddressProductShelf : ComponentActivity() {
 
 }
 
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @Composable
 fun Page(viewModel: AddressProductShelfViewModel, onBackPressed: () -> Unit) {
     MyApplicationTheme {

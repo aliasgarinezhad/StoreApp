@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.banimode.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
@@ -107,8 +106,6 @@ class BanimodeReturn : ComponentActivity() {
     }
 }
 
-
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @ExperimentalFoundationApi
 @Composable
 fun Page(

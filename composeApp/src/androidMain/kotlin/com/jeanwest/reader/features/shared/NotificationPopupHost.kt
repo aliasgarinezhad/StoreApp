@@ -6,6 +6,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import javax.inject.Inject
 
+/**
+ *  Manages the display and interaction of different types of notification popups.
+ *
+ *  This class provides methods to show various popups with different configurations,
+ *  including single-button, two-button, dropdown list, and text field input popups.
+ *  It uses Compose's state management to control the visibility of these popups and
+ *  handles button clicks and dismiss events.
+ *
+ *  @constructor Injects an instance of [NotificationPopupHost].
+ */
 class NotificationPopupHost @Inject constructor() {
 
     var showPopup1Button by mutableStateOf(false)

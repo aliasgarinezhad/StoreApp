@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.shelf.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
@@ -59,6 +58,22 @@ import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.useCases.ExceptionHandler
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Activity responsible for displaying and managing the Shelf Content Store.
+ *
+ * This activity uses Jetpack Compose for its UI and interacts with a [ShelfContentStoreViewModel]
+ * to handle data and business logic.  It allows the user to navigate and manage the contents
+ * of a shelf, likely within a warehouse or storage facility context.
+ *
+ * Key features:
+ * - Displays a page with content managed by [ShelfContentStoreViewModel].
+ * - Handles back navigation, allowing the user to move between different states or exit the activity.
+ * - Includes error handling for uncaught exceptions.
+ * - Manages activity lifecycle events (pause, resume) and informs the view model.
+ * - Listens for hardware back button presses and triggers back navigation.
+ *
+ *  @ExperimentalFoundationApi is used because it contains new features that are still in development and might change in future versions of Compose.
+ */
 @AndroidEntryPoint
 @OptIn(ExperimentalFoundationApi::class)
 class ShelfContentStore : ComponentActivity() {
@@ -111,7 +126,6 @@ class ShelfContentStore : ComponentActivity() {
     }
 }
 
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @ExperimentalFoundationApi
 @Composable
 fun Page(viewModel: ShelfContentStoreViewModel, back: () -> Unit) {

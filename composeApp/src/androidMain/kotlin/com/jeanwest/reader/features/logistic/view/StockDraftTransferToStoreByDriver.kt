@@ -2,7 +2,6 @@
 
 package com.jeanwest.reader.features.logistic.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
@@ -232,12 +231,16 @@ class StockDraftTransferToStoreByDriver : ComponentActivity() {
                         } else if (it.logisticKey != "null") {
                             showLog("حواله قبلا به راننده تحویل داده شده است", state)
                             stockDraftIDs.remove(barcode)
-
                             errorBeep(state)
-                        } else if (it.epcsToPrimaryKeysMap.isEmpty() && (it.destination == 1707 || it.destination == 1712)) {
+                        } else if (it.epcsToPrimaryKeysMap.isEmpty() && it.destination in listOf(
+                                1707,
+                                1712,
+                                1874,
+                                1687
+                            )
+                        ) {
                             showLog("حواله باید ار اف ای دی داشته باشد.", state)
                             stockDraftIDs.remove(barcode)
-
                             errorBeep(state)
                         } else {
                             stockDraftIDs.add(it.number.toString())
@@ -351,8 +354,6 @@ class StockDraftTransferToStoreByDriver : ComponentActivity() {
         finish()
     }
 
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
     @ExperimentalFoundationApi
     @Composable
     fun Page() {
@@ -374,7 +375,8 @@ class StockDraftTransferToStoreByDriver : ComponentActivity() {
 
     @Composable
     fun AppBar() {
-        AppBarWithDeleteButton(title = stringResource(id = R.string.ReceiveLogistics),
+        AppBarWithDeleteButton(
+            title = stringResource(id = R.string.ReceiveLogistics),
             onDeletePressed = { openClearDialog = true },
             onBackPressed = { back() }
         )

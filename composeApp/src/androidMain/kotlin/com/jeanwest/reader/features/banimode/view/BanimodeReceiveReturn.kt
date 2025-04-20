@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.banimode.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
@@ -122,8 +121,6 @@ class BanimodeReceiveReturn : ComponentActivity() {
     }
 }
 
-
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @ExperimentalFoundationApi
 @Composable
 fun Page(
@@ -307,17 +304,18 @@ fun BaniRecieveLazyColumnItem(i: Int, view: BanimodeReceiveReturnViewModel) {
 
         if (view.filteredUiList[i].conflictType == "اضافی") {
 
-            Box(modifier = Modifier
-                .padding(top = topPaddingClearButton, end = 8.dp)
-                .background(
-                    shape = RoundedCornerShape(36.dp), color = errorContainerLight
-                )
-                .size(30.dp)
-                .align(TopEnd)
-                .testTag("clear")
-                .clickable {
-                    view.clearItem(view.filteredUiList[i])
-                }) {
+            Box(
+                modifier = Modifier
+                    .padding(top = topPaddingClearButton, end = 8.dp)
+                    .background(
+                        shape = RoundedCornerShape(36.dp), color = errorContainerLight
+                    )
+                    .size(30.dp)
+                    .align(TopEnd)
+                    .testTag("clear")
+                    .clickable {
+                        view.clearItem(view.filteredUiList[i])
+                    }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_baseline_clear_24),
                     contentDescription = "",

@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.shelf.view
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -48,8 +47,28 @@ import com.jeanwest.reader.features.shelf.model.RequestType
 import com.jeanwest.reader.models.Carton
 import com.jeanwest.reader.models.Product
 
+/**
+ * A composable function that displays a screen for scanning cartons and barcodes.  It provides UI elements
+ * for user input, displays scanned items, and allows for filtering and submission of the scanned data.
+ *
+ * @param topBarTitle The title displayed in the top app bar.
+ * @param topBarOnClick Callback function invoked when the back button in the top bar is clicked.
+ * @param loading Boolean flag indicating whether a loading indicator should be displayed.
+ * @param uiListProduct A list of [Product] objects representing scanned products.
+ * @param state A [SnackbarHostState] to manage and display snackbar messages.
+ * @param inputValue The current value of the input text field for scanning.
+ * @param inputHint The hint text displayed in the input text field.
+ * @param onValueChange Callback function invoked when the input text field value changes.  It receives the new input string.
+ * @param syncScanItem Callback function invoked to process the scanned item (typically triggered by a button click or enter key press).
+ * @param onBottomBarClick Callback function invoked when the bottom bar button is clicked (if displayed).
+ * @param popupState  A [NotificationPopupHost] to manage and display popup notifications (errors, etc.).
+ * @param clearItem Callback function invoked to remove an item from the scanned list. It receives the index of the item to remove.
+ * @param bottomBarText The text displayed on the bottom bar button.
+ * @param uiListCarton A list of [Carton] objects representing scanned cartons.
+ * @param hasTypeFilter Boolean flag indicating whether a type filter is enabled.
+ * @param typeFilter The currently selected type filter value.
+ * @param onTypeFilterChange Callback function invoked when the type filter selection changes.  It receives the new filter string */
 @OptIn(ExperimentalFoundationApi::class)
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ScanCartonAndBarcodeScreen(
     topBarTitle: String,
@@ -83,23 +102,25 @@ fun ScanCartonAndBarcodeScreen(
                     )
                 },
                 content = {
-                    Content(
-                        inputValue = inputValue,
-                        inputHint = inputHint,
-                        onValueChange = onValueChange,
-                        syncScanItem = syncScanItem,
-                        loading = loading,
-                        uiListProduct = uiListProduct,
-                        popupState = popupState,
-                        clearItem = clearItem,
-                        uiListCarton = uiListCarton,
-                        hasTypeFilter = hasTypeFilter,
-                        typeFilter = typeFilter,
-                        onTypeFilterChange = onTypeFilterChange,
-                        typeFilterList = typeFilterList,
-                        isRFScanning = isRFScanning,
-                        showInputProductTextField = showInputProductTextField
-                    )
+                    Box(Modifier.padding(it)) {
+                        Content(
+                            inputValue = inputValue,
+                            inputHint = inputHint,
+                            onValueChange = onValueChange,
+                            syncScanItem = syncScanItem,
+                            loading = loading,
+                            uiListProduct = uiListProduct,
+                            popupState = popupState,
+                            clearItem = clearItem,
+                            uiListCarton = uiListCarton,
+                            hasTypeFilter = hasTypeFilter,
+                            typeFilter = typeFilter,
+                            onTypeFilterChange = onTypeFilterChange,
+                            typeFilterList = typeFilterList,
+                            isRFScanning = isRFScanning,
+                            showInputProductTextField = showInputProductTextField
+                        )
+                    }
                 },
                 snackbarHost = { ErrorSnackBar(state) },
                 bottomBar = {

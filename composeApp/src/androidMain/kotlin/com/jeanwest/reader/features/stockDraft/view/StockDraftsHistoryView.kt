@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.stockDraft.view
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -86,8 +85,19 @@ class StockDraftsHistoryViewModel @Inject constructor(
     var stateId by mutableStateOf<Int?>(null)
 }
 
+/**
+ * Composable function that represents the main page for displaying stock drafts history.
+ *
+ * It utilizes Material3 Scaffold for a consistent layout structure, including a top app bar,
+ * main content area, a snackbar for displaying errors, and an empty bottom bar.  It also sets
+ * the layout direction to Right-to-Left (Rtl).
+ *
+ * @param viewModel The [StockDraftsHistoryViewModel] instance responsible for managing the
+ *                  data and logic related to stock drafts history.  The view model is expected
+ *                  to provide the title for the app bar, handle back navigation, and
+ *                  manage the state for the content and error display.
+ */
 @OptIn(ExperimentalCoilApi::class)
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @ExperimentalFoundationApi
 @Composable
 fun Page(viewModel: StockDraftsHistoryViewModel) {

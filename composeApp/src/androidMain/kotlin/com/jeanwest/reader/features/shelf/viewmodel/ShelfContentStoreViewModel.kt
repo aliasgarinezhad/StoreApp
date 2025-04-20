@@ -20,6 +20,18 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
+/**
+ * ViewModel for managing the display of shelf content in the store.
+ *
+ * This ViewModel handles barcode scanning, fetching shelf details from the API,
+ * retrieving product information based on SKUs, and managing the UI state for displaying
+ * products associated with a specific shelf (cage).
+ *
+ * @property state The state of the Snackbar host for displaying messages to the user.
+ * @property memory Shared preferences for storing user-related data.  Currently unused in this class but kept for potential future use.
+ * @property api The API interface for interacting with the backend service.
+ * @property context The application context.
+ */
 @HiltViewModel
 class ShelfContentStoreViewModel @Inject constructor(
     val state: SnackbarHostState,

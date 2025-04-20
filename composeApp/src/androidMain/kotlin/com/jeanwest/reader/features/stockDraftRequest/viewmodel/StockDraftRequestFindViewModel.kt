@@ -31,6 +31,19 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
+/**
+ * ViewModel for managing the stock draft request finding process.
+ *
+ * This ViewModel handles the logic for finding stock draft requests, updating their status,
+ * and interacting with barcode and RFID scanners. It manages the UI state for different steps
+ * in the process, including searching for requests, viewing details, selecting shelves,
+ * and updating the number of found items.
+ *
+ * @property state The [SnackbarHostState] for displaying snackbar messages.
+ * @property memory The [SharedPreference] instance for accessing user preferences and data.
+ * @property api The [API] instance for making API calls.
+ * @property context The application context.
+ */
 @HiltViewModel
 class StockDraftRequestFindViewModel @Inject constructor(
     val state: SnackbarHostState,

@@ -2,7 +2,6 @@
 
 package com.jeanwest.reader.features.stockDraft.view
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
@@ -704,8 +703,6 @@ class StockDraftAttachEPCs : ComponentActivity() {
         })
     }
 
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalCoilApi::class)
     @ExperimentalFoundationApi
     @Composable

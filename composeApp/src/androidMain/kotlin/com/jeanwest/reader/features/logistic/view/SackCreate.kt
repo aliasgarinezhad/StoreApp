@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.logistic.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -89,7 +88,6 @@ class SackCreate : ComponentActivity() {
     }
 }
 
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @ExperimentalFoundationApi
 @Composable
 private fun Page(viewModel: SackCreateViewModel, back: () -> Unit) {

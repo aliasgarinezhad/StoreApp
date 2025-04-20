@@ -26,9 +26,6 @@ class CreateStockDraftFromCarton : ComponentActivity() {
 
     @Inject
     lateinit var state: SnackbarHostState
-//
-//    @Inject
-//    lateinit var memory: SharedMemory
 
     @Inject
     lateinit var api: API
