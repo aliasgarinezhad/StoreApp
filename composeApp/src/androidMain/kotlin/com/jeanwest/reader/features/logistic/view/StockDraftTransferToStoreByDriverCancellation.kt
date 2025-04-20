@@ -310,9 +310,7 @@ class StockDraftTransferToStoreByDriverCancellation : ComponentActivity() {
     private fun back() {
         finish()
     }
-
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+    
     @ExperimentalFoundationApi
     @Composable
     fun Page() {
@@ -334,7 +332,8 @@ class StockDraftTransferToStoreByDriverCancellation : ComponentActivity() {
 
     @Composable
     fun AppBar() {
-        AppBarWithDeleteButton(title = stringResource(id = R.string.ReturnLogistics),
+        AppBarWithDeleteButton(
+            title = stringResource(id = R.string.ReturnLogistics),
             onDeletePressed = { openClearDialog = true },
             onBackPressed = { back() }
         )

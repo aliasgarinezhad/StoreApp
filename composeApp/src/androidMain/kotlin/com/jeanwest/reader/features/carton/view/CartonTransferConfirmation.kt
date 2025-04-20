@@ -309,8 +309,7 @@ class CartonTransferConfirmation @Inject constructor(
         barcode.barcode = ""
         saveToMemory()
     }
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+    
     @ExperimentalFoundationApi
     @Composable
     fun Page() {

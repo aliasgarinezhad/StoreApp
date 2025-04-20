@@ -997,8 +997,7 @@ class InventoryReportDepartment : ComponentActivity() {
             finish()
         }
     }
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+    
     @OptIn(ExperimentalCoilApi::class)
     @ExperimentalFoundationApi
     @Composable
@@ -1132,7 +1131,8 @@ class InventoryReportDepartment : ComponentActivity() {
 
                     items(uiList.size) { i ->
 
-                        Item(i,
+                        Item(
+                            i,
                             uiList,
                             text3 = "تعداد: " + uiList[i].manualScannedNumber,
                             text4 = "رنگ" + ":" + " " + uiList[i].color,
@@ -1229,7 +1229,8 @@ class InventoryReportDepartment : ComponentActivity() {
 
                     items(uiList.size) { i ->
 
-                        Item(i,
+                        Item(
+                            i,
                             uiList,
                             text3 = uiList[i].spec,
                             text4 = uiList[i].spec2,

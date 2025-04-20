@@ -59,6 +59,21 @@ import com.jeanwest.reader.useCases.Barcode
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+/**
+ * Activity responsible for registering a device to an IoT hub.
+ *
+ * This activity handles user authentication, device registration, and saving device information locally.
+ * It utilizes Jetpack Compose for UI rendering and interacts with an API for backend operations.
+ *
+ * The registration process involves two main steps:
+ * 1. **User Authentication:** The user enters their username and password to obtain an authentication token.
+ * 2. **Device Registration:** The user enters the device serial number and selects the device's location (warehouse)
+ *    from a list. The device is then registered with the IoT hub, and its ID, IoT token, serial number, and location
+ *    are saved to shared preferences for future use.
+ *
+ * The UI is built using Jetpack Compose and consists of two main screens:
+ * - **Login Screen:** Prompts the user for their username and password.
+ * - */
 @OptIn(ExperimentalMaterial3Api::class)
 @AndroidEntryPoint
 class DeviceRegister : ComponentActivity() {
@@ -208,7 +223,6 @@ class DeviceRegister : ComponentActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
     @Composable
     fun Page() {
         MyApplicationTheme {

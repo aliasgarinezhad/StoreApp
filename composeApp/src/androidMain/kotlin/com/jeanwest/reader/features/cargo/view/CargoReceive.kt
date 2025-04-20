@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.cargo.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -93,7 +92,6 @@ class CargoReceive : ComponentActivity() {
 
 }
 
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @Composable
 fun Page(viewModel: CargoReceiveViewModel, onBackPressed: () -> Unit) {
     MyApplicationTheme {

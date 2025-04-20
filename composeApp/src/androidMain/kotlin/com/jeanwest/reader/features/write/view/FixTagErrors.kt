@@ -1,7 +1,6 @@
 package com.jeanwest.reader.features.write.view
 
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
@@ -124,8 +123,6 @@ private fun ComposableHost(viewModel: FixTagErrorsViewModel, onBackPressed: () -
     )
 }
 
-
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @Composable
 private fun Page(
     state: SnackbarHostState,

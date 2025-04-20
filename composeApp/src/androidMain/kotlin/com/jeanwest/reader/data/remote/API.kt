@@ -2050,6 +2050,50 @@ class API @Inject constructor(
         queue.add(request)
     }
 
+    fun shelfInventoryReport(
+        warehouseCode: Int,
+        shelfNumber: String,
+        status: Boolean,
+        products: List<ShelfItem>,
+        onSuccess: () -> Unit,
+        onError: () -> Unit,
+    ) {
+        val url = "$serverAddress/shelf/inventory"
+        val request = object : JsonObjectRequest(Method.POST, url, null, {
+            onSuccess()
+        }, {
+            apiErrorProcess(state, it)
+            onError()
+        }) {
+            override fun getHeaders(): Map<String, String> {
+                return header
+            }
+
+            override fun getBody(): ByteArray {
+                val body = JSONObject()
+                body.put("WareHouse_ID", warehouseCode)
+                body.put("ShelfID", shelfNumber)
+                body.put("Status", status)
+
+                val jsonArray = JSONArray()
+                products.forEach {
+                    it.epcs.forEach { epc ->
+                        if(epc !in it.product.scannedEPCs) {
+                            val jsonObject = JSONObject()
+                            jsonObject.put("BarcodeMain_ID", it.product.primaryKey)
+                            jsonObject.put("EPC", epc)
+                            jsonArray.put(jsonObject)
+                        }
+                    }
+                }
+                body.put("products", jsonArray)
+                Log.e(this@API.tag, body.toString())
+                return body.toString().toByteArray()
+            }
+        }
+        queue.add(request)
+    }
+
     fun shelfContent(
         warehouseCode: Int,
         shelfNumber: String,
@@ -2114,6 +2158,7 @@ class API @Inject constructor(
                         name = productsJsonArray.getJSONObject(i).getString("ItemName"),
                         KBarCode = productsJsonArray.getJSONObject(i).getString("KBarCode"),
                         shelfCount = productsJsonArray.getJSONObject(i).getInt("Qty"),
+                        primaryKey = productsJsonArray.getJSONObject(i).getLong("BarcodeMain_ID"),
                     )
                     val searchAndBarcodes =
                         productsJsonArray.getJSONObject(i).getJSONArray("SearchCodes")
@@ -2122,11 +2167,19 @@ class API @Inject constructor(
                             product.searchCodes.add(searchAndBarcodes.getString(a))
                         }
                     }
+                    val shelfProductEpc = mutableListOf<String>()
+                    val epcsJsonArray =
+                        productsJsonArray.getJSONObject(i).getJSONArray("epcs")
+                    if (epcsJsonArray.length() != 0) {
+                        for (a in 0 until epcsJsonArray.length()) {
+                            shelfProductEpc.add(epcsJsonArray.getString(a))
+                        }
+                    }
                     val shelfItem = ShelfItem(
                         qtyInShelf = productsJsonArray.getJSONObject(i).getInt("Qty"),
                         product = product,
                         shelfNumber = shelfNumber,
-                        epcs = mutableListOf()
+                        epcs = shelfProductEpc
                     )
                     productsList.add(shelfItem)
                 }
@@ -2389,6 +2442,7 @@ class API @Inject constructor(
                         jObject.put("KBarCode", elements.product.KBarCode)
                         jObject.put("qty", 1)
                         jObject.put("epc", elements.epcs[i])
+                        jObject.put("BarcodeMain_ID", elements.product.primaryKey)
                         productList.put(jObject)
                     }
                 }

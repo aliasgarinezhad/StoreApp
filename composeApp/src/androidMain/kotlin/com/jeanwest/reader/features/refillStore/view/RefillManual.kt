@@ -547,8 +547,7 @@ class RefillManual : ComponentActivity() {
         }
         return returnVar
     }
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+    
     @Composable
     fun Page() {
         MyApplicationTheme {
@@ -560,7 +559,15 @@ class RefillManual : ComponentActivity() {
                             if (scanningMode) Content() else Content2()
                         }
                     },
-                    bottomBar = { if (memory.user.calculatedLocationCode in listOf(68, 42, 53, 29)) BottomBar() else BottomBarNotMegamall() },
+                    bottomBar = {
+                        if (memory.user.calculatedLocationCode in listOf(
+                                68,
+                                42,
+                                53,
+                                29
+                            )
+                        ) BottomBar() else BottomBarNotMegamall()
+                    },
                     snackbarHost = { ErrorSnackBar(state) },
                 )
             }

@@ -72,6 +72,25 @@ import com.jeanwest.reader.models.StockDraftRequestItem
 import com.jeanwest.reader.useCases.ExceptionHandler
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Activity for finding items to add to a stock draft request.
+ *
+ * This activity handles user interaction for searching and selecting items
+ * to be included in a stock draft request.  It uses a ViewModel to manage
+ * the UI state and data operations.
+ *
+ * Key Features:
+ * - Displays a search interface for finding items. (Implementation in the `Page` composable)
+ * - Allows users to select items for the draft request. (Implementation likely within ViewModel and `Page`)
+ * - Supports barcode scanning for item identification (via `scanTrigger()`).
+ * - Handles back navigation and activity lifecycle events.
+ * - Includes error handling using a custom `ExceptionHandler`.
+ *
+ * The UI is built using Jetpack Compose, specifically the `Page` composable.
+ * Data and logic are managed by the `StockDraftRequestFindViewModel`.
+ *
+ *  **Note:** Replace placeholder imports (e.g., `com.example.yourproject...`) with the actual paths in your project.
+ */
 @AndroidEntryPoint
 @OptIn(ExperimentalFoundationApi::class)
 class StockDraftRequestFindItems : ComponentActivity() {
@@ -131,7 +150,6 @@ class StockDraftRequestFindItems : ComponentActivity() {
 
 
 @OptIn(ExperimentalCoilApi::class)
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @ExperimentalFoundationApi
 @Composable
 fun Page(viewModel: StockDraftRequestFindViewModel, onBackPressed: () -> Unit) {
@@ -350,7 +368,6 @@ fun ColumnItem(
     }
 }
 
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @Preview
 @Composable
 fun Preview1() {
@@ -381,19 +398,21 @@ fun Preview1() {
                     )
                 },
                 content = { paddingValues ->
-                    ColumnItem(
-                        item = StockDraftRequestItem(
-                            product = product,
-                            KBarcode = "64822109J-8010-F",
-                            requestNumber = 15,
-                            shelfID = "SH010203"
-                        ),
-                        uiItem4Shelf = ShelfBarcodeAddress(
-                            shelfID = "SH010203"
-                        ),
-                        onAddClick = {},
-                        onRemoveClick = {}
-                    )
+                    Box(Modifier.padding(paddingValues)) {
+                        ColumnItem(
+                            item = StockDraftRequestItem(
+                                product = product,
+                                KBarcode = "64822109J-8010-F",
+                                requestNumber = 15,
+                                shelfID = "SH010203"
+                            ),
+                            uiItem4Shelf = ShelfBarcodeAddress(
+                                shelfID = "SH010203"
+                            ),
+                            onAddClick = {},
+                            onRemoveClick = {}
+                        )
+                    }
                 },
             )
         }

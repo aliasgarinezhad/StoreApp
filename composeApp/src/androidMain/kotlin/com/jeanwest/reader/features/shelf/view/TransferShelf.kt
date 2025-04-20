@@ -14,6 +14,34 @@ import com.jeanwest.reader.features.shared.ScanOrTypeNumberScreen
 import com.jeanwest.reader.features.shelf.viewmodel.TransferShelfViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ *  Activity responsible for handling the shelf transfer process.
+ *  This process involves scanning items from one shelf and transferring them to another.
+ *  The activity uses Jetpack Compose for UI and Navigation Compose for screen management.
+ *
+ *  Key Functionalities:
+ *    - Scanning items from the source shelf ("ScanShelfToExit").
+ *    - Selecting products to be transferred ("SelectProductsScreen").
+ *    - Scanning the destination shelf ("ScanShelfToEnter").
+ *    - Scanning the selected products on the destination shelf to confirm transfer ("ScanProductsScreen").
+ *    - Managing RFID scanning for product identification.
+ *    - Handling user input and navigation between screens.
+ *    - Communicating with a [TransferShelfViewModel] to manage data and business logic.
+ *
+ *  Screens:
+ *    - **ScanShelfToExit:**  Allows the user to scan or manually enter the identifier of the shelf from which items will be transferred.
+ *    - **SelectProductsScreen:** Displays a list of products and allows the user to select the products they want to transfer.  Also initiates RFID scanning to identify products on the shelf.
+ *    - **ScanShelfToEnter:** Allows the user to scan or manually enter the identifier of the shelf to which items will be transferred.
+ *    - **ScanProductsScreen:**  Requires the user to scan the selected products on the destination shelf to verify the transfer.  Final RFID scan and transfer confirmation occurs here.
+ *
+ *  Dependencies:
+ *    - Jetpack Compose: For building the UI.
+ *    - Navigation Compose: For managing screen transitions.
+ *    - Dagger Hilt: For dependency injection, providing the [TransferShelfViewModel].
+ *    - [TransferShelfViewModel]:  Manages the state and logic for the shelf transfer process.  This includes handling user input, interacting with data sources, and controlling navigation.
+ *
+ *  Lifecycle Events:
+ *    - **onCreate:** Sets up the Compose UI */
 @AndroidEntryPoint
 class TransferShelf : ComponentActivity() {
 
@@ -69,7 +97,13 @@ class TransferShelf : ComponentActivity() {
                         },
                         signedKBarCode = viewModel.scanAndCompareProductsUiList,
                         completeRfScan = viewModel.rfid.epcs.size == viewModel.scanAndCompareProductsUiList.flatMap { it.epcs }.size,
-                        rfid = viewModel.rfid
+                        rfid = viewModel.rfid,
+                        text1 = "مجموع اسکن: ${
+                            viewModel.uiList.filter { it in viewModel.scanAndCompareProductsUiList }
+                                .sumOf { it.product.scannedBarcodeNumber }
+                        }",
+                        text2 = "",
+                        specText = "لطفا کالا های مورد نظر برای خروج از قفسه را انتخاب کنید",
                     )
                 }
 
@@ -114,7 +148,13 @@ class TransferShelf : ComponentActivity() {
                         signedKBarCode = viewModel.scanAndCompareProductsUiList,
                         completeRfScan = (viewModel.rfid.epcs.size == viewModel.scanAndCompareProductsUiList.flatMap { it.epcs }.size && viewModel.scanAndCompareProductsUiList.flatMap { it.epcs }
                             .isNotEmpty()),
-                        rfid = viewModel.rfid
+                        rfid = viewModel.rfid,
+                        text1 = "مجموع اسکن: ${
+                            viewModel.uiList.filter { it in viewModel.scanAndCompareProductsUiList }
+                                .sumOf { it.product.scannedBarcodeNumber }
+                        }",
+                        text2 = "",
+                        specText = "لطفا کالا های مورد نظر برای خروج از قفسه را اسکن کنید"
                     )
                 }
             }

@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.carton.view
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -14,8 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -66,7 +65,6 @@ import com.jeanwest.reader.useCases.RFID
  * @param scanTypeValue The type of scanning being performed (e.g., "Barcode", "RFID").
  * @param onPrinterSelected Callback function */
 @OptIn(ExperimentalFoundationApi::class)
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CartonCreateScreen(
     context: Context,
@@ -101,24 +99,26 @@ fun CartonCreateScreen(
                     )
                 },
                 content = {
-                    Content(
-                        context = context,
-                        loading = loading,
-                        uiList = uiList,
-                        openPrintDialog = openPrintDialog,
-                        printer = printer,
-                        popupState = popupState,
-                        scannedNumber = scannedNumber,
-                        scanTypeValue = scanTypeValue,
-                        onPrinterSelected = onPrinterSelected,
-                        onPrintConfirm = onPrintConfirm,
-                        onPopupDismiss = onPopupDismiss,
-                        onScanTypeChanged = onScanTypeChanged,
-                        clearItem = clearItem,
-                        onOpenSearchActivity = onOpenSearchActivity,
-                        rf = rf,
-                        printerList = printerList
-                    )
+                    Box(modifier = Modifier.padding(it)) {
+                        Content(
+                            context = context,
+                            loading = loading,
+                            uiList = uiList,
+                            openPrintDialog = openPrintDialog,
+                            printer = printer,
+                            popupState = popupState,
+                            scannedNumber = scannedNumber,
+                            scanTypeValue = scanTypeValue,
+                            onPrinterSelected = onPrinterSelected,
+                            onPrintConfirm = onPrintConfirm,
+                            onPopupDismiss = onPopupDismiss,
+                            onScanTypeChanged = onScanTypeChanged,
+                            clearItem = clearItem,
+                            onOpenSearchActivity = onOpenSearchActivity,
+                            rf = rf,
+                            printerList = printerList
+                        )
+                    }
                 },
                 snackbarHost = { ErrorSnackBar(state) },
                 bottomBar = { BottomBar(loading, rfScanning, uiList, onBottomBarClick) }

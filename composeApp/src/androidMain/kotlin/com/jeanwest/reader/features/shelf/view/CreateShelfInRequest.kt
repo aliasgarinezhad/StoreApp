@@ -10,6 +10,11 @@ import com.jeanwest.reader.features.shelf.model.RequestType
 import com.jeanwest.reader.features.shelf.viewmodel.CreateEnterShelfRequestViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * This activity handles the creation of "Shelf In" requests, likely for inventory management.
+ * It allows users to scan cartons or input carton numbers, select a request type, and create the request.
+ * The activity uses a ViewModel ([CreateEnterShelfRequestViewModel]) to manage UI state and business logic.
+ */
 @AndroidEntryPoint
 class CreateShelfInRequest : ComponentActivity() {
 

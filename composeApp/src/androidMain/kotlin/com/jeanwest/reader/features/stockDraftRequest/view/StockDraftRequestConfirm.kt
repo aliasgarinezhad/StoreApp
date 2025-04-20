@@ -347,7 +347,8 @@ class StockDraftRequestConfirm : ComponentActivity() {
     private fun printCartonLabel(cartonNumber: String) {
 
         if (printer == "بدون لیبل") {
-            popupState.showPopupWithAButton("کارتن با شماره $cartonNumber با تعداد $numberOfScanned ایجاد شد.",
+            popupState.showPopupWithAButton(
+                "کارتن با شماره $cartonNumber با تعداد $numberOfScanned ایجاد شد.",
                 onDoneButtonClick = {
                     clear()
                     getStockDraftRequestDetails(selectedStockDraftRequestDetails.number.toString())
@@ -1027,8 +1028,7 @@ class StockDraftRequestConfirm : ComponentActivity() {
             LocalDate.parse(it.date, dateTimeFormatter)
         }.toMutableStateList()
     }
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+    
     @OptIn(ExperimentalCoilApi::class)
     @ExperimentalFoundationApi
     @Composable
@@ -1279,7 +1279,7 @@ class StockDraftRequestConfirm : ComponentActivity() {
 
                         ItemWithClearButton(
                             product = uiItems[i],
-                            onClearButtonClick = {  clearOneScan(uiItems[i].product) },
+                            onClearButtonClick = { clearOneScan(uiItems[i].product) },
                             showFoundNumber = scanValues[scanFilter] == "کسری جور شده",
                             onItemClick = { openSearchActivity(uiItems[i].product) },
                             isFirstItem = i == 0,

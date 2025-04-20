@@ -32,6 +32,21 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONArray
 import javax.inject.Inject
 
+/**
+ * This activity handles the reverse refill process, allowing users to scan items,
+ * synchronize them with the server, and create stock drafts for transferring
+ * items from the store to the warehouse.
+ *
+ * Key functionalities include:
+ * - **Barcode Scanning:** Uses a [Barcode] object to scan barcodes and trigger
+ *   item synchronization.
+ * - **Item Synchronization:** Communicates with the server via an [API] to fetch
+ *   item details based on scanned barcodes.  Manages a list of scanned and
+ *   synchronized [Product]s.
+ * - **Stock Draft Creation:** Allows users to create stock drafts, initiating the
+ *   transfer of selected items to the warehouse using [LocalStoreDatabase].
+ * - **Memory Management:** Persists scanned barcodes and product data locally using
+ *   shared preferences ( */
 @AndroidEntryPoint
 class ReverseRefill : ComponentActivity() {
 

@@ -23,6 +23,20 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
+/**
+ * ViewModel for managing the creation of "Enter Shelf" requests.  This request is used to move
+ * stock from a central warehouse to a store's shelves.
+ *
+ * This ViewModel handles:
+ * - User interaction for creating requests.
+ * - Scanning barcodes (product or carton codes) using a [Barcode] scanner.
+ * - Scanning RFID tags (EPCs) for products (when the `newFeature` is enabled).
+ * - Retrieving product and carton details from a [RepositoryImpl].
+ * - Managing UI state (loading indicators, lists of products/cartons, etc.).
+ * - Submitting the request to the [RepositoryImpl].
+ * - Displaying success/error messages using a [SnackbarHostState] and a [NotificationPopupHost].
+ * - Handling different request types (Product or Carton).
+ */
 @HiltViewModel
 class CreateEnterShelfRequestViewModel @Inject constructor(
     @ApplicationContext val context: Context,

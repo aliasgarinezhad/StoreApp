@@ -137,7 +137,6 @@ class ConfirmStockDraftLogisticInStore : ComponentActivity() {
     }
 }
 
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @ExperimentalFoundationApi
 @Composable
 private fun Page(
@@ -426,12 +425,11 @@ private fun Content2(
 }
 
 
-
 @SuppressLint("UnsafeOptInUsageError")
 @Composable
 fun BarcodeScannerWithCamera(
     context: ComponentActivity,
-    onClick: (barcodes: List<Barcode>) -> Unit
+    onClick: (barcodes: List<Barcode>) -> Unit,
 ) {
 
     val cameraProvider = ProcessCameraProvider.getInstance(context).get()

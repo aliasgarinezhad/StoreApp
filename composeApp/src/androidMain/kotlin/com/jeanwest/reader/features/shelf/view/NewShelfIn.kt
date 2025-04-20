@@ -15,6 +15,30 @@ import com.jeanwest.reader.features.shelf.viewmodel.NewShelfInViewModel
 import com.jeanwest.reader.features.stockDraftRequest.view.StockDraftRequestScreen
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * This activity manages the "New Shelf In" workflow, which allows users to process stock draft requests,
+ * select items, and manage shelf entries and returns.  It uses Jetpack Compose for the UI and Navigation
+ * Compose for managing different screens within the workflow.  The activity interacts with a [NewShelfInViewModel]
+ * to handle business logic and data management.
+ *
+ * Key features:
+ *  - **Navigation:**  Manages transitions between different screens using a NavHost.  Screens include:
+ *      - `StockDraftRequestScreen`: Displays a list of stock draft requests.
+ *      - `StockDraftRequestItemsScreen`: Shows items associated with a selected stock draft request.
+ *      - `ShelfEnterScreen`:  Handles entering items into a shelf, including shelf scanning and quantity input.
+ *      - `ScanAndCompareProduct`: Facilitates the return of items, likely involving a scanning and comparison process.
+ *  - **Data Handling:** Relies on the [NewShelfInViewModel] for data retrieval, updates, and state management.
+ *  - **UI Interactions:**  Defines composable functions for each screen, handling user interactions like button clicks
+ *    and list selections.  The UI reflects the state managed by the ViewModel (e.g., loading indicators, data lists).
+ *  - **RFID Integration:** Potentially integrates with RFID scanning hardware, as evidenced by the `viewModel.rfid.scanning`
+ *    property and the `onKeyDown` method handling specific key codes.
+ *  - **Lifecycle Management:** Overrides `onResume` and `onPause` to potentially handle RFID scanner lifecycle or other
+ *    resource management tasks.
+ *  - **Back Navigation:** Uses `BackHandler` to customize back button behavior on each screen, often navigating back
+ *    to a previous screen within the workflow.
+ *
+ * @property viewModel The [NewShelfInViewModel] instance, injected using Hilt.
+ */
 @AndroidEntryPoint
 class NewShelfIn : ComponentActivity() {
 

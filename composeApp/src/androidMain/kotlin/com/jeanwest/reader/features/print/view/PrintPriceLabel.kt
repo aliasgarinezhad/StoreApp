@@ -31,6 +31,20 @@ import com.jeanwest.reader.features.shared.SimpleTextField
 import com.jeanwest.reader.useCases.ExceptionHandler
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * This activity handles the printing of price labels for products.
+ *
+ * It allows users to scan or enter a product barcode, retrieves associated stock information,
+ * and presents options for printing price labels.
+ *
+ * Key features include:
+ *  - Scanning or manual entry of product barcodes.
+ *  - Displaying a list of stock drafts associated with the product.
+ *  - Navigation through stock drafts and selection for printing.
+ *  - Error handling and display of error messages.
+ *  - Custom back button handling.
+ *  - UI implemented using Jetpack Compose.
+ */
 @AndroidEntryPoint
 class PrintPriceLabel : ComponentActivity() {
 
@@ -105,7 +119,6 @@ class PrintPriceLabel : ComponentActivity() {
      * Main page composable that includes the scaffold and content.
      */
     @Composable
-    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     fun Page(viewModel: PrintPriceLabelViewModel, onBackPressed: () -> Unit) {
         MyApplicationTheme {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {

@@ -14,6 +14,7 @@ import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -53,6 +54,11 @@ import java.io.File
 import javax.inject.Inject
 
 
+/**
+ * The `Update` activity handles application updates. It allows users to download and install new versions of the application,
+ * displaying information about the new version and managing the download process.
+ *
+ * Key features */
 @AndroidEntryPoint
 class Update : ComponentActivity() {
 
@@ -224,10 +230,6 @@ class Update : ComponentActivity() {
         return true
     }
 
-    @SuppressLint(
-        "UnusedMaterialScaffoldPaddingParameter",
-        "UnusedMaterial3ScaffoldPaddingParameter"
-    )
     @Composable
     fun AboutUsUI() {
         MyApplicationTheme {
@@ -238,73 +240,81 @@ class Update : ComponentActivity() {
                         AppBarWithBack({ back() }, "بروزرسانی")
                     },
                     content = {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            if (isDownloading.value) {
-                                CircularProgressIndicator(modifier = Modifier.padding(top = 50.dp))
-                                Text(
-                                    text = "در حال دانلود",
-                                    modifier = Modifier.padding(bottom = 10.dp, top = 10.dp)
-                                )
-                            }
-                            Row {
-                                Row {
+                        Box(Modifier.padding(it)) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                if (isDownloading.value) {
+                                    CircularProgressIndicator(modifier = Modifier.padding(top = 50.dp))
                                     Text(
-                                        text = appVersion,
-                                        modifier = Modifier.padding(bottom = 20.dp, top = 20.dp),
-                                        fontSize = 20.sp,
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp)) // Add some space before the icon
-
-                                    Icon(
-                                        imageVector = Icons.Default.ArrowForward, // Use a default icon or custom one
-                                        contentDescription = "Version Info Icon",
-                                        modifier = Modifier
-                                            .size(24.dp)
-                                            .align(Alignment.CenterVertically) // Size of the icon
-                                    )
-
-                                    Spacer(modifier = Modifier.width(8.dp)) // Add some space after the icon
-
-                                    Text(
-                                        text = packageManager.getPackageInfo(
-                                            packageName,
-                                            0
-                                        ).versionName,
-                                        modifier = Modifier.padding(bottom = 20.dp, top = 20.dp),
-                                        fontSize = 20.sp
+                                        text = "در حال دانلود",
+                                        modifier = Modifier.padding(bottom = 10.dp, top = 10.dp)
                                     )
                                 }
-                            }
-                            Text(
-                                text = "تغییرات نسخه اخیر: \n${fileContent.value}",
-                                modifier = Modifier
-                                    .padding(bottom = 20.dp, top = 20.dp)
-                                    .weight(3f),
-                                fontSize = 20.sp,
-                            )
-                            BottomBarButton("بروزرسانی") {
-                                openDialog.value = true
-                            }
-                            if (openDialog.value) {
-                                AlertDialogWith2Button(
-                                    title = "نرم افزار به روز رسانی شود؟",
-                                    btnConfirm = "بله",
-                                    btnNotConfirm = "خیر",
-                                    btnConfirmOnClick = {
-                                        downloadApkFile()
-                                        openDialog.value = false
-                                        isDownloading.value = true
-                                    },
-                                    btnNotConfirmOnClick = {
-                                        openDialog.value = false
-                                    },
-                                    onDismiss = { openDialog.value = false }
+                                Row {
+                                    Row {
+                                        Text(
+                                            text = appVersion,
+                                            modifier = Modifier.padding(
+                                                bottom = 20.dp,
+                                                top = 20.dp
+                                            ),
+                                            fontSize = 20.sp,
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp)) // Add some space before the icon
+
+                                        Icon(
+                                            imageVector = Icons.Default.ArrowForward, // Use a default icon or custom one
+                                            contentDescription = "Version Info Icon",
+                                            modifier = Modifier
+                                                .size(24.dp)
+                                                .align(Alignment.CenterVertically) // Size of the icon
+                                        )
+
+                                        Spacer(modifier = Modifier.width(8.dp)) // Add some space after the icon
+
+                                        Text(
+                                            text = packageManager.getPackageInfo(
+                                                packageName,
+                                                0
+                                            ).versionName,
+                                            modifier = Modifier.padding(
+                                                bottom = 20.dp,
+                                                top = 20.dp
+                                            ),
+                                            fontSize = 20.sp
+                                        )
+                                    }
+                                }
+                                Text(
+                                    text = "تغییرات نسخه اخیر: \n${fileContent.value}",
+                                    modifier = Modifier
+                                        .padding(bottom = 20.dp, top = 20.dp)
+                                        .weight(3f),
+                                    fontSize = 20.sp,
                                 )
+                                BottomBarButton("بروزرسانی") {
+                                    openDialog.value = true
+                                }
+                                if (openDialog.value) {
+                                    AlertDialogWith2Button(
+                                        title = "نرم افزار به روز رسانی شود؟",
+                                        btnConfirm = "بله",
+                                        btnNotConfirm = "خیر",
+                                        btnConfirmOnClick = {
+                                            downloadApkFile()
+                                            openDialog.value = false
+                                            isDownloading.value = true
+                                        },
+                                        btnNotConfirmOnClick = {
+                                            openDialog.value = false
+                                        },
+                                        onDismiss = { openDialog.value = false }
+                                    )
+                                }
                             }
                         }
                     },

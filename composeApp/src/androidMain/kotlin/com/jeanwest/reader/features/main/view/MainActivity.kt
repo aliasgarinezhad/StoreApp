@@ -3,7 +3,6 @@
 package com.jeanwest.reader.features.main.view
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -509,7 +508,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 private fun Page(viewModel: MainViewModel) {
     MyApplicationTheme {
@@ -661,7 +659,7 @@ fun MainBottomBar(viewModel: MainViewModel) {
             //.shadow(6.dp, RoundedCornerShape(0.dp))
             .background(color = MaterialTheme.colorScheme.surfaceContainerLow)
             .height(72.dp)
-            //.align(Alignment.BottomCenter),
+        //.align(Alignment.BottomCenter),
     ) {
         Row(
             modifier = Modifier

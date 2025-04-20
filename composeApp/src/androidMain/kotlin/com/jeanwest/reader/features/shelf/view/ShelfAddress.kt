@@ -21,6 +21,28 @@ import com.jeanwest.reader.data.local.SharedPreference
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+/**
+ * This activity is responsible for searching and displaying the shelf address of an item based on its barcode.
+ *
+ *  Key functionalities:
+ *  - **Barcode Scanning:** Integrates with a barcode scanner to capture item barcodes.
+ *  - **Search and Display:** Queries an API to retrieve shelf addresses for a given barcode and displays them in a list.
+ *  - **Scanning Mode:** Operates in two modes:
+ *     - *Normal Mode:*  Allows manual barcode input or single-scan search.
+ *     - *Scanning Mode:*  Continuously scans and searches for barcodes until explicitly exited.
+ *  - **Clear Data:**  Clears the displayed list of shelf addresses.
+ *  - **Back Navigation:** Navigates back to the previous screen or exits the scanning mode.
+ *  - **Exception Handling:** Implements a custom exception handler to manage uncaught exceptions.
+ *
+ *  **Dependencies:**
+ *  - `Barcode`:  Manages barcode scanning functionality.
+ *  - `SnackbarHostState`:  Controls the display of snackbar messages.
+ *  - `SharedPreference`: Provides access to shared preferences for storing user data.
+ *  - `API`:  Handles communication with the backend API for retrieving shelf address information.
+ *  - `ShelfBarcodeAddress`: Data class representing the shelf address and quantity of an item.
+ *
+ *  **UI Composition:**
+ *  Uses Jetpack Compose to build the user interface, with a dedicated composable function (`Page */
 @AndroidEntryPoint
 @OptIn(ExperimentalFoundationApi::class)
 class ShelfAddress : ComponentActivity() {

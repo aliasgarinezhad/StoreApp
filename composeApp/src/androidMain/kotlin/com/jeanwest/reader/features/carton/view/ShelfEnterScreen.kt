@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.carton.view
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -53,7 +52,6 @@ import com.jeanwest.reader.models.ShelfBarcodeAddress
 import com.jeanwest.reader.models.StockDraftRequestItem
 
 @OptIn(ExperimentalFoundationApi::class)
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ShelfEnterScreen(
     topBarTitle: String,
@@ -80,16 +78,18 @@ fun ShelfEnterScreen(
                     )
                 },
                 content = {
-                    Content(
-                        loading = loading,
-                        uiListProduct = uiListProduct,
-                        popupState = popupState,
-                        scannedNumber = scannedNumber,
-                        shelfNumber = shelfNumber,
-                        suggestedShelfList = suggestedShelfList,
-                        inputNumberChange = inputNumberChange,
-                        enableInputNumber = enableInputNumber
-                    )
+                    Box(Modifier.padding(it)) {
+                        Content(
+                            loading = loading,
+                            uiListProduct = uiListProduct,
+                            popupState = popupState,
+                            scannedNumber = scannedNumber,
+                            shelfNumber = shelfNumber,
+                            suggestedShelfList = suggestedShelfList,
+                            inputNumberChange = inputNumberChange,
+                            enableInputNumber = enableInputNumber
+                        )
+                    }
                 },
                 snackbarHost = { ErrorSnackBar(state) },
                 bottomBar = {
