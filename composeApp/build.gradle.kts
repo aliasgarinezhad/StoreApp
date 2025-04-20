@@ -3,17 +3,13 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
-    id("com.google.dagger.hilt.android") version "2.51.1"
-    id("kotlin-kapt")
+    alias(libs.plugins.hiltAndroid)
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlin.serialization)
-}
-
-kapt {
-    correctErrorTypes = true
+    alias(libs.plugins.kotlinAndroidKsp)
 }
 
 kotlin {
@@ -44,6 +40,14 @@ kotlin {
     }
 
     sourceSets {
+
+        val composeVersion = "1.6.7"
+
+        androidInstrumentedTest.dependencies {
+            implementation("androidx.compose.ui:ui-tooling:$composeVersion")
+            implementation("androidx.compose.ui:ui-test-manifest:$composeVersion")
+            implementation("androidx.compose.ui:ui-test-junit4:$composeVersion")
+        }
 
         androidMain.dependencies {
 
@@ -81,28 +85,24 @@ kotlin {
             implementation("com.google.mlkit:barcode-scanning:17.3.0")
 
             // Compose
-            val compose_version = "1.6.7"
-            //debugImplementation("androidx.compose.ui:ui-tooling:$compose_version")
-            //debugImplementation("androidx.compose.ui:ui-test-manifest:$compose_version")
-            implementation("androidx.compose.ui:ui:$compose_version")
-            implementation("androidx.compose.material:material:$compose_version")
-            implementation("androidx.compose.ui:ui-tooling-preview:$compose_version")
-            implementation("androidx.compose.runtime:runtime:$compose_version")
-            implementation("androidx.compose.runtime:runtime-rxjava2:$compose_version")
-            //androidTestImplementation("androidx.compose.ui:ui-test-junit4:$compose_version")
+            implementation("androidx.compose.ui:ui:$composeVersion")
+            implementation("androidx.compose.material:material:$composeVersion")
+            implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
+            implementation("androidx.compose.runtime:runtime:$composeVersion")
+            implementation("androidx.compose.runtime:runtime-rxjava2:$composeVersion")
             implementation("com.google.android.material:material:1.12.0")
 
             // Jalali datePicker
             implementation("com.github.hamooo90:jalali-datepicker-compose:1.1.1")
             implementation("ir.huri:JalaliCalendar:1.3.3")
             // Hilt
-            implementation("com.google.dagger:hilt-android:2.51.1")
+            implementation(libs.hilt.android)
             // Sentry
             implementation("io.sentry:sentry-android:6.8.0")
             // refresh by swipe
             implementation("com.google.accompanist:accompanist-swiperefresh:0.30.1")
             // Serializable
-            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+            implementation(libs.kotlinx.serialization.json)
             // Navigation Component
             implementation("androidx.navigation:navigation-compose:2.8.5")
 
@@ -127,26 +127,51 @@ kotlin {
 }
 
 android {
-    namespace = "io.domil.store"
+    namespace = "com.jeanwest.reader"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
+    ndkVersion = "23.0.7123448"
 
     defaultConfig {
-        applicationId = "io.domil.store"
+        applicationId = "com.jeanwest.reader"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
-        versionName = "1.0"
+        versionName = "5.2.6"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+        multiDexEnabled = true
     }
+
+    signingConfigs {
+        create("release") {
+            // Ensure the keystore file (rfid.jks) is available at this location.
+            storeFile = file("rfid.jks")
+            storePassword = "Mojtaba77@m.a.com"
+            keyAlias = "key0"
+            keyPassword = "Mojtaba77@m.a.com"
+        }
+    }
+
+    buildTypes {
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            // Additional release-specific settings can go here.
+        }
+    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -155,7 +180,7 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
-    "kapt"("com.google.dagger:hilt-compiler:2.51.1")
+    ksp(libs.hilt.compiler)
 }
 
 

@@ -1,0 +1,44 @@
+package com.jeanwest.reader.factory.addTaskFeature.model
+
+import androidx.compose.ui.graphics.Color
+
+/**
+ * Represents a product with various attributes such as name, style, color, sizes, color hex code, tasks, and part.
+ *
+ * @property lineID Unique identifier for the product line. Defaults to 0L.
+ * @property name The name of the product. Defaults to "تی شرت".
+ * @property style The style code of the product. Defaults to "41531052".
+ * @property color The color code of the product. Defaults to "2010".
+ * @property sizes A map of sizes and their corresponding integer representations. Defaults to a map with "Small", "Medium", "Large", and "XLarger" sizes.
+ * @property colorHex The hexadecimal representation of the product's color. Defaults to "x000000".  Should start with "x" followed by 6 hex characters.
+ * @property tasks A map of tasks associated with the product and their corresponding IDs. Defaults to a map with "یقه", "آستین", and "دکمه" tasks.
+ * @property part The part number of the product. Defaults to "2".
+ *
+ * The class also includes a computed property:
+ *
+ * @property uiColor A [Color] object representing the product's color based on the [colorHex] property.
+ *                   If [colorHex] is a valid 7-character hex code (including "x" prefix), it converts the hex values to RGB components and returns a [Color].
+ *                   Otherwise, it returns [Color.White].
+ */
+data class Product(
+    val lineID: Long = 0L,
+    val name: String = "تی شرت",
+    val style: String = "41531052",
+    val color: String = "2010",
+    val sizes: Map<String, Int> = mapOf("Small" to 0, "Medium" to 1, "Large" to 2, "XLarger" to 3),
+    val colorHex: String = "x000000",
+    val tasks: Map<String, Long> = mapOf("یقه" to 0L, "آستین" to 1L, "دکمه" to 2L),
+    val part: String = "2",
+) {
+    val uiColor: Color
+        get() {
+            if (colorHex.length == 7) {
+                val redCode = colorHex.substring(1, 3).toInt(16)
+                val greenCode = colorHex.substring(3, 5).toInt(16)
+                val blueCode = colorHex.substring(5, 7).toInt(16)
+                return Color(redCode, greenCode, blueCode, )
+            } else {
+                return Color.White
+            }
+        }
+}

@@ -1,0 +1,68 @@
+package com.jeanwest.reader
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.window.ComposeViewport
+import barcodeScannerPageAddress
+import com.jeanwest.reader.factory.addTaskFeature.viewModel.FactoryAddTaskViewModel
+import com.jeanwest.reader.factory.main.viewModel.FactoryMainViewModel
+import com.jeanwest.reader.factory.stopActivityFeature.viewModel.StopActivityViewModel
+import com.jeanwest.reader.shop.viewModel.AppViewModel
+import kotlinx.browser.document
+import kotlinx.browser.window
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import com.jeanwest.reader.shop.data.User
+import org.w3c.dom.get
+import org.w3c.dom.set
+
+
+@OptIn(ExperimentalComposeUiApi::class)
+fun main() {
+
+    val isFactoryAppRequested = window.location.href.contains("factory")
+    val barcode = window.location.href.substringAfter("keyword=", "")
+    val user = getUserData()
+
+    println("web page ran")
+
+    val viewModel = AppViewModel(
+        saveUserData = {
+            saveUserData(it)
+        },
+        savedUser = user,
+        webPageRequestBarcode = barcode
+    )
+
+    ComposeViewport(document.body!!) {
+
+        val barcodeScannerComposable: @Composable (
+            onScanSuccess: (barcode: String) -> Unit
+        ) -> Unit = {
+            openScanner()
+        }
+
+        App(
+            barcodeScanner = barcodeScannerComposable,
+            viewModel = viewModel,
+            mainViewModel = FactoryMainViewModel(),
+            isFactoryAppRequested = isFactoryAppRequested,
+            addTaskViewModel = FactoryAddTaskViewModel(),
+            stopActivityViewModel = StopActivityViewModel()
+        )
+    }
+}
+
+private fun openScanner() {
+    window.open(barcodeScannerPageAddress, target = "_self")
+}
+
+fun saveUserData(user: User) {
+    window.localStorage["userKey"] = Json.encodeToString(user)
+}
+
+fun getUserData(): User {
+    return Json.decodeFromString(window.localStorage["userKey"] ?: Json.encodeToString(User()))
+}
+
+
