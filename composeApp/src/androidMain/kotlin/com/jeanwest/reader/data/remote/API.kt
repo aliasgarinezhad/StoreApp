@@ -2078,7 +2078,7 @@ class API @Inject constructor(
                 val jsonArray = JSONArray()
                 products.forEach {
                     it.epcs.forEach { epc ->
-                        if(epc !in it.product.scannedEPCs) {
+                        if (epc !in it.product.scannedEPCs) {
                             val jsonObject = JSONObject()
                             jsonObject.put("BarcodeMain_ID", it.product.primaryKey)
                             jsonObject.put("EPC", epc)
@@ -3507,7 +3507,6 @@ class API @Inject constructor(
     fun getWarehousesLists(
         onSuccess: (locations: Map<String, String>, sortedLocations: List<String>, departmentWarehousesLists: Map<String, MutableList<String>>, departmentTitles: Map<String, String>) -> Unit,
         onError: () -> Unit,
-        token: String = "",
     ) {
 
         val url = "$serverAddress/department-infos"
@@ -3553,17 +3552,7 @@ class API @Inject constructor(
             onError()
         }) {
             override fun getHeaders(): Map<String, String> {
-
-                if (token.isNotEmpty()) {
-                    val header = mutableMapOf<String, String>()
-                    header.putAll(this@API.header)
-                    header["Authorization"] = "Bearer $token"
-                    Log.e(this@API.tag, header.toMap().toString())
-                    return header
-                } else {
-                    Log.e(this@API.tag, header.toMap().toString())
-                    return this@API.header
-                }
+                return this@API.header
             }
         }
 
@@ -4413,19 +4402,17 @@ class API @Inject constructor(
         }) {
             override fun getHeaders(): Map<String, String> {
 
-                if (!memory.user.isExist) {
-                    val header = mutableMapOf<String, String>()
-                    header.putAll(this@API.header)
-                    header["Authorization"] = "Bearer $token"
-                    return header
-                } else {
-                    return this@API.header
-                }
+                val header = mutableMapOf<String, String>()
+                header.putAll(this@API.header)
+                header["Authorization"] = "Bearer $token"
+                Log.e(this@API.tag, "header is empty: $header")
+                return header
             }
 
             override fun getBody(): ByteArray {
                 val body = JSONObject()
                 body.put("serialNumber", deviceSerialNumber)
+                Log.e(this@API.tag, "body: $body")
                 return body.toString().toByteArray()
             }
         }

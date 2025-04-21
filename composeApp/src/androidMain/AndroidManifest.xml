@@ -107,9 +107,10 @@
         <activity android:name=".features.shelf.view.CreateShelfInRequest"/>
         <activity android:name=".features.shelf.view.NewShelfIn"/>
         <activity android:name=".features.shelf.view.TransferShelf"/>
+        <activity android:name=".features.shelf.inventory.view.ShelfInventory"/>
 
         <activity
-            android:name="com.jeanwest.reader.features.main.view.MainActivity"
+            android:name="com.jeanwest.reader.features.main.mainPage.view.MainActivity"
             android:exported="true"
             android:theme="@android:style/Theme.Material.Light.NoActionBar">
             <intent-filter>
