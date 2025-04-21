@@ -232,31 +232,18 @@ class NewShelfInViewModel @Inject constructor(
                 selectedProductToEnterShelfScannedNumber
         }
         loading = true
-        repository.api.shelfEntryWithEpcs(
-            sourceWareHouseID = 44,
+        api.shelfEnterEpcAndUpdateStockDraft(
+            stockDraftRequestID = request.number,
             shelfCode = selectedShelfToEnterProduct,
             products = selectedProductToEnterShelf,
+            reasonID = 1,
             onSuccess = {
-                repository.api.shelfUpdateStockDraftRequestNumberOfFound(
-                    stockDraftRequestID = request.number,
-                    product = selectedProductToEnterShelf.product,
-                    username = request.user.toString(),
-                    source = memory.user.warehouseCode,
-                    reasonID = 1,
-                    shelfNumber = 0,
-                    shelfCode = "",
-                    numberOfFound = selectedProductToEnterShelfScannedNumber,
-                    onSuccess = {
-                        getSelectedRequestDetails(request)
-                        showLog(
-                            data = "کالاها با موفقیت به قفسه انتقال داده شدند.",
-                            state = state,
-                            action = SnackBarActions.SUCCESS
-                        )
-                    },
-                    onError = {
-                        loading = false
-                    }
+                loading = false
+                getSelectedRequestDetails(request)
+                showLog(
+                    data = "کالاها با موفقیت به قفسه انتقال داده شدند.",
+                    state = state,
+                    action = SnackBarActions.SUCCESS
                 )
             },
             onError = {

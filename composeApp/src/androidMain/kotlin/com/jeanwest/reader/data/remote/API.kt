@@ -2350,6 +2350,63 @@ class API @Inject constructor(
         queue.add(request)
     }
 
+    fun shelfEnterEpcAndUpdateStockDraft(
+        stockDraftRequestID: Long,
+        reasonID: Int,
+        shelfCode: String,
+        products: StockDraftRequestItem,
+        onSuccess: () -> Unit,
+        onError: () -> Unit,
+    ){
+        val url = "$serverAddress/stock-draft-requests/$stockDraftRequestID/shelf-in"
+
+        val request = object : JsonObjectRequest(Method.POST, url, null, {
+            onSuccess()
+        }, {
+            if (it?.networkResponse?.statusCode == 504) {
+                showLog(
+                    "درخواست انجام شده است اما سرور پاسخ نمی دهد. جهت اطمینان بیشتر مدتی بعد محتوی قفسه را چک کنید.",
+                    state,
+                    action = SnackBarActions.WARNING
+                )
+            } else {
+                apiErrorProcess(state, it)
+            }
+            onError()
+        }) {
+            override fun getHeaders(): Map<String, String> {
+                return header
+            }
+
+            override fun getBody(): ByteArray {
+                val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
+                sdf.timeZone = TimeZone.getDefault()
+
+                val body = JSONObject()
+                val productList = JSONArray()
+                body.put("ToShelfCode", shelfCode)
+                body.put("WareHouse_ID", 44)
+                body.put("JoorSelectTime", sdf.format(Date()))
+                body.put("ReasonID", reasonID)
+                if (products.epcs.isNotEmpty()) {
+                    products.epcs.forEach { epc ->
+                        val productJson = JSONObject()
+                        productJson.put("BarcodeMain_ID", products.product.primaryKey)
+                        productJson.put("KBarCode", products.product.KBarCode)
+                        productJson.put("qty", 1)
+                        productJson.put("epc", epc)
+                        productList.put(productJson)
+                    }
+                }
+                body.put("products", productList)
+                return body.toString().toByteArray()
+            }
+        }
+        request.retryPolicy = requestSetting
+        queue.add(request)
+    }
+
+
     fun shelfExit(
         currentWareHouseId: Int,
         shelfCode: String,
