@@ -135,8 +135,8 @@ object RemoteConnection {
                 val bodyMap = mapOf(
                     "ProductionOrderID" to JsonPrimitive(userTask.product.lineID),
                     "ProductionOrderOperationID" to JsonPrimitive(userTask.taskId),
-                    "StyleN" to JsonPrimitive(userTask.product.style),
-                    "ColorCodeF" to JsonPrimitive(userTask.product.color),
+                    "StyleNumber" to JsonPrimitive(userTask.product.style),
+                    "ColorCode" to JsonPrimitive(userTask.product.color),
                     "Part" to JsonPrimitive(userTask.product.part),
                     "SizeCode" to JsonPrimitive(userTask.sizeCode),
                     "Quantity" to JsonPrimitive(userTask.number),

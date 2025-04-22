@@ -18,7 +18,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
@@ -41,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
@@ -54,14 +57,14 @@ import com.jeanwest.reader.factory.addTaskFeature.model.Product
 import com.jeanwest.reader.factory.addTaskFeature.model.UserTask
 import com.jeanwest.reader.view.BigButton
 import com.jeanwest.reader.view.BottomBar
+import com.jeanwest.reader.view.ErrorSnackBar
 import com.jeanwest.reader.view.Jeanswest
 import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.NotificationPopUp
+import com.jeanwest.reader.view.NotificationPopupHost
 import com.jeanwest.reader.view.Shapes
 import com.jeanwest.reader.view.borderColor
 import com.jeanwest.reader.view.iconColor
-import com.jeanwest.reader.view.ErrorSnackBar
-import com.jeanwest.reader.view.NotificationPopUp
-import com.jeanwest.reader.view.NotificationPopupHost
 import kotlinx.serialization.Serializable
 import rememberPickerState
 
@@ -94,9 +97,10 @@ fun EnterDateAndNumberScreen(
     onBack: () -> Unit,
     textFieldValue: String,
     popupHost: NotificationPopupHost,
-) {
+    onTextFieldFocused: () -> Unit,
+    ) {
     // Define hour and minute values for the pickers
-    val hourValues = (7..18).map { it.toString() }
+    val hourValues = (7..21).map { it.toString() }
     val minuteValues = listOf(0, 15, 30, 45).map { it.toString() }
 
     // States for start time
@@ -109,6 +113,7 @@ fun EnterDateAndNumberScreen(
 
     // State for dropdown selection
     var expanded by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
 
     MyApplicationTheme {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
@@ -118,7 +123,14 @@ fun EnterDateAndNumberScreen(
                 },
                 content = {
 
-                    Column {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(scrollState) // Enable scrolling
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
 
                         NotificationPopUp(state = popupHost)
 
@@ -131,13 +143,19 @@ fun EnterDateAndNumberScreen(
                             )
 
                             Text(
-                                text = userTask.product.style.substring(product.style.length - 3, product.style.length) + "-",
+                                text = userTask.product.style.substring(
+                                    product.style.length - 3,
+                                    product.style.length
+                                ) + "-",
                                 style = MaterialTheme.typography.h1,
                                 textAlign = TextAlign.Right,
                                 fontSize = 14.sp,
                             )
                             Text(
-                                text = userTask.product.style.substring(0 , product.style.length - 3),
+                                text = userTask.product.style.substring(
+                                    0,
+                                    product.style.length - 3
+                                ),
                                 style = MaterialTheme.typography.body2,
                                 textAlign = TextAlign.Right,
                             )
@@ -306,6 +324,8 @@ fun EnterDateAndNumberScreen(
                                     currentSelection = userTask.size,
                                     defaultText = "انتخاب سایز",
                                 )
+
+                                var isFocused by remember { mutableStateOf(false) }
                                 OutlinedTextField(
                                     value = textFieldValue,
                                     onValueChange = { newValue ->
@@ -316,6 +336,12 @@ fun EnterDateAndNumberScreen(
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                     modifier = Modifier.width(102.dp).height(60.dp)
                                         .padding(start = 20.dp)
+                                        .onFocusChanged {
+                                            isFocused = it.isFocused
+                                            if (isFocused) {
+                                                onTextFieldFocused()
+                                            }
+                                        },
                                 )
                             }
                         }

@@ -4,6 +4,8 @@ import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.jeanwest.reader.data.onError
+import com.jeanwest.reader.data.onSuccess
 import com.jeanwest.reader.factory.addTaskFeature.data.RemoteConnection
 import com.jeanwest.reader.factory.addTaskFeature.model.Product
 import com.jeanwest.reader.factory.addTaskFeature.model.UserTask
@@ -11,10 +13,8 @@ import com.jeanwest.reader.factory.addTaskFeature.view.EnterDateAndNumberScreen
 import com.jeanwest.reader.factory.addTaskFeature.view.SelectTaskScreen
 import com.jeanwest.reader.factory.addTaskFeature.view.ShowProductionLinesScreen
 import com.jeanwest.reader.factory.main.view.FeatureListScreen
-import com.jeanwest.reader.view.showLog
-import com.jeanwest.reader.data.onError
-import com.jeanwest.reader.data.onSuccess
 import com.jeanwest.reader.view.NotificationPopupHost
+import com.jeanwest.reader.view.showLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Default
@@ -110,7 +110,7 @@ class FactoryAddTaskViewModel {
     }
 
     fun changeScreen(screen: Any) {
-        if(!screenChangePending) {
+        if (!screenChangePending) {
             destinationScreen = screen
             screenChangePending = true
         }
@@ -146,6 +146,10 @@ class FactoryAddTaskViewModel {
         userTask = userTask.copy(size = size, sizeCode = userTask.product.sizes[size] ?: 0)
     }
 
+    fun onNumberFieldFocused() {
+        textFieldValue = ""
+    }
+
     fun onNumberChanged(number: String) {
         textFieldValue = number
         if (number.toIntOrNull() == null) {
@@ -157,23 +161,31 @@ class FactoryAddTaskViewModel {
     }
 
     fun onAddTaskButtonClick() {
-
+        println(
+            "clock data: ST Hour: ${userTask.startHour} , ST Minute: ${userTask.startMinute}, End Hour: ${userTask.endHour}, EndMin: ${userTask.endMinute}"
+        )
         if (userTask.sizeCode == 0) {
             showLog("لطفا سایز را انتخاب کنید.", state = state)
-        } else if(SharedRepository.machineCode == null) {
+        } else if (SharedRepository.machineCode == null) {
             showLog("شماره چرخ نامعتبر است.", state = state)
+        } else if (textFieldValue.isEmpty()) {
+            showLog("تعداد وارد نشده است.", state = state)
+        } else if ((userTask.startHour > userTask.endHour) || (userTask.startHour == userTask.endHour && userTask.startMinute >= userTask.endMinute)) {
+            showLog("تاریخ پایان نمیتواند زودتر از تاریخ شروع باشد!", state = state)
         } else {
             userTask = userTask.copy(machineCode = SharedRepository.machineCode!!)
             loading = true
             CoroutineScope(Default).launch {
                 RemoteConnection.finalUserAction(userTask = userTask).onSuccess {
-                    println("navid body: $it")
                     println("request success")
-                    popupHost.showPopupWithAButton("ثبت فعالیت با موفقیت انجام شد.", onDoneButtonClick = {
-                        changeScreen(FeatureListScreen)
-                    }, onDismiss = {
-                        changeScreen(FeatureListScreen)
-                    })
+                    popupHost.showPopupWithAButton(
+                        "ثبت فعالیت با موفقیت انجام شد.",
+                        onDoneButtonClick = {
+                            changeScreen(FeatureListScreen)
+                        },
+                        onDismiss = {
+                            changeScreen(FeatureListScreen)
+                        })
                     withContext(Dispatchers.Main) {
                         loading = false
                     }
