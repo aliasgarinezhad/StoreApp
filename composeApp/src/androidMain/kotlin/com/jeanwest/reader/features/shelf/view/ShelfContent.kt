@@ -175,7 +175,13 @@ fun ProductContent(viewModel: ShelfContentViewModel) {
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                 )
-
+                Text(
+                    text = "شماره قفسه: " + (viewModel.cageNumber),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(bottom = 0.dp, top = 16.dp, end = 16.dp)
+                )
                 if (viewModel.editShelfMode) {
                     Text(
                         text = "انتخاب شده: ${viewModel.editShelfCount}",

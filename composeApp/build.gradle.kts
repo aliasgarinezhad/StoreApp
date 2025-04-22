@@ -179,6 +179,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.ui.test.junit4.android)
     debugImplementation(compose.uiTooling)
     ksp(libs.hilt.compiler)
 }

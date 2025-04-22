@@ -12,6 +12,7 @@ ktor = "3.0.0"
 coil3 = "3.0.0-rc02"
 navigationCompose = "2.8.0-alpha10"
 kspVersion = "2.1.20-2.0.0"
+uiTestJunit4Android = "1.7.8"
 
 [libraries]
 
@@ -31,6 +32,7 @@ coil-mp = { module = "io.coil-kt.coil3:coil", version.ref = "coil3" }
 navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler" , version.ref = "hiltAndroid"}
+ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
 
 
 [plugins]
