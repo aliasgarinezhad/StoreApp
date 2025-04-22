@@ -127,7 +127,7 @@ fun EnterDateAndNumberScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .verticalScroll(scrollState) // Enable scrolling
-                            .padding(16.dp),
+                            .padding(16.dp, bottom = 60.dp),
                         verticalArrangement = Arrangement.spacedBy(24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {

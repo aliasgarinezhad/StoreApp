@@ -168,7 +168,7 @@ class FactoryAddTaskViewModel {
             showLog("لطفا سایز را انتخاب کنید.", state = state)
         } else if (SharedRepository.machineCode == null) {
             showLog("شماره چرخ نامعتبر است.", state = state)
-        } else if (textFieldValue.isEmpty()) {
+        } else if (textFieldValue.isEmpty()|| textFieldValue == "0") {
             showLog("تعداد وارد نشده است.", state = state)
         } else if ((userTask.startHour > userTask.endHour) || (userTask.startHour == userTask.endHour && userTask.startMinute >= userTask.endMinute)) {
             showLog("تاریخ پایان نمیتواند زودتر از تاریخ شروع باشد!", state = state)
