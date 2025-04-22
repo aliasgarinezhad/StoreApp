@@ -33,7 +33,19 @@ import com.jeanwest.reader.features.shared.onPrimaryLight
 import com.jeanwest.reader.models.ShelfBarcodeAddress
 
 
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+/**
+ * A composable function that displays a page with a top app bar, content, and a snackbar.  It adapts its content based on the `showContent1` flag, showing either `Content1` or `Content2`.
+ *  It also handles layout direction and applies a custom theme.
+ *
+ * @param showContent1 Boolean flag indicating which content to display: `Content1` if true, `Content2` if false.
+ * @param back Callback function to be executed when the back button in the app bar is pressed. Defaults to an empty lambda.
+ * @param title The title to display in the app bar.
+ * @param state The state of the snackbar host, used for displaying error messages.
+ * @param loading Boolean flag indicating whether the page is in a loading state. Affects the appearance of both content views.
+ * @param uiList A mutable list of `ShelfBarcodeAddress` objects used in `Content1` to display data.
+ * @param textFieldValue The current text value of the text field, used in both content views.
+ * @param onTextValueChange Callback function to be executed when the text field value changes.  Receives the new text value as a parameter. Defaults to an empty lambda.
+ * @param onTextFieldConfirm Callback function to be executed when the text field input is confirmed (e.g., by pressing the enter key). Defaults to an empty lambda. */
 @ExperimentalFoundationApi
 @Composable
 fun Page(

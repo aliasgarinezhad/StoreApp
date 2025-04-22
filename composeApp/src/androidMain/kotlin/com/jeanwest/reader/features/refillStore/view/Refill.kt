@@ -607,8 +607,7 @@ class Refill : ComponentActivity() {
 
         return returnVar
     }
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+    
     @Composable
     fun Page() {
         MyApplicationTheme {
@@ -707,14 +706,14 @@ class Refill : ComponentActivity() {
                     ) {
                         FilterDropDownList(
                             icon = { }, text = {
-                            Text(
-                                text = selectedDepartmentFilter,
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically)
-                                    .padding(start = 16.dp)
-                            )
-                        }, values = departmentFilterList
+                                Text(
+                                    text = selectedDepartmentFilter,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier
+                                        .align(Alignment.CenterVertically)
+                                        .padding(start = 16.dp)
+                                )
+                            }, values = departmentFilterList
                         ) {
                             selectedDepartmentFilter = it
                             uiList.addAllAndSort(refillProducts)

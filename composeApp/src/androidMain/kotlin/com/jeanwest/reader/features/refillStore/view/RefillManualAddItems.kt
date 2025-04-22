@@ -70,6 +70,10 @@ import org.json.JSONArray
 import org.json.JSONObject
 import javax.inject.Inject
 
+/**
+ * This activity allows users to manually add items to a refill list.
+ *
+ * Users can scan a product barcode or manually enter the product code */
 @AndroidEntryPoint
 class RefillManualAddItems : ComponentActivity() {
 
@@ -382,8 +386,7 @@ class RefillManualAddItems : ComponentActivity() {
         queue.stop()
         finish()
     }
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+    
     @Composable
     fun Page() {
         MyApplicationTheme {

@@ -32,6 +32,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel for managing the process of entering products into shelves.
+ *
+ * This ViewModel handles the logic for creating and managing stock draft requests,
+ * scanning products and shelves, and updating the stock information.
+ *
+ * @param context The application context.
+ * @param memory Shared preferences for storing user data.
+ * @param api The remote API for interacting with the backend.
+ * @param */
 @HiltViewModel
 class NewShelfInViewModel @Inject constructor(
     @ApplicationContext val context: Context,
@@ -222,31 +232,18 @@ class NewShelfInViewModel @Inject constructor(
                 selectedProductToEnterShelfScannedNumber
         }
         loading = true
-        repository.api.shelfEntryWithEpcs(
-            sourceWareHouseID = 44,
+        api.shelfEnterEpcAndUpdateStockDraft(
+            stockDraftRequestID = request.number,
             shelfCode = selectedShelfToEnterProduct,
             products = selectedProductToEnterShelf,
+            reasonID = 1,
             onSuccess = {
-                repository.api.shelfUpdateStockDraftRequestNumberOfFound(
-                    stockDraftRequestID = request.number,
-                    product = selectedProductToEnterShelf.product,
-                    username = request.user.toString(),
-                    source = memory.user.warehouseCode,
-                    reasonID = 1,
-                    shelfNumber = 0,
-                    shelfCode = "",
-                    numberOfFound = selectedProductToEnterShelfScannedNumber,
-                    onSuccess = {
-                        getSelectedRequestDetails(request)
-                        showLog(
-                            data = "کالاها با موفقیت به قفسه انتقال داده شدند.",
-                            state = state,
-                            action = SnackBarActions.SUCCESS
-                        )
-                    },
-                    onError = {
-                        loading = false
-                    }
+                loading = false
+                getSelectedRequestDetails(request)
+                showLog(
+                    data = "کالاها با موفقیت به قفسه انتقال داده شدند.",
+                    state = state,
+                    action = SnackBarActions.SUCCESS
                 )
             },
             onError = {

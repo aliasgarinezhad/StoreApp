@@ -390,8 +390,7 @@ class Count : ComponentActivity() {
         intent.putExtra("product", Gson().toJson(product).toString())
         startActivity(intent)
     }
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+    
     @ExperimentalFoundationApi
     @Composable
     fun Page() {
@@ -425,7 +424,8 @@ class Count : ComponentActivity() {
             },
 
             actions = {
-                IconButton(modifier = Modifier.testTag("CountActivityClearButton"),
+                IconButton(
+                    modifier = Modifier.testTag("CountActivityClearButton"),
                     onClick = {
                         if (!rf.scanning && !loading) {
                             openClearDialog = true

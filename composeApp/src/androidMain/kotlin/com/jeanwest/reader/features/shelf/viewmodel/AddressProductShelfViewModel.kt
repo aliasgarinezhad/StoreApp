@@ -18,6 +18,19 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
+/**
+ * ViewModel for managing the process of addressing a product to a shelf in a store.
+ *
+ * This ViewModel handles barcode scanning for product identification, retrieves product
+ * shelf information from the API, and updates the UI accordingly.  It also manages
+ * the connection and disconnection of the barcode scanner during activity lifecycle
+ * events (pause and resume).
+ *
+ * @property state [SnackbarHostState] for displaying snackbar messages to the user.
+ * @property memory [SharedPreference] for persisting data (not directly used in this class, but potentially in future extensions).
+ * @property api [API] for making network requests to retrieve product and shelf data.
+ * @property context The application context.
+ */
 @HiltViewModel
 class AddressProductShelfViewModel @Inject constructor(
     val state: SnackbarHostState,

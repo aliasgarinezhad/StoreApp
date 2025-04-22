@@ -2,6 +2,7 @@ package com.jeanwest.reader.features.shelf.view
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,8 +28,23 @@ import com.jeanwest.reader.features.shared.NotificationPopUp
 import com.jeanwest.reader.features.shared.NotificationPopupHost
 import com.jeanwest.reader.models.Product
 
+/**
+ * Composable function that displays a screen for scanning and comparing products.
+ *
+ * This screen includes an app bar with a back button, a content area to display the product list,
+ * a snackbar for error messages, and a bottom bar button for further actions.
+ * It also handles RTL layout direction.
+ *
+ * @param topBarTitle The title to be displayed in the top app bar.
+ * @param topBarOnClick Callback function to be executed when the back button in the top app bar is clicked.
+ * @param loading Boolean flag indicating whether the screen is in a loading state.  If true, a loading indicator is displayed in the content area.
+ * @param uiListProduct A list of [Product] objects to be displayed in the content area.  Should be an empty list or contain valid product data.
+ * @param state The [SnackbarHostState] used to manage and display snackbar messages, typically for errors.
+ * @param onBottomBarClick Callback function to be executed when the button in the bottom bar is clicked.
+ * @param popupState The [NotificationPopupHost] used to display pop-up notifications (not currently used in the provided code but included in the signature).
+ * @param bottomBarText The text to be displayed on the button in the bottom bar.
+ */
 @OptIn(ExperimentalFoundationApi::class)
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ScanAndCompareProduct(
     topBarTitle: String,
@@ -50,11 +66,13 @@ fun ScanAndCompareProduct(
                     )
                 },
                 content = {
-                    Content(
-                        loading = loading,
-                        uiListProduct = uiListProduct,
-                        popupState = popupState,
-                    )
+                    Box(Modifier.padding(it)) {
+                        Content(
+                            loading = loading,
+                            uiListProduct = uiListProduct,
+                            popupState = popupState,
+                        )
+                    }
                 },
                 snackbarHost = { ErrorSnackBar(state) },
                 bottomBar = {
@@ -82,7 +100,7 @@ fun Content(
 
             Text(
                 text = "لطفا کالا های دارای موجودی فیزیکی را اسکن کنید.",
-                style = MaterialTheme.typography.h1,
+                style = MaterialTheme.typography.body1,
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp)
             )
 

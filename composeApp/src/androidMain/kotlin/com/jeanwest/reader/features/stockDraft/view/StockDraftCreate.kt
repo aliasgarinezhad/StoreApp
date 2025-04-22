@@ -696,8 +696,7 @@ class StockDraftCreate : ComponentActivity() {
         }
         return returnVar
     }
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+    
     @Composable
     fun Page() {
         MyApplicationTheme {

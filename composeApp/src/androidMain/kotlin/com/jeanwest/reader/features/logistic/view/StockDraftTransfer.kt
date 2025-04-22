@@ -308,9 +308,7 @@ class StockDraftTransfer : ComponentActivity() {
         saveToMemory()
         finish()
     }
-
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+    
     @ExperimentalFoundationApi
     @Composable
     fun Page() {
@@ -332,7 +330,8 @@ class StockDraftTransfer : ComponentActivity() {
 
     @Composable
     fun AppBar() {
-        AppBarWithDeleteButton(title = stringResource(id = R.string.stockDraftTransfer),
+        AppBarWithDeleteButton(
+            title = stringResource(id = R.string.stockDraftTransfer),
             onDeletePressed = { openClearDialog = true },
             onBackPressed = { back() }
         )

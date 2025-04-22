@@ -205,8 +205,7 @@ class BarcodeSpecial : ComponentActivity() {
             finish()
         }
     }
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+    
     @ExperimentalCoilApi
     @Composable
     fun Page() {

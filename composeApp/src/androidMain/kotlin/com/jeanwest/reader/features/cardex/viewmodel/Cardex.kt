@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.cardex.viewmodel
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -87,7 +86,6 @@ class Cardex : ComponentActivity() {
 
 
 @OptIn(ExperimentalCoilApi::class)
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @ExperimentalFoundationApi
 @Composable
 fun Page(viewModel: CardexViewModel, onBackPressed: () -> Unit) {

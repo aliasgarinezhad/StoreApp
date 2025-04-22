@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.shelf.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
@@ -54,6 +53,21 @@ import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.useCases.ExceptionHandler
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * The main activity for displaying the content of a shelf.
+ *
+ * This activity manages the user interface for browsing and interacting with
+ * the items on a specific shelf.  It uses a [ShelfContentViewModel] to
+ * handle the underlying data and logic.  Navigation within the shelf and
+ * back to previous screens is also managed here.
+ *
+ * Key features:
+ * - Displays the content of a shelf using a composable [Page].
+ * - Utilizes [ShelfContentViewModel] for data management and UI state.
+ * - Handles back navigation, both through UI interaction and hardware back button.
+ * - Implements an exception handler to gracefully manage uncaught exceptions.
+ * - Tracks activity lifecycle events (pause/resume) and notifies the view model.
+ */
 @AndroidEntryPoint
 @OptIn(ExperimentalFoundationApi::class)
 class ShelfContent : ComponentActivity() {
@@ -102,7 +116,6 @@ class ShelfContent : ComponentActivity() {
     }
 }
 
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @ExperimentalFoundationApi
 @Composable
 fun Page(viewModel: ShelfContentViewModel, back: () -> Unit) {
@@ -341,17 +354,18 @@ fun BottomBar(viewModel: ShelfContentViewModel) {
                 }
             }
         } else if (viewModel.editShelfMode) {
-            Button(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp), onClick = {
-                viewModel.popupState.showPopupWith2Button("تغییرات انجام شده نهایی شوند؟", {
-                    viewModel.editShelfConfirm()
-                }, {
-                    viewModel.clear()
-                    viewModel.editShelfMode = false
-                    viewModel.pageState.intValue = 0
-                }, "بله", "خیر، منصرف شدم")
-            }) {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp), onClick = {
+                    viewModel.popupState.showPopupWith2Button("تغییرات انجام شده نهایی شوند؟", {
+                        viewModel.editShelfConfirm()
+                    }, {
+                        viewModel.clear()
+                        viewModel.editShelfMode = false
+                        viewModel.pageState.intValue = 0
+                    }, "بله", "خیر، منصرف شدم")
+                }) {
                 Text(text = "تایید نهایی")
             }
         }

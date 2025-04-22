@@ -33,6 +33,7 @@ import com.jeanwest.reader.features.print.view.PrintPriceLabel
 import com.jeanwest.reader.features.refillStore.view.Refill
 import com.jeanwest.reader.features.refillStore.view.Refill2
 import com.jeanwest.reader.features.refillStore.view.RefillManual
+import com.jeanwest.reader.features.shelf.inventory.view.ShelfInventory
 import com.jeanwest.reader.features.shelf.view.AddressProductShelf
 import com.jeanwest.reader.features.shelf.view.CreateShelfInRequest
 import com.jeanwest.reader.features.shelf.view.CreateShelfStore
@@ -242,6 +243,13 @@ val features = mutableListOf(
         R.string.shelf_transfer,
         R.drawable.ic_shelf,
         TransferShelf::class.java
+    ),
+    Feature(
+        "ProductNumberInAllDepartments",
+        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        R.string.ShelfInventory,
+        R.drawable.ic_shelf,
+        ShelfInventory::class.java
     ),
     Feature(
         "StockDraftRequestCentralWarehouseFind",

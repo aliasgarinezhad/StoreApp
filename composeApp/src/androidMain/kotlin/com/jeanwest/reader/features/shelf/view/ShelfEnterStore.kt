@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.shelf.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -43,6 +42,32 @@ import com.jeanwest.reader.features.shelf.viewmodel.ShelfEnterStoreViewModel
 import com.jeanwest.reader.useCases.ExceptionHandler
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ *  [ShelfEnterStore] is an Activity that handles the process of entering products into a store's inventory shelf.
+ *  It utilizes a [ShelfEnterStoreViewModel] to manage the UI state and data related to product entry.
+ *  The activity is designed to handle exceptions gracefully and manages its lifecycle events (pause/resume) to
+ *  interact with the ViewModel accordingly.
+ *
+ *  Key functionalities:
+ *  - **Product Entry:** Allows users to add products to a virtual or physical shelf within a store.  The specific UI
+ *      and interaction details are handled by the `Page` composable, not directly within this activity class.
+ *  - **Data Management:**  Leverages a [ShelfEnterStoreViewModel] to store and update information about products being
+ *      entered, including a list of UI representations (`uiListProduct`), SKUs (`skuList`), and barcodes (`barcodes`).
+ *  - **UI State Control:** Uses an integer `uiState` within the ViewModel to manage the current state of the product
+ *      entry process.  Specifically:
+ *      - `uiState == 1`: Indicates completion of the product entry, triggering a cleanup of product data
+ *        and resetting the state to `uiState = 0`.
+ *      - `uiState != 1`:  Represents an incomplete state, causing the activity to finish (likely returning to a
+ *        previous screen).
+ *  - **Exception Handling:** Implements a custom [ExceptionHandler] to handle uncaught exceptions and prevent app
+ *      crashes.  The exact behavior of the exception handler (logging, reporting, etc.) would be defined within
+ *      the `ExceptionHandler` class.
+ *  - **Lifecycle Management:** Overrides `onPause` and `onResume` to call corresponding methods in the
+ *      [ShelfEnterStoreViewModel], allowing it to manage resources or operations appropriately based on the
+ *      activity's visibility.
+ *
+ *  Note: The core UI for product entry is implemented by the `Page` composable function, which is invoked within
+ *  the `setContent` block.  The details of the UI (e.g., fields for entering product details */
 @AndroidEntryPoint
 class ShelfEnterStore : ComponentActivity() {
 
@@ -85,7 +110,6 @@ class ShelfEnterStore : ComponentActivity() {
 
 }
 
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @Composable
 fun Page(viewModel: ShelfEnterStoreViewModel, onBackPressed: () -> Unit) {
     MyApplicationTheme {

@@ -21,6 +21,23 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Locale
 import javax.inject.Inject
 
+/**
+ * ViewModel for managing the shelf transfer process.
+ *
+ * This ViewModel handles the logic for transferring items between shelves, including:
+ * - Scanning shelves and products using barcode and RFID scanners.
+ * - Retrieving shelf details from the API.
+ * - Managing the UI state and lists of shelf items.
+ * - Communicating with the API to perform the transfer.
+ * - Displaying user feedback through Snackbar and popup notifications.
+ *
+ * @property context The application context.
+ * @property memory  Shared preferences for accessing user data.
+ * @property api The API interface for interacting with the backend.
+ * @property repository The repository implementation for data access.
+ * @property state The SnackbarHostState for displaying Snackbar messages.
+ * @property popupHost The NotificationPopupHost for displaying popup notifications.
+ */
 @HiltViewModel
 class TransferShelfViewModel @Inject constructor(
     @ApplicationContext val context: Context,
@@ -172,7 +189,7 @@ class TransferShelfViewModel @Inject constructor(
         shelfToEnterItems = ""
         uiList.clear()
         scanAndCompareProductsUiList.clear()
-        changeScreen("ScanOrTypeNumberScreen")
+        changeScreen("ScanShelfToExit")
     }
 
     private fun setBarcodeScan() {

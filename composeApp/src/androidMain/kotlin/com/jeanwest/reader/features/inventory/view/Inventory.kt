@@ -2,7 +2,6 @@
 
 package com.jeanwest.reader.features.inventory.view
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
@@ -137,8 +136,6 @@ class Inventory : ComponentActivity() {
     }
 }
 
-
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalCoilApi::class)
 @ExperimentalFoundationApi
 @Composable
@@ -460,7 +457,8 @@ private fun ListContent(
                         .padding(start = 16.dp)
                         .weight(1F)
                 ) {
-                    FilterDropDownList(icon = { }, text = {
+                    FilterDropDownList(
+                        icon = { }, text = {
                         Text(
                             text = sexTileFilterValue,
                             style = MaterialTheme.typography.bodyMedium,

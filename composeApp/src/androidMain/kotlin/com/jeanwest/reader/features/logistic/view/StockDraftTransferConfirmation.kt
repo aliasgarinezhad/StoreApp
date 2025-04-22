@@ -2,7 +2,6 @@
 
 package com.jeanwest.reader.features.logistic.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
@@ -305,8 +304,7 @@ class StockDraftTransferConfirmation : ComponentActivity() {
     fun scanTrigger() {
         barcode.startBarcodeScan()
     }
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+    
     @ExperimentalFoundationApi
     @Composable
     fun Page() {

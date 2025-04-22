@@ -128,7 +128,9 @@ fun FactoryApp(
                 userTask = factoryAddTaskViewModel.userTask,
                 pageTitle = "انتخاب سایز و تعداد",
                 onBack = { factoryAddTaskViewModel.changeScreen(SelectTaskScreen) },
-                textFieldValue = factoryAddTaskViewModel.textFieldValue
+                textFieldValue = factoryAddTaskViewModel.textFieldValue,
+                onTextFieldFocused = { factoryAddTaskViewModel.onNumberFieldFocused() },
+
             )
         }
         composable<StopActivityScreen> {

@@ -22,6 +22,19 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import org.json.JSONArray
 import javax.inject.Inject
 
+/**
+ * ViewModel for managing the "Print Price Per Product" screen functionality.
+ *
+ * This ViewModel handles fetching product details, managing UI state, processing
+ * barcode data, and interacting with the API and local database for printing
+ * price labels.  It utilizes Hilt for dependency injection and exposes
+ * observable state variables for UI updates.
+ *
+ * @property snackBarHostState State for managing and displaying Snackbar messages.
+ * @property api API interface for fetching product-related data.
+ * @property localStoreDatabase Database interface for interacting with the local database, specifically for printing labels.
+ * @property context Application context for accessing resources and initializing dependencies.
+ */
 @HiltViewModel
 class PrintPricePerProductViewModel @Inject constructor(
     val snackBarHostState: SnackbarHostState, // SnackBar state for displaying error or success messages

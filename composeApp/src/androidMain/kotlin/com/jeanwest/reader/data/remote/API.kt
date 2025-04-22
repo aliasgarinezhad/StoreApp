@@ -2050,6 +2050,50 @@ class API @Inject constructor(
         queue.add(request)
     }
 
+    fun shelfInventoryReport(
+        warehouseCode: Int,
+        shelfNumber: String,
+        status: Boolean,
+        products: List<ShelfItem>,
+        onSuccess: () -> Unit,
+        onError: () -> Unit,
+    ) {
+        val url = "$serverAddress/shelf/inventory"
+        val request = object : JsonObjectRequest(Method.POST, url, null, {
+            onSuccess()
+        }, {
+            apiErrorProcess(state, it)
+            onError()
+        }) {
+            override fun getHeaders(): Map<String, String> {
+                return header
+            }
+
+            override fun getBody(): ByteArray {
+                val body = JSONObject()
+                body.put("WareHouse_ID", warehouseCode)
+                body.put("ShelfID", shelfNumber)
+                body.put("Status", status)
+
+                val jsonArray = JSONArray()
+                products.forEach {
+                    it.epcs.forEach { epc ->
+                        if (epc !in it.product.scannedEPCs) {
+                            val jsonObject = JSONObject()
+                            jsonObject.put("BarcodeMain_ID", it.product.primaryKey)
+                            jsonObject.put("EPC", epc)
+                            jsonArray.put(jsonObject)
+                        }
+                    }
+                }
+                body.put("products", jsonArray)
+                Log.e(this@API.tag, body.toString())
+                return body.toString().toByteArray()
+            }
+        }
+        queue.add(request)
+    }
+
     fun shelfContent(
         warehouseCode: Int,
         shelfNumber: String,
@@ -2114,6 +2158,7 @@ class API @Inject constructor(
                         name = productsJsonArray.getJSONObject(i).getString("ItemName"),
                         KBarCode = productsJsonArray.getJSONObject(i).getString("KBarCode"),
                         shelfCount = productsJsonArray.getJSONObject(i).getInt("Qty"),
+                        primaryKey = productsJsonArray.getJSONObject(i).getLong("BarcodeMain_ID"),
                     )
                     val searchAndBarcodes =
                         productsJsonArray.getJSONObject(i).getJSONArray("SearchCodes")
@@ -2122,11 +2167,19 @@ class API @Inject constructor(
                             product.searchCodes.add(searchAndBarcodes.getString(a))
                         }
                     }
+                    val shelfProductEpc = mutableListOf<String>()
+                    val epcsJsonArray =
+                        productsJsonArray.getJSONObject(i).getJSONArray("epcs")
+                    if (epcsJsonArray.length() != 0) {
+                        for (a in 0 until epcsJsonArray.length()) {
+                            shelfProductEpc.add(epcsJsonArray.getString(a))
+                        }
+                    }
                     val shelfItem = ShelfItem(
                         qtyInShelf = productsJsonArray.getJSONObject(i).getInt("Qty"),
                         product = product,
                         shelfNumber = shelfNumber,
-                        epcs = mutableListOf()
+                        epcs = shelfProductEpc
                     )
                     productsList.add(shelfItem)
                 }
@@ -2297,6 +2350,63 @@ class API @Inject constructor(
         queue.add(request)
     }
 
+    fun shelfEnterEpcAndUpdateStockDraft(
+        stockDraftRequestID: Long,
+        reasonID: Int,
+        shelfCode: String,
+        products: StockDraftRequestItem,
+        onSuccess: () -> Unit,
+        onError: () -> Unit,
+    ){
+        val url = "$serverAddress/stock-draft-requests/$stockDraftRequestID/shelf-in"
+
+        val request = object : JsonObjectRequest(Method.POST, url, null, {
+            onSuccess()
+        }, {
+            if (it?.networkResponse?.statusCode == 504) {
+                showLog(
+                    "درخواست انجام شده است اما سرور پاسخ نمی دهد. جهت اطمینان بیشتر مدتی بعد محتوی قفسه را چک کنید.",
+                    state,
+                    action = SnackBarActions.WARNING
+                )
+            } else {
+                apiErrorProcess(state, it)
+            }
+            onError()
+        }) {
+            override fun getHeaders(): Map<String, String> {
+                return header
+            }
+
+            override fun getBody(): ByteArray {
+                val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
+                sdf.timeZone = TimeZone.getDefault()
+
+                val body = JSONObject()
+                val productList = JSONArray()
+                body.put("ToShelfCode", shelfCode)
+                body.put("WareHouse_ID", 44)
+                body.put("JoorSelectTime", sdf.format(Date()))
+                body.put("ReasonID", reasonID)
+                if (products.epcs.isNotEmpty()) {
+                    products.epcs.forEach { epc ->
+                        val productJson = JSONObject()
+                        productJson.put("BarcodeMain_ID", products.product.primaryKey)
+                        productJson.put("KBarCode", products.product.KBarCode)
+                        productJson.put("qty", 1)
+                        productJson.put("epc", epc)
+                        productList.put(productJson)
+                    }
+                }
+                body.put("products", productList)
+                return body.toString().toByteArray()
+            }
+        }
+        request.retryPolicy = requestSetting
+        queue.add(request)
+    }
+
+
     fun shelfExit(
         currentWareHouseId: Int,
         shelfCode: String,
@@ -2389,6 +2499,7 @@ class API @Inject constructor(
                         jObject.put("KBarCode", elements.product.KBarCode)
                         jObject.put("qty", 1)
                         jObject.put("epc", elements.epcs[i])
+                        jObject.put("BarcodeMain_ID", elements.product.primaryKey)
                         productList.put(jObject)
                     }
                 }
@@ -3453,7 +3564,6 @@ class API @Inject constructor(
     fun getWarehousesLists(
         onSuccess: (locations: Map<String, String>, sortedLocations: List<String>, departmentWarehousesLists: Map<String, MutableList<String>>, departmentTitles: Map<String, String>) -> Unit,
         onError: () -> Unit,
-        token: String = "",
     ) {
 
         val url = "$serverAddress/department-infos"
@@ -3499,17 +3609,7 @@ class API @Inject constructor(
             onError()
         }) {
             override fun getHeaders(): Map<String, String> {
-
-                if (token.isNotEmpty()) {
-                    val header = mutableMapOf<String, String>()
-                    header.putAll(this@API.header)
-                    header["Authorization"] = "Bearer $token"
-                    Log.e(this@API.tag, header.toMap().toString())
-                    return header
-                } else {
-                    Log.e(this@API.tag, header.toMap().toString())
-                    return this@API.header
-                }
+                return this@API.header
             }
         }
 
@@ -4359,19 +4459,17 @@ class API @Inject constructor(
         }) {
             override fun getHeaders(): Map<String, String> {
 
-                if (!memory.user.isExist) {
-                    val header = mutableMapOf<String, String>()
-                    header.putAll(this@API.header)
-                    header["Authorization"] = "Bearer $token"
-                    return header
-                } else {
-                    return this@API.header
-                }
+                val header = mutableMapOf<String, String>()
+                header.putAll(this@API.header)
+                header["Authorization"] = "Bearer $token"
+                Log.e(this@API.tag, "header is empty: $header")
+                return header
             }
 
             override fun getBody(): ByteArray {
                 val body = JSONObject()
                 body.put("serialNumber", deviceSerialNumber)
+                Log.e(this@API.tag, "body: $body")
                 return body.toString().toByteArray()
             }
         }

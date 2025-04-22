@@ -18,6 +18,20 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+/**
+ * Composable function that displays an error snackbar at the bottom of the screen.
+ *
+ * The snackbar's appearance (text color) is determined by the action label of the current
+ * snackbar data in the provided [SnackbarHostState].
+ *
+ * @param state The [SnackbarHostState] that manages the display of the snackbar.  The message
+ *              displayed in the snackbar will be taken from `state.currentSnackbarData?.visuals?.message`,
+ *              and the color will be determined based on `state.currentSnackbarData?.visuals?.actionLabel`.
+ *              If the action label is "ERROR", the color will be [errorLight].  If it is "SUCCESS",
+ *              the color will be [doneColor].  If it is "WARNING", the color will be [warningColor].
+ *              Otherwise, the color defaults to [errorLight]. The snackbar will also include a
+ *              dismiss button labeled "متوجه شدم" (Understood).
+ */
 @Composable
 fun ErrorSnackBar(state: SnackbarHostState) {
 

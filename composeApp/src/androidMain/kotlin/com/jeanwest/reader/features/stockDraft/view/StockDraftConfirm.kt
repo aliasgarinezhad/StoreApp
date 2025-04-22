@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.stockDraft.view
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -194,17 +193,26 @@ class StockDraftConfirm : ComponentActivity() {
     }
 
     private fun getStockDraftsDetails() {
-        api.stockDraftsHistory(null, memory.user.warehouseCode, null, null, null, true, perPage = "80", { it ->
+        api.stockDraftsHistory(
+            null,
+            memory.user.warehouseCode,
+            null,
+            null,
+            null,
+            true,
+            perPage = "80",
+            { it ->
 
-            stockDraftUiList.clear()
-            stockDraftUiList.addAll(it)
-            stockDraftUiList.sortedByDescending {
-                it.createDate
-            }
-            loading = false
-        }, {
-            loading = false
-        })
+                stockDraftUiList.clear()
+                stockDraftUiList.addAll(it)
+                stockDraftUiList.sortedByDescending {
+                    it.createDate
+                }
+                loading = false
+            },
+            {
+                loading = false
+            })
         loading = true
 
     }
@@ -344,7 +352,8 @@ class StockDraftConfirm : ComponentActivity() {
                 return
             }
 
-            api.getItemDetails(mutableListOf(),
+            api.getItemDetails(
+                mutableListOf(),
                 barcodeTableForV4,
                 { _, barcodes, _, invalidBarcodes ->
 
@@ -575,7 +584,8 @@ class StockDraftConfirm : ComponentActivity() {
         } else {
 
             if (memory.user.isLocalMode) {
-                localDatabase.getItemDetails(epcs = listOf(),
+                localDatabase.getItemDetails(
+                    epcs = listOf(),
                     barcodes = listOf(barcode),
                     { _, barcodes, _, invalidBarcodes ->
 
@@ -604,7 +614,8 @@ class StockDraftConfirm : ComponentActivity() {
 
             } else {
 
-                api.getItemDetails(mutableListOf(),
+                api.getItemDetails(
+                    mutableListOf(),
                     mutableListOf(barcode),
                     { _, barcodes, _, invalidBarcodes ->
 
@@ -683,7 +694,7 @@ class StockDraftConfirm : ComponentActivity() {
                     scanningMode = false
                 }
             }
-        } catch (_:Exception ) {
+        } catch (_: Exception) {
 
         }
     }
@@ -759,6 +770,10 @@ class StockDraftConfirm : ComponentActivity() {
                     if (!memory.user.isStoreUser && it.destination != memory.user.warehouseCode) {
                         showLog("انبار مقصد حواله با انبار جاری انتخابی شما متفاوت است.", state)
                         loading = false
+                    } else if (it.stateID in listOf("2", "9") && it.positionID == "2") {
+                        showLog("حواله نهایی شده است.", state)
+                        stockDraftNumber = ""
+                        loading = false
                     } else {
                         draftProperties = it
                         clearAll()
@@ -811,8 +826,6 @@ class StockDraftConfirm : ComponentActivity() {
         return "${intArrayFormatJalaliCreateDate[0]}/${intArrayFormatJalaliCreateDate[1]}/${intArrayFormatJalaliCreateDate[2]}"
     }
 
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalCoilApi::class)
     @ExperimentalFoundationApi
     @Composable
@@ -835,7 +848,8 @@ class StockDraftConfirm : ComponentActivity() {
 
     @Composable
     fun AppBar() {
-        AppBarWithBack(title = stringResource(id = R.string.stock_draft_confirmation),
+        AppBarWithBack(
+            title = stringResource(id = R.string.stock_draft_confirmation),
             onBackPressed = { back() })
     }
 
@@ -878,7 +892,8 @@ class StockDraftConfirm : ComponentActivity() {
     fun Content() {
         Column {
             if (openFinishDialog) {
-                AlertDialogWith2Button("کالاهای اسکن شده ثبت شوند؟",
+                AlertDialogWith2Button(
+                    "کالاهای اسکن شده ثبت شوند؟",
                     "بله",
                     "خیر، نتایج پاک شوند",
                     btnNotConfirmOnClick = {
@@ -980,17 +995,18 @@ class StockDraftConfirm : ComponentActivity() {
 
             if (itemsUiList[i].conflictType == "اضافی") {
 
-                Box(modifier = Modifier
-                    .padding(top = topPaddingClearButton, end = 8.dp)
-                    .background(
-                        shape = RoundedCornerShape(36.dp), color = errorContainerLight
-                    )
-                    .size(30.dp)
-                    .align(TopEnd)
-                    .testTag("clear")
-                    .clickable {
-                        clear(itemsUiList[i])
-                    }) {
+                Box(
+                    modifier = Modifier
+                        .padding(top = topPaddingClearButton, end = 8.dp)
+                        .background(
+                            shape = RoundedCornerShape(36.dp), color = errorContainerLight
+                        )
+                        .size(30.dp)
+                        .align(TopEnd)
+                        .testTag("clear")
+                        .clickable {
+                            clear(itemsUiList[i])
+                        }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_clear_24),
                         contentDescription = "",
@@ -1069,9 +1085,10 @@ class StockDraftConfirm : ComponentActivity() {
         }
 
         Box(modifier = modifier) {
-            Row(modifier = Modifier
-                .testTag("checkInFilterDropDownList")
-                .clickable { expanded = true }) {
+            Row(
+                modifier = Modifier
+                    .testTag("checkInFilterDropDownList")
+                    .clickable { expanded = true }) {
                 Text(text = scanValues[scanFilter])
                 Icon(imageVector = Icons.Filled.ArrowDropDown, "")
             }

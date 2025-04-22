@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.print.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
@@ -39,6 +38,20 @@ import com.jeanwest.reader.features.shared.primaryLight
 import com.jeanwest.reader.useCases.ExceptionHandler
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Activity for printing price labels per product within a stock draft.
+ *
+ * This activity displays a UI for printing price labels associated with individual products
+ * within a specified stock draft.  It interacts with a [PrintPricePerProductViewModel] to
+ * manage data and printing logic.
+ *
+ * Key features include:
+ *  - Loading and displaying products from a stock draft based on the provided [StockDraftId].
+ *  - Handling user interactions related to printing.
+ *  - Gracefully handling lifecycle events (resume, pause, destroy).
+ *  - Implementing a custom exception handler.
+ *  - Overriding back button behavior for navigation.
+ */
 @AndroidEntryPoint
 @OptIn(ExperimentalFoundationApi::class)
 class PrintPricePerProduct : ComponentActivity() {
@@ -86,7 +99,6 @@ class PrintPricePerProduct : ComponentActivity() {
 
 
 @OptIn(ExperimentalCoilApi::class)
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @ExperimentalFoundationApi
 @Composable
 fun Page(

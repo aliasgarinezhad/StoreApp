@@ -2,7 +2,6 @@
 
 package com.jeanwest.reader.features.kiosk.view
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -164,7 +163,8 @@ class Kiosk : ComponentActivity() {
         uiList.clear()
         productCode = ""
 
-        api.getProductsSimilar(storeCode, barcode, {
+        api.getProductsSimilar(
+            storeCode, barcode, {
             for (elements in it) {
                 if (elements.color == scannedColor && elements.size == scannedSize) {
                     isSameProduct = true
@@ -268,7 +268,6 @@ class Kiosk : ComponentActivity() {
         }
     }
 
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
     @ExperimentalCoilApi
     @Composable
     fun Page() {

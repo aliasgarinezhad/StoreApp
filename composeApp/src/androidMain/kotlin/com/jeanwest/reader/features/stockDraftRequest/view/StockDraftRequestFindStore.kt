@@ -1,9 +1,7 @@
 package com.jeanwest.reader.features.stockDraftRequest.view
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -718,8 +716,6 @@ class StockDraftRequestFindStore : ComponentActivity() {
         }
     }
 
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalCoilApi::class)
     @ExperimentalFoundationApi
     @Composable

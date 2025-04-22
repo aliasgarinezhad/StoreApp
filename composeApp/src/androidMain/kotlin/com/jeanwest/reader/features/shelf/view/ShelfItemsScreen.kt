@@ -1,14 +1,16 @@
 package com.jeanwest.reader.features.shelf.view
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -20,17 +22,34 @@ import com.jeanwest.reader.features.shared.AppBarWithBack
 import com.jeanwest.reader.features.shared.BottomBarButton
 import com.jeanwest.reader.features.shared.EmptyBox
 import com.jeanwest.reader.features.shared.ErrorSnackBar
+import com.jeanwest.reader.features.shared.ItemShelfItems
 import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
 import com.jeanwest.reader.features.shared.MyApplicationTheme
 import com.jeanwest.reader.features.shared.NotificationPopUp
 import com.jeanwest.reader.features.shared.NotificationPopupHost
+import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.models.ShelfItem
 import com.jeanwest.reader.useCases.RFID
-import com.jeanwest.reader.features.shared.ItemShelfItems
 
 
+/**
+ * Composable function for displaying a screen showing items on a shelf.
+ *
+ * This screen includes a top app bar with a back button, a content area displaying the shelf items,
+ * a snackbar for error messages, and a bottom bar with a button for actions like submitting or completing the process.
+ *
+ * @param topBarTitle The title to be displayed in the top app bar.
+ * @param topBarOnClick Callback function to be executed when the back button in the top app bar is clicked.
+ * @param loading Boolean flag indicating whether the screen is in a loading state.  A loading indicator should be displayed if true.
+ * @param uiListProduct List of [ShelfItem] objects representing the items on the shelf to be displayed.
+ * @param state [SnackbarHostState] for managing and displaying snackbar messages.
+ * @param onBottomBarClick Callback function to be executed when the button in the bottom bar is clicked.
+ * @param popupState [NotificationPopupHost] for managing and displaying popup notifications.
+ * @param bottomBarText The text to be displayed on the button in the bottom bar.
+ * @param isSecondPage Boolean flag indicating if this is the second page in a multi-step process. This affects the bottom bar button's visibility.
+ * @param itemOnClick Callback function to be executed when a shelf item is clicked. It receives the clicked [ShelfItem] as a parameter.
+ * @param signedKBarCode Mutable list of [ShelfItem] objects representing items signed with a specific barcode (likely a KBar */
 @OptIn(ExperimentalFoundationApi::class)
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ShelfItemsScreen(
     topBarTitle: String,
@@ -46,6 +65,9 @@ fun ShelfItemsScreen(
     signedKBarCode: MutableList<ShelfItem>,
     completeRfScan: Boolean,
     rfid: RFID,
+    text1: String,
+    text2: String,
+    specText: String = "",
 ) {
     MyApplicationTheme {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
@@ -57,15 +79,20 @@ fun ShelfItemsScreen(
                     )
                 },
                 content = {
-                    ContentShelfScreen(
-                        loading = loading,
-                        uiListProduct = uiListProduct,
-                        popupState = popupState,
-                        isSecondPage = isSecondPage,
-                        itemOnClick = itemOnClick,
-                        signedKBarCode = signedKBarCode,
-                        rfid = rfid
-                    )
+                    Box(Modifier.padding(it)) {
+                        ContentShelfScreen(
+                            loading = loading,
+                            uiListProduct = uiListProduct,
+                            popupState = popupState,
+                            isSecondPage = isSecondPage,
+                            itemOnClick = itemOnClick,
+                            signedKBarCode = signedKBarCode,
+                            rfid = rfid,
+                            text1 = text1,
+                            text2 = text2,
+                            specText = specText
+                        )
+                    }
                 },
                 snackbarHost = { ErrorSnackBar(state) },
                 bottomBar = {
@@ -94,6 +121,9 @@ fun ContentShelfScreen(
     itemOnClick: (shelfItem: ShelfItem) -> Unit,
     signedKBarCode: MutableList<ShelfItem>,
     rfid: RFID,
+    text1: String,
+    text2: String,
+    specText: String = "",
 ) {
     Column {
         if (loading || rfid.scanning) {
@@ -101,19 +131,26 @@ fun ContentShelfScreen(
         } else {
             NotificationPopUp(popupState)
             if (isSecondPage) {
-                Text(
-                    text = "لطفا کالا های مورد نظر برای خروج از قفسه را اسکن کنید",
-                    style = MaterialTheme.typography.headlineLarge,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp)
-                )
-                Text(
-                    text = "مجموع اسکن: ${
-                        uiListProduct.filter { it in signedKBarCode }
-                            .sumOf { it.product.scannedBarcodeNumber }
-                    }",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp)
-                )
+
+                if (specText != "") {
+                    Text(
+                        text = specText,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                    )
+                }
+                Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(
+                        text = text1,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                    )
+                    Text(
+                        text = text2,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                    )
+                }
             }
             if (uiListProduct.isEmpty()) {
                 EmptyBox("هنوز کالایی اسکن نکرده اید")
@@ -182,6 +219,8 @@ private fun PreviewShelfItemsScreen() {
 //
 //        mutableListOf("43751458J-8170-XXXL"),
 //        true,
-//        rfid = RFID()
+//        rfid = RFID(),
+//        text1 = "",
+//        text2 = ""
 //    )
 }

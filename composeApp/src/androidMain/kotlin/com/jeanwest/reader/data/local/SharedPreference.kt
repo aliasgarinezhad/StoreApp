@@ -2,6 +2,7 @@ package com.jeanwest.reader.data.local
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.jeanwest.reader.models.Device
@@ -42,23 +43,12 @@ class SharedPreference @Inject constructor(
             erpData.javaClass
         ) ?: ERPData()
 
-        device.id = appMemory.getString("deviceId", "") ?: ""
-        device.locationCode = appMemory.getInt("deviceLocationCode", 0).toString()
-        device.location = appMemory.getString("deviceLocation", "") ?: ""
-        device.token = appMemory.getString("iotToken", "") ?: ""
-        device.serialNumber = appMemory.getString("deviceSerialNumber", "") ?: ""
-    }
+        device = Gson().fromJson(
+            appMemory.getString("device", ""),
+            device.javaClass
+        ) ?: Device()
 
-    fun setAppData() {
-        appMemoryEditor.putString(
-            "user",
-            Gson().toJson(user).toString()
-        )
-        appMemoryEditor.putString(
-            "erpData",
-            Gson().toJson(erpData).toString()
-        )
-        appMemoryEditor.apply()
+        //Log.e("navid data", device.toString())
     }
 
     fun setAppDataImmediately() {
@@ -69,6 +59,10 @@ class SharedPreference @Inject constructor(
         appMemoryEditor.putString(
             "erpData",
             Gson().toJson(erpData).toString()
+        )
+        appMemoryEditor.putString(
+            "device",
+            Gson().toJson(device).toString()
         )
         appMemoryEditor.commit()
         refresh()

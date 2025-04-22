@@ -100,7 +100,20 @@ class CreateStockDraftFromCartonView @Inject constructor(
     var popupState = NotificationPopupHost()
 }
 
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+/**
+ * Composable function that represents the main page of the "Create Stock Draft From Carton" screen.
+ * It provides the overall layout structure including top app bar, content area, bottom bar, and snackbar.
+ *
+ * The function utilizes `Scaffold` from Material3 for layout management.
+ *  - `topBar`:  Displays an [AppBar] composable, providing the top navigation bar.  The AppBar's content is determined by the provided [CreateStockDraftFromCartonView].
+ *  - `content`:  Renders the main content area using the [Content] composable.  It is enclosed in a `Box` with padding to account for the top bar and bottom bar. The content is also determined by the provided [CreateStockDraftFromCartonView].
+ *  - `bottomBar`: Shows the [BottomBar] composable, typically containing actions or navigation elements. Its content is determined by the provided [CreateStockDraftFromCartonView].
+ *  - `snackbarHost`:  Handles displaying snackbars for error messages using the [ErrorSnackBar] composable.  The snackbar's visibility and content are controlled by the `state` within the provided [CreateStockDraftFromCartonView].
+ *
+ * The layout direction is set to right-to-left (RTL) using `CompositionLocalProvider` and `LocalLayoutDirection`, catering to languages that read from right to left.
+ *
+ * @param viewModel The [CreateStockDraftFromCartonView] instance, which acts as the ViewModel for this screen and provides data and interactions for the UI elements (AppBar, Content, BottomBar, and snackbar).
+ */
 @ExperimentalFoundationApi
 @Composable
 fun Page(viewModel: CreateStockDraftFromCartonView) {
@@ -145,6 +158,7 @@ fun BottomBar(viewModel: CreateStockDraftFromCartonView) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Content(viewModel: CreateStockDraftFromCartonView) {
 

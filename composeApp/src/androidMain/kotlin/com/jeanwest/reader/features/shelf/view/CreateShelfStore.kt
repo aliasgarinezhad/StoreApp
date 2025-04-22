@@ -2,7 +2,6 @@
 
 package com.jeanwest.reader.features.shelf.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -63,6 +62,19 @@ import com.jeanwest.reader.models.StoreShelf
 import com.jeanwest.reader.useCases.ExceptionHandler
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Activity responsible for creating a new shelf store.
+ *
+ * This activity handles user interactions for creating a new shelf store, including
+ * setting up the UI, managing the lifecycle, and handling exceptions.
+ * It utilizes a ViewModel (`CreateShelfStoreViewModel`) to manage the underlying data and logic.
+ *
+ *  Key functionalities:
+ *  - Initializes the UI using Compose.
+ *  - Provides a back navigation option.
+ *  - Handles activity lifecycle events (onPause, onResume).
+ *  - Implements an exception handler to catch and log unhandled exceptions.
+ */
 @AndroidEntryPoint
 class CreateShelfStore : ComponentActivity() {
 
@@ -106,7 +118,6 @@ class CreateShelfStore : ComponentActivity() {
     }
 }
 
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @ExperimentalFoundationApi
 @Composable
 fun Page(

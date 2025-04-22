@@ -251,8 +251,7 @@ class StockDraftDetails : ComponentActivity() {
             finish()
         }
     }
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+    
     @OptIn(ExperimentalCoilApi::class)
     @ExperimentalFoundationApi
     @Composable

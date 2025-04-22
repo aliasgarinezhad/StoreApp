@@ -184,8 +184,7 @@ class BarcodeChecker : ComponentActivity() {
             finish()
         }
     }
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+    
     @ExperimentalCoilApi
     @Composable
     fun Page() {

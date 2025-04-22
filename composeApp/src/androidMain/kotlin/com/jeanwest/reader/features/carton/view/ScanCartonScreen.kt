@@ -1,10 +1,13 @@
 package com.jeanwest.reader.features.carton.view
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.navigation.NavController
@@ -16,7 +19,6 @@ import com.jeanwest.reader.features.shared.ScanOrTypeNumberPage
 //@Serializable
 //object ScanCartonScreen
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ScanCartonScreen(
     loading: Boolean,
@@ -32,13 +34,15 @@ fun ScanCartonScreen(
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
             Scaffold(
                 content = {
-                    ScanCarton(
-                        loading = loading,
-                        value = value,
-                        textFieldHint = "شماره کارتن",
-                        onClick = { onClick(navController) },
-                        onValueChange = { onValueChange(it) }
-                    )
+                    Box(Modifier.padding(it)) {
+                        ScanCarton(
+                            loading = loading,
+                            value = value,
+                            textFieldHint = "شماره کارتن",
+                            onClick = { onClick(navController) },
+                            onValueChange = { onValueChange(it) }
+                        )
+                    }
                 },
                 topBar = {
                     AppBarWithBack(title = topBarTitle, onBackPressed = { topBarOnClick() })

@@ -2,7 +2,6 @@
 
 package com.jeanwest.reader.features.carton.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
@@ -122,7 +121,6 @@ class CartonsConfirmItems : ComponentActivity() {
     }
 }
 
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @Composable
 fun Page(viewModel: CartonsConfirmItemsViewModel, onBackPressed: () -> Unit) {
     MyApplicationTheme {

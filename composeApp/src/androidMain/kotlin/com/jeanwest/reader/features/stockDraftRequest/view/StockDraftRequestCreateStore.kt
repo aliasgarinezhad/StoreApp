@@ -80,6 +80,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONArray
 import javax.inject.Inject
 
+/**
+ *  This class handles the creation of stock draft requests within the application.
+ *  It allows users to scan products, select a request type, and submit the request.
+ *  The class integrates with barcode and RFID scanning, communicates with a local database and a remote API,
+ *  and persists data using */
 @AndroidEntryPoint
 @OptIn(ExperimentalFoundationApi::class)
 class StockDraftRequestCreateStore : ComponentActivity() {
@@ -487,8 +492,7 @@ class StockDraftRequestCreateStore : ComponentActivity() {
 
         return returnVar
     }
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+    
     @Composable
     fun Page() {
         MyApplicationTheme {

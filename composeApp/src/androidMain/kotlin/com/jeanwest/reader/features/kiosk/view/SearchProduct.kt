@@ -2,7 +2,6 @@
 
 package com.jeanwest.reader.features.kiosk.view
 
-import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.os.Bundle
@@ -270,7 +269,6 @@ class SearchProduct : ComponentActivity() {
         }
     }
 
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
     @Composable
     fun Page() {
         MyApplicationTheme {

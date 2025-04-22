@@ -92,7 +92,7 @@ import com.jeanwest.reader.data.local.requestFeatures
 import com.jeanwest.reader.data.local.shelfFeatures
 import com.jeanwest.reader.data.local.stockDraftsFeatures
 import com.jeanwest.reader.data.local.transferFeatures
-import com.jeanwest.reader.features.main.view.MainViewModel
+import com.jeanwest.reader.features.main.mainPage.viewModel.MainViewModel
 import com.jeanwest.reader.models.Feature
 import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.models.ShelfItem
@@ -3087,7 +3087,7 @@ fun ScanBox(item: String, modifier: Modifier) {
 
             Text(
                 item,
-                style = Typography.headlineLarge,
+                style = Typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(

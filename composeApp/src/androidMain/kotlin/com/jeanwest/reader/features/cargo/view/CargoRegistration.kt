@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.cargo.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -26,16 +25,16 @@ import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import com.jeanwest.reader.R
 import com.jeanwest.reader.features.cargo.viewmodel.CargoRegistrationViewModel
-import com.jeanwest.reader.useCases.ExceptionHandler
 import com.jeanwest.reader.features.shared.AppBarWithBack
 import com.jeanwest.reader.features.shared.BottomBarButton
 import com.jeanwest.reader.features.shared.ErrorSnackBar
 import com.jeanwest.reader.features.shared.FilterDropDownList
-import com.jeanwest.reader.features.shared.onPrimaryLight
 import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
 import com.jeanwest.reader.features.shared.MyApplicationTheme
 import com.jeanwest.reader.features.shared.Shapes
 import com.jeanwest.reader.features.shared.SimpleTextField
+import com.jeanwest.reader.features.shared.onPrimaryLight
+import com.jeanwest.reader.useCases.ExceptionHandler
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -80,7 +79,6 @@ class CargoRegistration : ComponentActivity() {
 
 }
 
-@SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
 @Composable
 fun Page(viewModel: CargoRegistrationViewModel, onBackPressed: () -> Unit) {
     MyApplicationTheme {

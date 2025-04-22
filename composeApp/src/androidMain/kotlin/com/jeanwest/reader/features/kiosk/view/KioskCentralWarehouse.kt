@@ -143,7 +143,8 @@ class KioskCentralWarehouse : ComponentActivity() {
     private fun getProductDetails(barcode: String) {
         loading = true
         showDetailsMode = false
-        api.getProductsV5(listOf(memory.user.warehouseCode.toString()), mutableListOf(),
+        api.getProductsV5(
+            listOf(memory.user.warehouseCode.toString()), mutableListOf(),
             mutableListOf(barcode), { _, products, _, _ ->
                 if (products.isEmpty()) {
                     showLog("بارکد وارد شده نامعتبر است.", state)
@@ -199,8 +200,7 @@ class KioskCentralWarehouse : ComponentActivity() {
             finish()
         }
     }
-
-    @SuppressLint("Unusedmaterial3ScaffoldPaddingParameter")
+    
     @ExperimentalCoilApi
     @Composable
     fun Page() {
