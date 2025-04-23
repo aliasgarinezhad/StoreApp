@@ -30,6 +30,10 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -52,10 +56,6 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
 import com.jeanwest.reader.shop.data.Product
-import org.jetbrains.compose.resources.painterResource
-import storeapp.composeapp.generated.resources.Res
-import storeapp.composeapp.generated.resources.ic_baseline_arrow_drop_down_24
-import storeapp.composeapp.generated.resources.ic_baseline_arrow_drop_up_24
 import kotlin.math.max
 import kotlin.math.min
 
@@ -246,13 +246,12 @@ fun FilterDropDownList(
             icon()
             text()
             Icon(
-                painter = painterResource(
+                imageVector =
                     if (expanded) {
-                        Res.drawable.ic_baseline_arrow_drop_up_24
+                        Icons.Filled.KeyboardArrowUp
                     } else {
-                        Res.drawable.ic_baseline_arrow_drop_down_24
-                    }
-                ),
+                        Icons.Filled.KeyboardArrowDown
+                    },
                 "",
                 modifier = Modifier
                     .align(Alignment.CenterVertically)

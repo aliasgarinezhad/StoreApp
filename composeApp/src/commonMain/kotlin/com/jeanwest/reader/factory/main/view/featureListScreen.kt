@@ -40,8 +40,10 @@ import com.jeanwest.reader.factory.main.model.Feature
 import com.jeanwest.reader.view.MyApplicationTheme
 import com.jeanwest.reader.view.ErrorSnackBar
 import com.jeanwest.reader.view.LoadingIndicator
+import com.jeanwest.reader.view.OpenActivityButton
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Serializable
 object FeatureListScreen
@@ -154,10 +156,10 @@ fun MainContent(
                             for (i in 0..2) {
                                 val it = featuresList[rowIndex * 3 + i]
                                 OpenActivityButton(
-                                    title = it.title,
+                                    title = stringResource(it.title),
                                     icon = painterResource(it.iconRes),
                                 ) {
-                                    onFeatureIconClick(it.routeScreen)
+                                    onFeatureIconClick(it.routeScreen!!)
                                 }
                             }
                         }
@@ -176,10 +178,10 @@ fun MainContent(
                                 val it =
                                     featuresList[numberOfRowsBeforeLastRow * 3 + i]
                                 OpenActivityButton(
-                                    title = it.title,
+                                    title = stringResource(it.title),
                                     icon = painterResource(it.iconRes),
                                 ) {
-                                    onFeatureIconClick(it.routeScreen)
+                                    onFeatureIconClick(it.routeScreen!!)
                                 }
                             }
 
@@ -196,41 +198,5 @@ fun MainContent(
                 }
             }
         }
-    }
-}
-
-@Composable
-fun OpenActivityButton(title: String, icon: Painter, onClick: () -> Unit) {
-
-    val iconSize = 88.dp
-    val textSize = 96.dp
-
-    Column(
-        verticalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier
-            .padding(8.dp)
-            .clickable {
-                onClick()
-            }
-    ) {
-
-        Icon(
-            painter = icon, contentDescription = "", modifier = Modifier
-                .size(iconSize)
-                .align(Alignment.CenterHorizontally)
-                .background(
-                    color = MaterialTheme.colors.primary,
-                    shape = MaterialTheme.shapes.large
-                )
-                .padding(4.dp), tint = MaterialTheme.colors.onPrimary
-        )
-        Text(
-            title,
-            modifier = Modifier
-                .width(textSize)
-                .padding(top = 4.dp),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.body1
-        )
     }
 }

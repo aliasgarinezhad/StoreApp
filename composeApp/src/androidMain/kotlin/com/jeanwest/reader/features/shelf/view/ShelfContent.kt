@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -234,7 +235,7 @@ fun AdditionalItems(i: Int, viewModel: ShelfContentViewModel) {
                     }
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_remove),
+                    painter = painterResource(R.drawable.ic_remove),
                     contentDescription = "",
                     tint = errorLight,
                     modifier = Modifier

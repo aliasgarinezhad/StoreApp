@@ -61,6 +61,8 @@ import com.jeanwest.reader.features.shelf.viewmodel.CreateShelfStoreViewModel
 import com.jeanwest.reader.models.StoreShelf
 import com.jeanwest.reader.useCases.ExceptionHandler
 import dagger.hilt.android.AndroidEntryPoint
+import storeapp.composeapp.generated.resources.Res
+import storeapp.composeapp.generated.resources.ic_shelf
 
 /**
  * Activity responsible for creating a new shelf store.
@@ -205,7 +207,9 @@ fun Content(
                                     modifier = Modifier,
                                     icon = {
                                         Icon(
-                                            painter = painterResource(id = R.drawable.ic_shelf),
+                                            painter = org.jetbrains.compose.resources.painterResource(
+                                                Res.drawable.ic_shelf
+                                            ),
                                             contentDescription = "",
                                             tint = primaryLight,
                                             modifier = Modifier

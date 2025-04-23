@@ -3,7 +3,9 @@
 package com.jeanwest.reader.data.local
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import com.jeanwest.reader.R
+import com.jeanwest.reader.FeatureLocation
+import com.jeanwest.reader.FeaturePlatforms
+import com.jeanwest.reader.factory.main.model.Feature
 import com.jeanwest.reader.features.banimode.view.BanimodeReceiveReturn
 import com.jeanwest.reader.features.banimode.view.BanimodeReturn
 import com.jeanwest.reader.features.cardex.viewmodel.Cardex
@@ -57,7 +59,80 @@ import com.jeanwest.reader.features.stockDraftRequest.view.StockDraftRequestCrea
 import com.jeanwest.reader.features.stockDraftRequest.view.StockDraftRequestFindItems
 import com.jeanwest.reader.features.stockDraftRequest.view.StockDraftRequestFindStore
 import com.jeanwest.reader.features.write.view.WriteTag
-import com.jeanwest.reader.models.Feature
+import storeapp.composeapp.generated.resources.AddressProductStore
+import storeapp.composeapp.generated.resources.Cardex
+import storeapp.composeapp.generated.resources.CargoReceive
+import storeapp.composeapp.generated.resources.CargoRegistration
+import storeapp.composeapp.generated.resources.CartonModification
+import storeapp.composeapp.generated.resources.CreateShelfStore
+import storeapp.composeapp.generated.resources.EnterShelfStore
+import storeapp.composeapp.generated.resources.NewShelfInRequest
+import storeapp.composeapp.generated.resources.PrintPriceLabel
+import storeapp.composeapp.generated.resources.ReceiveLogistics
+import storeapp.composeapp.generated.resources.Res
+import storeapp.composeapp.generated.resources.ReturnLogistics
+import storeapp.composeapp.generated.resources.ShelfInNew
+import storeapp.composeapp.generated.resources.ShelfInRequest
+import storeapp.composeapp.generated.resources.ShelfInventory
+import storeapp.composeapp.generated.resources.StockDraftRequestCreateStore
+import storeapp.composeapp.generated.resources.StockDraftRequestFindStore
+import storeapp.composeapp.generated.resources.addOrRemoveCarton
+import storeapp.composeapp.generated.resources.add_list
+import storeapp.composeapp.generated.resources.bani
+import storeapp.composeapp.generated.resources.banimodeReceiveReturn
+import storeapp.composeapp.generated.resources.banimodeReturn
+import storeapp.composeapp.generated.resources.barcodeChecker
+import storeapp.composeapp.generated.resources.barcodeSpecial
+import storeapp.composeapp.generated.resources.barcode_scan_icon
+import storeapp.composeapp.generated.resources.carton
+import storeapp.composeapp.generated.resources.cartonTransferConfirmation
+import storeapp.composeapp.generated.resources.cartonsDetailConfirm
+import storeapp.composeapp.generated.resources.confirm_stock_draft
+import storeapp.composeapp.generated.resources.createCarton
+import storeapp.composeapp.generated.resources.createStockDraftFromCarton
+import storeapp.composeapp.generated.resources.enter_shelf_ic
+import storeapp.composeapp.generated.resources.exit_shelf_ic
+import storeapp.composeapp.generated.resources.ic_cardex
+import storeapp.composeapp.generated.resources.ic_history
+import storeapp.composeapp.generated.resources.ic_sack
+import storeapp.composeapp.generated.resources.ic_shelf
+import storeapp.composeapp.generated.resources.inventory
+import storeapp.composeapp.generated.resources.inventoryReportDepartment
+import storeapp.composeapp.generated.resources.inventoryText
+import storeapp.composeapp.generated.resources.kiosk
+import storeapp.composeapp.generated.resources.kioskCurrentWarehouse
+import storeapp.composeapp.generated.resources.manualRefill
+import storeapp.composeapp.generated.resources.receive_logistics_ic
+import storeapp.composeapp.generated.resources.refill
+import storeapp.composeapp.generated.resources.refill2
+import storeapp.composeapp.generated.resources.reverseRefill
+import storeapp.composeapp.generated.resources.sackCreate
+import storeapp.composeapp.generated.resources.search
+import storeapp.composeapp.generated.resources.searchItemsInCartons
+import storeapp.composeapp.generated.resources.shelf_address
+import storeapp.composeapp.generated.resources.shelf_address_ic
+import storeapp.composeapp.generated.resources.shelf_content
+import storeapp.composeapp.generated.resources.shelf_content_ic
+import storeapp.composeapp.generated.resources.shelf_enter
+import storeapp.composeapp.generated.resources.shelf_exit
+import storeapp.composeapp.generated.resources.shelf_transfer
+import storeapp.composeapp.generated.resources.showCarton
+import storeapp.composeapp.generated.resources.show_carton
+import storeapp.composeapp.generated.resources.stockDraftAttachEpcs
+import storeapp.composeapp.generated.resources.stockDraftCreate
+import storeapp.composeapp.generated.resources.stockDraftDetails
+import storeapp.composeapp.generated.resources.stockDraftRequestConfirm
+import storeapp.composeapp.generated.resources.stockDraftRequestFind
+import storeapp.composeapp.generated.resources.stockDraftTransfer
+import storeapp.composeapp.generated.resources.stockDraftTransferConfirmation
+import storeapp.composeapp.generated.resources.stockDraftTransferToStoreByDriverConfirmation
+import storeapp.composeapp.generated.resources.stockDraftsHistory
+import storeapp.composeapp.generated.resources.stock_draft_confirmation
+import storeapp.composeapp.generated.resources.tagProgramming
+import storeapp.composeapp.generated.resources.transferCarton
+import storeapp.composeapp.generated.resources.transfer_cartons
+import storeapp.composeapp.generated.resources.true_flase
+import storeapp.composeapp.generated.resources.write
 
 const val mainTitle = "مدیریت انبار"
 
@@ -71,411 +146,573 @@ const val mainTitle = "مدیریت انبار"
  * allowing for dynamic UI adaptation and feature availability.
  */
 @OptIn(ExperimentalFoundationApi::class)
-val features = mutableListOf(
+val features = listOf(
 
     Feature(
-        "CreateStockDraftFromStoreWarehouseToStore",
-        listOf(FeatureLocation.STORE_WAREHOUSE),
-        R.string.manualRefill,
-        R.drawable.refill,
-        RefillManual::class.java
+        activityClass = RefillManual::class,
+        isNavAble = false,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
+        accessKey = "CreateStockDraftFromStoreWarehouseToStore",
+        title = Res.string.manualRefill,
+        routeScreen = null,
+        iconRes = Res.drawable.refill,
+        locationsArray = listOf(FeatureLocation.STORE_WAREHOUSE),
     ),
     Feature(
-        "CreateStockDraftFromRefill",
-        listOf(FeatureLocation.STORE_WAREHOUSE),
-        R.string.refill,
-        R.drawable.refill,
-        Refill::class.java
+        accessKey = "CreateStockDraftFromRefill",
+        locationsArray = listOf(FeatureLocation.STORE_WAREHOUSE),
+        title = Res.string.refill,
+        iconRes = Res.drawable.refill,
+        activityClass = Refill::class,
+        isNavAble = false,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
+        routeScreen = null
     ),
     Feature(
-        "CreateStockDraftFromRefill",
-        listOf(FeatureLocation.STORE_WAREHOUSE),
-        R.string.refill2,
-        R.drawable.refill,
-        Refill2::class.java
+        accessKey = "CreateStockDraftFromRefill",
+        locationsArray = listOf(FeatureLocation.STORE_WAREHOUSE),
+        title = Res.string.refill2,
+        iconRes = Res.drawable.barcode_scan_icon,
+        activityClass = Refill2::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "CreateStockDraftFromStoreToStoreWarehouse",
-        listOf(FeatureLocation.STORE),
-        R.string.reverseRefill,
-        R.drawable.add_list,
-        ReverseRefill::class.java
+        accessKey = "CreateStockDraftFromStoreToStoreWarehouse",
+        locationsArray = listOf(FeatureLocation.STORE),
+        title = Res.string.reverseRefill,
+        iconRes = Res.drawable.add_list,
+        activityClass = ReverseRefill::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "ConfirmStockDraft",
-        listOf(
+        accessKey = "ConfirmStockDraft",
+        locationsArray = listOf(
             FeatureLocation.STORE,
             FeatureLocation.STORE_WAREHOUSE,
             FeatureLocation.CENTRAL_WAREHOUSE
         ),
-        R.string.stock_draft_confirmation,
-        R.drawable.confirm_stock_draft,
-        StockDraftConfirm::class.java
+        title = Res.string.stock_draft_confirmation,
+        iconRes = Res.drawable.confirm_stock_draft,
+        activityClass = StockDraftConfirm::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "PrintPriceLabel",
-        listOf(FeatureLocation.STORE_WAREHOUSE),
-        R.string.PrintPriceLabel,
-        R.drawable.write,
-        PrintPriceLabel::class.java
+        accessKey = "PrintPriceLabel",
+        locationsArray = listOf(FeatureLocation.STORE_WAREHOUSE),
+        title = Res.string.PrintPriceLabel,
+        iconRes = Res.drawable.write,
+        activityClass = PrintPriceLabel::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "Kiosk",
-        listOf(FeatureLocation.STORE, FeatureLocation.STORE_WAREHOUSE),
-        R.string.kiosk,
-        R.drawable.search,
-        Kiosk::class.java
+        accessKey = "Kiosk",
+        locationsArray = listOf(FeatureLocation.STORE, FeatureLocation.STORE_WAREHOUSE),
+        title = Res.string.kiosk,
+        iconRes = Res.drawable.search,
+        activityClass = Kiosk::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "CreateStockDraft",
-        listOf(
+        accessKey = "CreateStockDraft",
+        locationsArray = listOf(
             FeatureLocation.STORE,
             FeatureLocation.STORE_WAREHOUSE,
             FeatureLocation.CENTRAL_WAREHOUSE
         ),
-        R.string.stockDraftCreate,
-        R.drawable.add_list,
-        StockDraftCreate::class.java
+        title = Res.string.stockDraftCreate,
+        iconRes = Res.drawable.add_list,
+        activityClass = StockDraftCreate::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "StockDraftRequestStoreCreate",
-        listOf(
+        accessKey = "StockDraftRequestStoreCreate",
+        locationsArray = listOf(
             FeatureLocation.STORE_WAREHOUSE,
             FeatureLocation.STORE,
             FeatureLocation.CENTRAL_WAREHOUSE,
         ),
-        R.string.StockDraftRequestCreateStore,
-        R.drawable.add_list,
-        StockDraftRequestCreateStore::class.java
+        title = Res.string.StockDraftRequestCreateStore,
+        iconRes = Res.drawable.add_list,
+        activityClass = StockDraftRequestCreateStore::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "StockDraftRequestStoreFindAndFinish",
-        listOf(
+        accessKey = "StockDraftRequestStoreFindAndFinish",
+        locationsArray = listOf(
             FeatureLocation.STORE_WAREHOUSE,
             FeatureLocation.STORE,
             FeatureLocation.CENTRAL_WAREHOUSE
         ),
-        R.string.StockDraftRequestFindStore,
-        R.drawable.confirm_stock_draft,
-        StockDraftRequestFindStore::class.java
+        title = Res.string.StockDraftRequestFindStore,
+        iconRes = Res.drawable.confirm_stock_draft,
+        activityClass = StockDraftRequestFindStore::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "StockDraftDetails",
-        listOf(
+        accessKey = "StockDraftDetails",
+        locationsArray = listOf(
             FeatureLocation.STORE,
             FeatureLocation.STORE_WAREHOUSE,
             FeatureLocation.CENTRAL_WAREHOUSE
         ),
-        R.string.stockDraftDetails,
-        R.drawable.ic_history,
-        StockDraftDetails::class.java
+        title = Res.string.stockDraftDetails,
+        iconRes = Res.drawable.ic_history,
+        activityClass = StockDraftDetails::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "StockDraftDetails",
-        listOf(
+        accessKey = "StockDraftDetails",
+        locationsArray = listOf(
             FeatureLocation.STORE,
             FeatureLocation.STORE_WAREHOUSE,
             FeatureLocation.CENTRAL_WAREHOUSE
         ),
-        R.string.stockDraftsHistory,
-        R.drawable.ic_history,
-        StockDraftsHistory::class.java
+        title = Res.string.stockDraftsHistory,
+        iconRes = Res.drawable.ic_history,
+        activityClass = StockDraftsHistory::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "Cardex",
-        listOf(FeatureLocation.STORE, FeatureLocation.STORE_WAREHOUSE),
-        R.string.Cardex,
-        R.drawable.ic_cardex,
-        Cardex::class.java
+        accessKey = "Cardex",
+        locationsArray = listOf(FeatureLocation.STORE, FeatureLocation.STORE_WAREHOUSE),
+        title = Res.string.Cardex,
+        iconRes = Res.drawable.ic_cardex,
+        activityClass = Cardex::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "RFIDTagWrite",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.tagProgramming,
-        R.drawable.write,
-        WriteTag::class.java
+        accessKey = "RFIDTagWrite",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.tagProgramming,
+        iconRes = Res.drawable.write,
+        activityClass = WriteTag::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "Inventory",
-        listOf(FeatureLocation.STORE, FeatureLocation.STORE_WAREHOUSE),
-        R.string.inventoryText,
-        R.drawable.inventory,
-        Inventory::class.java
+        accessKey = "Inventory",
+        locationsArray = listOf(FeatureLocation.STORE, FeatureLocation.STORE_WAREHOUSE),
+        title = Res.string.inventoryText,
+        iconRes = Res.drawable.inventory,
+        activityClass = Inventory::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "Inventory",
-        listOf(FeatureLocation.STORE, FeatureLocation.STORE_WAREHOUSE),
-        R.string.inventoryReportDepartment,
-        R.drawable.inventory,
-        InventoryReportDepartment::class.java
+        accessKey = "Inventory",
+        locationsArray = listOf(FeatureLocation.STORE, FeatureLocation.STORE_WAREHOUSE),
+        title = Res.string.inventoryReportDepartment,
+        iconRes = Res.drawable.inventory,
+        activityClass = InventoryReportDepartment::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "ShelfFindAnItem",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.shelf_address,
-        R.drawable.shelf_address_ic,
-        ShelfAddress::class.java
+        accessKey = "ShelfFindAnItem",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.shelf_address,
+        iconRes = Res.drawable.shelf_address_ic,
+        activityClass = ShelfAddress::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "ShelfDetails",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.shelf_content,
-        R.drawable.shelf_content_ic,
-        ShelfContent::class.java
+        accessKey = "ShelfDetails",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.shelf_content,
+        iconRes = Res.drawable.shelf_content_ic,
+        activityClass = ShelfContent::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "ShelfAddItem",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.shelf_enter,
-        R.drawable.enter_shelf_ic,
-        ShelfEnter::class.java
+        accessKey = "ShelfAddItem",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.shelf_enter,
+        iconRes = Res.drawable.enter_shelf_ic,
+        activityClass = ShelfEnter::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "ShelfRemoveItem",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.shelf_exit,
-        R.drawable.exit_shelf_ic,
-        ShelfExit::class.java
+        accessKey = "ShelfRemoveItem",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.shelf_exit,
+        iconRes = Res.drawable.exit_shelf_ic,
+        activityClass = ShelfExit::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "StockDraftRequestCentralWarehouseFind",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.shelf_transfer,
-        R.drawable.ic_shelf,
-        TransferShelf::class.java
+        accessKey = "StockDraftRequestCentralWarehouseFind",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.shelf_transfer,
+        iconRes = Res.drawable.ic_shelf,
+        activityClass = TransferShelf::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "ProductNumberInAllDepartments",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.ShelfInventory,
-        R.drawable.ic_shelf,
-        ShelfInventory::class.java
+        accessKey = "ProductNumberInAllDepartments",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.ShelfInventory,
+        iconRes = Res.drawable.ic_shelf,
+        activityClass = ShelfInventory::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "StockDraftRequestCentralWarehouseFind",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.stockDraftRequestFind,
-        R.drawable.search,
-        StockDraftRequestFindItems::class.java
+        accessKey = "StockDraftRequestCentralWarehouseFind",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.stockDraftRequestFind,
+        iconRes = Res.drawable.search,
+        activityClass = StockDraftRequestFindItems::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
 
     Feature(
-        "StockDraftRequestCentralWarehouseFind",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.ShelfInRequest,
-        R.drawable.ic_shelf,
-        CreateShelfInRequest::class.java
+        accessKey = "StockDraftRequestCentralWarehouseFind",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.ShelfInRequest,
+        iconRes = Res.drawable.ic_shelf,
+        activityClass = CreateShelfInRequest::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "StockDraftRequestCentralWarehouseFind",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.NewShelfInRequest,
-        R.drawable.ic_shelf,
-        CreateShelfInRequest::class.java
+        accessKey = "StockDraftRequestCentralWarehouseFind",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.NewShelfInRequest,
+        iconRes = Res.drawable.ic_shelf,
+        activityClass = CreateShelfInRequest::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "StockDraftRequestCentralWarehouseFind",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.ShelfInNew,
-        R.drawable.ic_shelf,
-        NewShelfIn::class.java
+        accessKey = "StockDraftRequestCentralWarehouseFind",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.ShelfInNew,
+        iconRes = Res.drawable.ic_shelf,
+        activityClass = NewShelfIn::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "StockDraftRequestCentralWarehouseCheckFoundedAndFinish",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.stockDraftRequestConfirm,
-        R.drawable.confirm_stock_draft,
-        StockDraftRequestConfirm::class.java
+        accessKey = "StockDraftRequestCentralWarehouseCheckFoundedAndFinish",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.stockDraftRequestConfirm,
+        iconRes = Res.drawable.confirm_stock_draft,
+        activityClass = StockDraftRequestConfirm::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "CartonAddToShelfOrRemoveFrom",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.addOrRemoveCarton,
-        R.drawable.true_flase,
-        AddOrRemoveCarton::class.java
+        accessKey = "CartonAddToShelfOrRemoveFrom",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.addOrRemoveCarton,
+        iconRes = Res.drawable.true_flase,
+        activityClass = AddOrRemoveCarton::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "CartonCreate",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.createCarton,
-        R.drawable.carton,
-        CartonCreate::class.java
+        accessKey = "CartonCreate",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.createCarton,
+        iconRes = Res.drawable.carton,
+        activityClass = CartonCreate::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "CartonDetails",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.showCarton,
-        R.drawable.show_carton,
-        CartonDetails::class.java
+        accessKey = "CartonDetails",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.showCarton,
+        iconRes = Res.drawable.show_carton,
+        activityClass = CartonDetails::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "CartonTransferBegin",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.transferCarton,
-        R.drawable.transfer_cartons,
-        CartonTransfer::class.java
+        accessKey = "CartonTransferBegin",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.transferCarton,
+        iconRes = Res.drawable.transfer_cartons,
+        activityClass = CartonTransfer::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "CartonTransferFinish",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.cartonTransferConfirmation,
-        R.drawable.transfer_cartons,
-        CartonTransferConfirmation::class.java
+        accessKey = "CartonTransferFinish",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.cartonTransferConfirmation,
+        iconRes = Res.drawable.transfer_cartons,
+        activityClass = CartonTransferConfirmation::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "CartonCreate",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.CartonModification,
-        R.drawable.ic_carton_modification,
-        CartonModification::class.java
+        accessKey = "CartonCreate",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.CartonModification,
+        iconRes = Res.drawable.carton,
+        activityClass = CartonModification::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "ProductNumberInAllDepartments",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.barcodeChecker,
-        R.drawable.search,
-        BarcodeChecker::class.java
+        accessKey = "ProductNumberInAllDepartments",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.barcodeChecker,
+        iconRes = Res.drawable.search,
+        activityClass = BarcodeChecker::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "ProductNumberInSpecialWarehouse",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.kioskCurrentWarehouse,
-        R.drawable.search,
-        KioskCentralWarehouse::class.java
+        accessKey = "ProductNumberInSpecialWarehouse",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.kioskCurrentWarehouse,
+        iconRes = Res.drawable.search,
+        activityClass = KioskCentralWarehouse::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "ProductNumberInSpecialWarehouses",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.barcodeSpecial,
-        R.drawable.search,
-        BarcodeSpecial::class.java
+        accessKey = "ProductNumberInSpecialWarehouses",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.barcodeSpecial,
+        iconRes = Res.drawable.search,
+        activityClass = BarcodeSpecial::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "CreateStockDraftAddRFIDTagsData",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.stockDraftAttachEpcs,
-        R.drawable.confirm_stock_draft,
-        StockDraftAttachEPCs::class.java
+        accessKey = "CreateStockDraftAddRFIDTagsData",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.stockDraftAttachEpcs,
+        iconRes = Res.drawable.confirm_stock_draft,
+        activityClass = StockDraftAttachEPCs::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "TransferStockDraftLocallyBegin",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.stockDraftTransfer,
-        R.drawable.confirm_stock_draft,
-        StockDraftTransfer::class.java
+        accessKey = "TransferStockDraftLocallyBegin",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.stockDraftTransfer,
+        iconRes = Res.drawable.confirm_stock_draft,
+        activityClass = StockDraftTransfer::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "TransferStockDraftLocallyFinish",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.stockDraftTransferConfirmation,
-        R.drawable.confirm_stock_draft,
-        StockDraftTransferConfirmation::class.java
+        accessKey = "TransferStockDraftLocallyFinish",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.stockDraftTransferConfirmation,
+        iconRes = Res.drawable.confirm_stock_draft,
+        activityClass = StockDraftTransferConfirmation::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "TransferStockDraftBegin",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.ReceiveLogistics,
-        R.drawable.receive_logistics_ic,
-        StockDraftTransferToStoreByDriver::class.java
+        accessKey = "TransferStockDraftBegin",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.ReceiveLogistics,
+        iconRes = Res.drawable.receive_logistics_ic,
+        activityClass = StockDraftTransferToStoreByDriver::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "TransferStockDraftCancel",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.ReturnLogistics,
-        R.drawable.ic_baseline_clear_24,
-        StockDraftTransferToStoreByDriverCancellation::class.java
+        accessKey = "TransferStockDraftCancel",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.ReturnLogistics,
+        iconRes = Res.drawable.transfer_cartons,
+        activityClass = StockDraftTransferToStoreByDriverCancellation::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "TransferStockDraftFinish",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.stockDraftTransferToStoreByDriverConfirmation,
-        R.drawable.ic_baseline_drive_eta_24,
-        ConfirmStockDraftLogisticInStore::class.java
+        accessKey = "TransferStockDraftFinish",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.stockDraftTransferToStoreByDriverConfirmation,
+        iconRes = Res.drawable.transfer_cartons,
+        activityClass = ConfirmStockDraftLogisticInStore::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "CartonDetailsConfirm",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.cartonsDetailConfirm,
-        R.drawable.carton,
-        CartonsConfirmItems::class.java
+        accessKey = "CartonDetailsConfirm",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.cartonsDetailConfirm,
+        iconRes = Res.drawable.carton,
+        activityClass = CartonsConfirmItems::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "TransferStockDraftBegin",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.sackCreate,
-        R.drawable.ic_sack,
-        SackCreate::class.java
+        accessKey = "TransferStockDraftBegin",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.sackCreate,
+        iconRes = Res.drawable.ic_sack,
+        activityClass = SackCreate::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "CartonTransferBegin",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.createStockDraftFromCarton,
-        R.drawable.ic_sack,
-        CreateStockDraftFromCarton::class.java
+        accessKey = "CartonTransferBegin",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.createStockDraftFromCarton,
+        iconRes = Res.drawable.ic_sack,
+        activityClass = CreateStockDraftFromCarton::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "CartonDetails",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.searchItemsInCartons,
-        R.drawable.shelf_address_ic,
-        SearchAnItemInCartons::class.java
+        accessKey = "CartonDetails",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.searchItemsInCartons,
+        iconRes = Res.drawable.shelf_address_ic,
+        activityClass = SearchAnItemInCartons::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "Inventory",
-        listOf(FeatureLocation.STORE, FeatureLocation.STORE_WAREHOUSE),
-        R.string.CreateShelfStore,
-        R.drawable.ic_shelf,
-        CreateShelfStore::class.java
+        accessKey = "Inventory",
+        locationsArray = listOf(FeatureLocation.STORE, FeatureLocation.STORE_WAREHOUSE),
+        title = Res.string.CreateShelfStore,
+        iconRes = Res.drawable.ic_shelf,
+        activityClass = CreateShelfStore::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "Inventory",
-        listOf(FeatureLocation.STORE, FeatureLocation.STORE_WAREHOUSE),
-        R.string.EnterShelfStore,
-        R.drawable.enter_shelf_ic,
-        ShelfEnterStore::class.java
+        accessKey = "Inventory",
+        locationsArray = listOf(FeatureLocation.STORE, FeatureLocation.STORE_WAREHOUSE),
+        title = Res.string.EnterShelfStore,
+        iconRes = Res.drawable.enter_shelf_ic,
+        activityClass = ShelfEnterStore::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
 
     Feature(
-        "Inventory",
-        listOf(FeatureLocation.STORE, FeatureLocation.STORE_WAREHOUSE),
-        R.string.AddressProductStore,
-        R.drawable.ic_search,
-        AddressProductShelf::class.java
+        accessKey = "Inventory",
+        locationsArray = listOf(FeatureLocation.STORE, FeatureLocation.STORE_WAREHOUSE),
+        title = Res.string.AddressProductStore,
+        iconRes = Res.drawable.search,
+        activityClass = AddressProductShelf::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "Inventory",
-        listOf(FeatureLocation.STORE, FeatureLocation.STORE_WAREHOUSE),
-        R.string.shelf_content,
-        R.drawable.shelf_content_ic,
-        ShelfContentStore::class.java
+        accessKey = "Inventory",
+        locationsArray = listOf(FeatureLocation.STORE, FeatureLocation.STORE_WAREHOUSE),
+        title = Res.string.shelf_content,
+        iconRes = Res.drawable.shelf_content_ic,
+        activityClass = ShelfContentStore::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "StockDraftRequestCentralWarehouseFind",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.CargoRegistration,
-        R.drawable.ic_cargo,
-        CargoRegistration::class.java
+        accessKey = "StockDraftRequestCentralWarehouseFind",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.CargoRegistration,
+        iconRes = Res.drawable.search,
+        activityClass = CargoRegistration::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "StockDraftRequestCentralWarehouseFind",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.CargoReceive,
-        R.drawable.ic_cargo,
-        CargoReceive::class.java
+        accessKey = "StockDraftRequestCentralWarehouseFind",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.CargoReceive,
+        iconRes = Res.drawable.search,
+        activityClass = CargoReceive::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "BanimodeReturn",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.banimodeReturn,
-        R.drawable.bani,
-        BanimodeReturn::class.java
+        accessKey = "BanimodeReturn",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.banimodeReturn,
+        iconRes = Res.drawable.bani,
+        activityClass = BanimodeReturn::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     ),
     Feature(
-        "BanimodeRecieveReturn",
-        listOf(FeatureLocation.CENTRAL_WAREHOUSE),
-        R.string.banimodeReceiveReturn,
-        R.drawable.bani,
-        BanimodeReceiveReturn::class.java
+        accessKey = "BanimodeRecieveReturn",
+        locationsArray = listOf(FeatureLocation.CENTRAL_WAREHOUSE),
+        title = Res.string.banimodeReceiveReturn,
+        iconRes = Res.drawable.bani,
+        activityClass = BanimodeReceiveReturn::class,
+        isNavAble = false,
+        routeScreen = null,
+        platformArray = listOf(FeaturePlatforms.ANDROID),
     )
 )
 

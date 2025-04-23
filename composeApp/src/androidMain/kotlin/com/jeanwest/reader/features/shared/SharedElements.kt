@@ -30,6 +30,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
@@ -65,6 +67,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -83,7 +86,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.jeanwest.reader.R
-import com.jeanwest.reader.data.local.FeatureLocation
+import com.jeanwest.reader.FeatureLocation
 import com.jeanwest.reader.data.local.banimodeFeatures
 import com.jeanwest.reader.data.local.cartonsFeatures
 import com.jeanwest.reader.data.local.driverFeatures
@@ -92,11 +95,15 @@ import com.jeanwest.reader.data.local.requestFeatures
 import com.jeanwest.reader.data.local.shelfFeatures
 import com.jeanwest.reader.data.local.stockDraftsFeatures
 import com.jeanwest.reader.data.local.transferFeatures
+import com.jeanwest.reader.factory.main.model.Feature
 import com.jeanwest.reader.features.main.mainPage.viewModel.MainViewModel
-import com.jeanwest.reader.models.Feature
 import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.models.ShelfItem
 import com.jeanwest.reader.models.StockDraftRequestItem
+import org.jetbrains.compose.resources.StringResource
+import storeapp.composeapp.generated.resources.NewShelfInRequest
+import storeapp.composeapp.generated.resources.Res
+import storeapp.composeapp.generated.resources.ic_shelf
 import java.util.Locale
 
 
@@ -280,7 +287,7 @@ fun EmptyShelf(text: String) {
                     .size(256.dp)
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_shelf),
+                    painter = org.jetbrains.compose.resources.painterResource(Res.drawable.ic_shelf),
                     contentDescription = "",
                     tint = Color.Unspecified,
                     modifier = Modifier
@@ -380,7 +387,7 @@ fun ShowProductDetails(
 }
 
 @Composable
-fun OpenActivityButton(text: Int, iconId: Int, onClick: () -> Unit) {
+fun OpenActivityButton(title: String, icon: Painter, onClick: () -> Unit) {
 
     val iconSize = 48.dp
     val textSize = 64.dp
@@ -395,7 +402,7 @@ fun OpenActivityButton(text: Int, iconId: Int, onClick: () -> Unit) {
     ) {
 
         Icon(
-            painter = painterResource(iconId),
+            painter = icon,
             tint = MaterialTheme.colorScheme.primary,
             contentDescription = "",
             modifier = Modifier
@@ -408,7 +415,7 @@ fun OpenActivityButton(text: Int, iconId: Int, onClick: () -> Unit) {
                 .padding(4.dp)
         )
         Text(
-            stringResource(id = text),
+            title,
             modifier = Modifier
                 .width(textSize)
                 .padding(top = 4.dp),
@@ -474,7 +481,7 @@ fun ExpandableCard(key: String, features: MutableList<Feature>, viewModel: MainV
         "cartonsFeatures" -> {
             title = "کارتن"
             featureList = features.filter {
-                FeatureLocation.CENTRAL_WAREHOUSE in it.featureLocationsArray &&
+                FeatureLocation.CENTRAL_WAREHOUSE in it.locationsArray &&
                         it.accessKey in cartonsFeatures
             }.toMutableList()
         }
@@ -482,7 +489,7 @@ fun ExpandableCard(key: String, features: MutableList<Feature>, viewModel: MainV
         "stockDraftsFeatures" -> {
             title = "حواله"
             featureList = features.filter {
-                FeatureLocation.CENTRAL_WAREHOUSE in it.featureLocationsArray &&
+                FeatureLocation.CENTRAL_WAREHOUSE in it.locationsArray &&
                         it.accessKey in stockDraftsFeatures
             }.toMutableList()
         }
@@ -490,7 +497,7 @@ fun ExpandableCard(key: String, features: MutableList<Feature>, viewModel: MainV
         "shelfFeatures" -> {
             title = "قفسه"
             featureList = features.filter {
-                FeatureLocation.CENTRAL_WAREHOUSE in it.featureLocationsArray &&
+                FeatureLocation.CENTRAL_WAREHOUSE in it.locationsArray &&
                         it.accessKey in shelfFeatures
             }.toMutableList()
         }
@@ -498,7 +505,7 @@ fun ExpandableCard(key: String, features: MutableList<Feature>, viewModel: MainV
         "driverFeatures" -> {
             title = "راننده"
             featureList = features.filter {
-                FeatureLocation.CENTRAL_WAREHOUSE in it.featureLocationsArray &&
+                FeatureLocation.CENTRAL_WAREHOUSE in it.locationsArray &&
                         it.accessKey in driverFeatures
             }.toMutableList()
         }
@@ -506,7 +513,7 @@ fun ExpandableCard(key: String, features: MutableList<Feature>, viewModel: MainV
         "transferFeatures" -> {
             title = "انتقال"
             featureList = features.filter {
-                FeatureLocation.CENTRAL_WAREHOUSE in it.featureLocationsArray &&
+                FeatureLocation.CENTRAL_WAREHOUSE in it.locationsArray &&
                         it.accessKey in transferFeatures
             }.toMutableList()
         }
@@ -514,7 +521,7 @@ fun ExpandableCard(key: String, features: MutableList<Feature>, viewModel: MainV
         "mojoodiReviewFeatures" -> {
             title = "کنترل موجودی"
             featureList = features.filter {
-                FeatureLocation.CENTRAL_WAREHOUSE in it.featureLocationsArray &&
+                FeatureLocation.CENTRAL_WAREHOUSE in it.locationsArray &&
                         it.accessKey in mojoodiReviewFeatures
             }.toMutableList()
         }
@@ -522,7 +529,7 @@ fun ExpandableCard(key: String, features: MutableList<Feature>, viewModel: MainV
         "requestFeatures" -> {
             title = "درخواست ها"
             featureList = features.filter {
-                FeatureLocation.CENTRAL_WAREHOUSE in it.featureLocationsArray &&
+                FeatureLocation.CENTRAL_WAREHOUSE in it.locationsArray &&
                         it.accessKey in requestFeatures
             }.toMutableList()
         }
@@ -530,7 +537,7 @@ fun ExpandableCard(key: String, features: MutableList<Feature>, viewModel: MainV
         "banimodeFeatures" -> {
             title = "بانی مد"
             featureList = features.filter {
-                FeatureLocation.CENTRAL_WAREHOUSE in it.featureLocationsArray &&
+                FeatureLocation.CENTRAL_WAREHOUSE in it.locationsArray &&
                         it.accessKey in banimodeFeatures
             }.toMutableList()
         }
@@ -565,13 +572,7 @@ fun ExpandableCard(key: String, features: MutableList<Feature>, viewModel: MainV
                 horizontalArrangement = Arrangement.Absolute.SpaceBetween
             ) {
                 Icon(
-                    painter = painterResource(
-                        id = if (expanded) {
-                            R.drawable.ic_baseline_arrow_drop_up_24
-                        } else {
-                            R.drawable.ic_baseline_arrow_drop_down_24
-                        }
-                    ),
+                    imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                     "",
                     modifier = Modifier
                         .padding(start = 0.dp, end = 4.dp)
@@ -603,14 +604,14 @@ fun ExpandableCard(key: String, features: MutableList<Feature>, viewModel: MainV
                         for (i in 0..3) {
                             val it = featureList[rowIndex * 4 + i]
                             OpenActivityButton(
-                                it.featureTitleResourceAddress,
-                                it.featureIconResourceAddress
+                                title = org.jetbrains.compose.resources.stringResource(it.title),
+                                icon = org.jetbrains.compose.resources.painterResource(it.iconRes)
                             ) {
                                 var data: String? = null
-                                if (it.featureTitleResourceAddress == R.string.NewShelfInRequest) {
+                                if (it.title == Res.string.NewShelfInRequest) {
                                     data = "RFID"
                                 }
-                                viewModel.onFeatureButtonClick(it.featureClass, data)
+                                viewModel.onFeatureButtonClick(it.activityClass, data)
                             }
                         }
                     }
@@ -628,14 +629,14 @@ fun ExpandableCard(key: String, features: MutableList<Feature>, viewModel: MainV
                         for (i in 0 until numberOfFeaturesInLastRow) {
                             val it = featureList[numberOfRowsBeforeLastRow * 4 + i]
                             OpenActivityButton(
-                                it.featureTitleResourceAddress,
-                                it.featureIconResourceAddress
+                                title = org.jetbrains.compose.resources.stringResource(it.title),
+                                icon = org.jetbrains.compose.resources.painterResource(it.iconRes)
                             ) {
                                 var data: String? = null
-                                if (it.featureTitleResourceAddress == R.string.NewShelfInRequest) {
+                                if (it.title == Res.string.NewShelfInRequest) {
                                     data = "RFID"
                                 }
-                                viewModel.onFeatureButtonClick(it.featureClass, data)
+                                viewModel.onFeatureButtonClick(it.activityClass, data)
                             }
                         }
 
@@ -2560,13 +2561,7 @@ fun FilterDropDownList(
             icon()
             text()
             Icon(
-                painter = painterResource(
-                    id = if (expanded) {
-                        R.drawable.ic_baseline_arrow_drop_up_24
-                    } else {
-                        R.drawable.ic_baseline_arrow_drop_down_24
-                    }
-                ),
+                imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                 "",
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
@@ -2637,13 +2632,7 @@ fun FilterDropDownListWithSearch(
             icon()
             text()
             Icon(
-                painter = painterResource(
-                    id = if (expanded) {
-                        R.drawable.ic_baseline_arrow_drop_up_24
-                    } else {
-                        R.drawable.ic_baseline_arrow_drop_down_24
-                    }
-                ),
+                imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                 "",
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
@@ -3037,11 +3026,7 @@ fun ScanTypeDropDownList(
                 .testTag("scanTypeDropDownList")) {
             Text(text = scanTypeValue)
             Icon(
-                painter = if (!expanded) {
-                    painterResource(id = R.drawable.ic_baseline_arrow_drop_down_24)
-                } else {
-                    painterResource(id = R.drawable.ic_baseline_arrow_drop_up_24)
-                }, ""
+                imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown, ""
             )
         }
 

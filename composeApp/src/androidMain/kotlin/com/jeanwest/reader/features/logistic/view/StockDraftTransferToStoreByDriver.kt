@@ -81,6 +81,8 @@ import com.jeanwest.reader.useCases.RFID
 import com.jeanwest.reader.useCases.errorBeep
 import com.jeanwest.reader.useCases.successBeep
 import dagger.hilt.android.AndroidEntryPoint
+import storeapp.composeapp.generated.resources.Res
+import storeapp.composeapp.generated.resources.ic_sack
 import java.util.Locale
 import javax.inject.Inject
 
@@ -673,7 +675,7 @@ class StockDraftTransferToStoreByDriver : ComponentActivity() {
                                                 }
                                         ) {
                                             Icon(
-                                                painter = painterResource(id = R.drawable.ic_sack),
+                                                painter = org.jetbrains.compose.resources.painterResource(Res.drawable.ic_sack),
                                                 contentDescription = "",
                                                 tint = Color.Blue,
                                                 modifier = Modifier

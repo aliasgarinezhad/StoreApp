@@ -62,6 +62,7 @@ import com.jeanwest.reader.features.shared.OpenActivityButton
 import com.jeanwest.reader.features.shared.SimpleTextField
 import com.jeanwest.reader.features.write.view.WriteTag
 import dagger.hilt.android.AndroidEntryPoint
+import io.ktor.util.reflect.instanceOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -96,17 +97,33 @@ class MainActivity : ComponentActivity() {
 
         CoroutineScope(Dispatchers.Main).launch {
             viewModel.navigationEvents.collect { event ->
-                if(event is NavigationEvents.OpenActivity) {
+                if (event is NavigationEvents.OpenActivity) {
 
-                    if(event.activity == WriteTag::class.java) {
+                    if (event.activity == WriteTag::class) {
                         if (!viewModel.memory.device.isExist) {
-                            this@MainActivity.startActivity(Intent(this@MainActivity, DeviceRegister::class.java))
+                            this@MainActivity.startActivity(
+                                Intent(
+                                    this@MainActivity,
+                                    DeviceRegister::class.java
+                                )
+                            )
                         } else {
-                            this@MainActivity.startActivity(Intent(this@MainActivity, WriteTag::class.java))
-                            this@MainActivity.startService(Intent(this@MainActivity, IotHub::class.java))
+                            this@MainActivity.startActivity(
+                                Intent(
+                                    this@MainActivity,
+                                    WriteTag::class.java
+                                )
+                            )
+                            this@MainActivity.startService(
+                                Intent(
+                                    this@MainActivity,
+                                    IotHub::class.java
+                                )
+                            )
                         }
                     } else {
-                        Intent(this@MainActivity, event.activity).apply {
+                        classLoader.setDefaultAssertionStatus(true)
+                        Intent(this@MainActivity, event.activity.java).apply {
                             if (!event.data.isNullOrEmpty()) {
                                 putExtra("data", event.data)
                             }
@@ -119,7 +136,7 @@ class MainActivity : ComponentActivity() {
 
         CoroutineScope(Dispatchers.Main).launch {
             viewModel.navigationEvents.collectLatest { event ->
-                if(event is NavigationEvents.OpenService) {
+                if (event is NavigationEvents.OpenService) {
                     this@MainActivity.startService(Intent(this@MainActivity, event.service))
                 }
             }
@@ -221,10 +238,13 @@ fun MainContent(viewModel: MainViewModel) {
                                 for (i in 0..3) {
                                     val it = viewModel.featuresList[rowIndex * 4 + i]
                                     OpenActivityButton(
-                                        it.featureTitleResourceAddress,
-                                        it.featureIconResourceAddress
+                                        title = org.jetbrains.compose.resources.stringResource(it.title),
+                                        icon = org.jetbrains.compose.resources.painterResource(it.iconRes)
                                     ) {
-                                        viewModel.onFeatureButtonClick(it.featureClass, null)
+                                        viewModel.onFeatureButtonClick(
+                                            it.activityClass,
+                                            null
+                                        )
                                     }
                                 }
                             }
@@ -243,10 +263,13 @@ fun MainContent(viewModel: MainViewModel) {
                                     val it =
                                         viewModel.featuresList[numberOfRowsBeforeLastRow * 4 + i]
                                     OpenActivityButton(
-                                        it.featureTitleResourceAddress,
-                                        it.featureIconResourceAddress
+                                        title = org.jetbrains.compose.resources.stringResource(it.title),
+                                        icon = org.jetbrains.compose.resources.painterResource(it.iconRes)
                                     ) {
-                                        viewModel.onFeatureButtonClick(it.featureClass, null)
+                                        viewModel.onFeatureButtonClick(
+                                            it.activityClass,
+                                            null
+                                        )
                                     }
                                 }
 

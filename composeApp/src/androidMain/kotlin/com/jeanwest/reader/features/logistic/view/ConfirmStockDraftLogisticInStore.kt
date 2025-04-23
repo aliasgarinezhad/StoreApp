@@ -70,6 +70,8 @@ import com.jeanwest.reader.features.shared.onPrimaryLight
 import com.jeanwest.reader.models.Logistic
 import com.jeanwest.reader.models.StockDraft
 import dagger.hilt.android.AndroidEntryPoint
+import storeapp.composeapp.generated.resources.Res
+import storeapp.composeapp.generated.resources.barcode_scan_icon
 import java.util.concurrent.Executors
 
 
@@ -244,7 +246,7 @@ private fun AppBar(
         actions = {
             IconButton(onClick = { onScanButtonClick() }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.barcode_scan_icon),
+                    painter = org.jetbrains.compose.resources.painterResource(Res.drawable.barcode_scan_icon),
                     modifier = Modifier.size(36.dp),
                     contentDescription = ""
 

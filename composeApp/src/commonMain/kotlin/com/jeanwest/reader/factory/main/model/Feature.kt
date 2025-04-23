@@ -1,6 +1,10 @@
 package com.jeanwest.reader.factory.main.model
 
+import com.jeanwest.reader.FeatureLocation
+import com.jeanwest.reader.FeaturePlatforms
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
+import kotlin.reflect.KClass
 
 /**
  * Represents a feature within the application.
@@ -12,7 +16,11 @@ import org.jetbrains.compose.resources.DrawableResource
  */
 data class Feature(
     val accessKey: String,
-    val title: String,
-    val routeScreen: Any,
+    val title: StringResource,
+    val routeScreen: Any ?,
     val iconRes: DrawableResource,
+    val locationsArray: List<FeatureLocation>,
+    val activityClass: KClass<*>?,
+    val isNavAble: Boolean,
+    val platformArray: List<FeaturePlatforms>
 )

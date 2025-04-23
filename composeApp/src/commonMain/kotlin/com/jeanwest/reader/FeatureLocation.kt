@@ -1,4 +1,4 @@
-package com.jeanwest.reader.data.local
+package com.jeanwest.reader
 
 /**
  * Represents the possible locations where a feature can be active or enabled.
@@ -8,5 +8,8 @@ package com.jeanwest.reader.data.local
  *  - `CENTRAL_WAREHOUSE`: The feature is active in warehouse location.
  */
 enum class FeatureLocation {
-    STORE, STORE_WAREHOUSE, CENTRAL_WAREHOUSE
+    STORE,
+    STORE_WAREHOUSE,
+    CENTRAL_WAREHOUSE,
+    FACTORY,
 }

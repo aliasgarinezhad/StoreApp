@@ -2,9 +2,7 @@ package com.jeanwest.reader.features.main.mainPage.viewModel
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -14,15 +12,13 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jeanwest.reader.data.local.FeatureLocation
-import com.jeanwest.reader.models.Feature
+import com.jeanwest.reader.FeatureLocation
 import com.jeanwest.reader.data.local.SharedPreference
 import com.jeanwest.reader.data.local.features
 import com.jeanwest.reader.data.remote.API
-import com.jeanwest.reader.data.remote.IotHub
 import com.jeanwest.reader.data.remote.LocalStoreDatabase
+import com.jeanwest.reader.factory.main.model.Feature
 import com.jeanwest.reader.features.main.mainPage.view.NavigationEvents
-import com.jeanwest.reader.features.main.view.DeviceRegister
 import com.jeanwest.reader.features.main.view.Update
 import com.jeanwest.reader.features.shared.showLog
 import com.jeanwest.reader.models.User
@@ -32,7 +28,6 @@ import com.jeanwest.reader.useCases.RFID
 import com.jeanwest.reader.useCases.fileNameToVersion
 import com.jeanwest.reader.useCases.versionToVersionIntFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -42,6 +37,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
+import kotlin.reflect.KClass
 
 
 /**
@@ -130,8 +126,8 @@ class MainViewModel @Inject constructor(
         memory.setAppDataImmediately()
     }
 
-    fun onFeatureButtonClick(feature: Class<*>, data: String?) {
-        openActivity(feature, data)
+    fun onFeatureButtonClick(feature: KClass<*>?, data: String?) {
+        openActivity(feature!!, data)
     }
 
     fun onSyncButtonClick() {
@@ -147,8 +143,7 @@ class MainViewModel @Inject constructor(
         loginMode = true
     }
 
-    private fun openActivity(activity: Class<*>, data: String?) {
-
+    private fun openActivity(activity: KClass<*>, data: String?) {
         viewModelScope.launch {
             _navigationEvents.emit(NavigationEvents.OpenActivity(activity, data))
         }
@@ -180,16 +175,16 @@ class MainViewModel @Inject constructor(
             if (memory.user.isStoreUser) {
                 if (memory.user.currentWarehouseCodeIsDepo) {
                     featuresList.addAll(features.filter {
-                        FeatureLocation.STORE_WAREHOUSE in it.featureLocationsArray && it.accessKey in memory.user.access
+                        FeatureLocation.STORE_WAREHOUSE in it.locationsArray && it.accessKey in memory.user.access
                     })
                 } else {
                     featuresList.addAll(features.filter {
-                        FeatureLocation.STORE in it.featureLocationsArray && it.accessKey in memory.user.access
+                        FeatureLocation.STORE in it.locationsArray && it.accessKey in memory.user.access
                     })
                 }
             } else {
                 featuresList.addAll(features.filter {
-                    FeatureLocation.CENTRAL_WAREHOUSE in it.featureLocationsArray &&
+                    FeatureLocation.CENTRAL_WAREHOUSE in it.locationsArray &&
                             it.accessKey in memory.user.access &&
                             it.accessKey !in limitedFeatures
                 })
@@ -382,7 +377,7 @@ class MainViewModel @Inject constructor(
             )
             if (desiredVersion != null && desiredVersionIntFormat != null && currentVersionIntFormat != null) {
                 if (currentVersionIntFormat < desiredVersionIntFormat) {
-                    openActivity(Update::class.java, null)
+                    openActivity(Update::class, null)
                 }
             }
 

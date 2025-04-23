@@ -1,10 +1,13 @@
 package com.jeanwest.reader.factory.main.useCase
 
+import com.jeanwest.reader.FeatureLocation
+import com.jeanwest.reader.FeaturePlatforms
 import com.jeanwest.reader.factory.addTaskFeature.view.ShowProductionLinesScreen
 import com.jeanwest.reader.factory.stopActivityFeature.view.StopActivityScreen
 import com.jeanwest.reader.factory.main.model.Feature
 import storeapp.composeapp.generated.resources.Res
 import storeapp.composeapp.generated.resources.add_ask
+import storeapp.composeapp.generated.resources.add_task
 import storeapp.composeapp.generated.resources.stop
 
 /**
@@ -18,14 +21,22 @@ import storeapp.composeapp.generated.resources.stop
 val features = listOf(
     Feature(
         accessKey = "Action",
-        title = "ثبت فعالیت",
+        title = Res.string.stop,
         routeScreen = ShowProductionLinesScreen,
-        iconRes = Res.drawable.add_ask
+        iconRes = Res.drawable.add_ask,
+        locationsArray = listOf(FeatureLocation.FACTORY),
+        activityClass = null,
+        isNavAble = true,
+        platformArray = listOf(FeaturePlatforms.WEB)
     ),
     Feature(
         accessKey = "Stop",
-        title = "توقفات",
+        title = Res.string.add_task,
         routeScreen = StopActivityScreen,
-        iconRes = Res.drawable.stop
+        iconRes = Res.drawable.stop,
+        locationsArray = listOf(FeatureLocation.FACTORY),
+        activityClass = null,
+        isNavAble = true,
+        platformArray = listOf(FeaturePlatforms.WEB)
     )
 )
