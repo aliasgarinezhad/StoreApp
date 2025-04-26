@@ -377,7 +377,7 @@ class MainViewModel @Inject constructor(
             )
             if (desiredVersion != null && desiredVersionIntFormat != null && currentVersionIntFormat != null) {
                 if (currentVersionIntFormat < desiredVersionIntFormat) {
-                    openActivity(Update::class, null)
+                    openActivity(Update::class, desiredVersion)
                 }
             }
 
