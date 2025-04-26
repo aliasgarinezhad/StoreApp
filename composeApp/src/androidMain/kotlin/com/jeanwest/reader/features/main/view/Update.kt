@@ -84,7 +84,7 @@ class Update : ComponentActivity() {
         barcode = Barcode(this) {}
         rf = RFID(this, state) {}
         rf.disconnect()
-        appVersion = intent.getStringExtra("appVersion") ?: ""
+        appVersion = intent.getStringExtra("data") ?: ""
         showLog("نسخه جدید (${appVersion}) موجود است", state)
 
 
