@@ -21,7 +21,7 @@ import storeapp.composeapp.generated.resources.stop
 val features = listOf(
     Feature(
         accessKey = "Action",
-        title = Res.string.stop,
+        title = Res.string.add_task,
         routeScreen = ShowProductionLinesScreen,
         iconRes = Res.drawable.add_ask,
         locationsArray = listOf(FeatureLocation.FACTORY),
@@ -31,7 +31,7 @@ val features = listOf(
     ),
     Feature(
         accessKey = "Stop",
-        title = Res.string.add_task,
+        title = Res.string.stop,
         routeScreen = StopActivityScreen,
         iconRes = Res.drawable.stop,
         locationsArray = listOf(FeatureLocation.FACTORY),
