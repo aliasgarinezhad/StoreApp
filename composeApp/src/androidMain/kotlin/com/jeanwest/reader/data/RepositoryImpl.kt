@@ -171,6 +171,7 @@ class RepositoryImpl @Inject constructor(
 
     fun createShelfInRequestByCartons(
         cartons: List<Carton>,
+        createRequestByRFID: Boolean,
         onSuccess: (stockDraftNumber: String, requestNumber: String) -> Unit,
         onError: (uiText: String) -> Unit,
     ) {
@@ -183,7 +184,7 @@ class RepositoryImpl @Inject constructor(
         val stockDraftRequestProducts = mutableListOf<Product>()
         cartonsProducts.forEach {
             stockDraftRequestProducts.add(
-                if (it.epcs.isEmpty()) {
+                if (it.epcs.isEmpty() || !createRequestByRFID) {
                     it.product.copy(scannedBarcodeNumber = it.qtyInCarton)
                 } else {
                     it.product.copy(scannedEPCs = it.epcs.toMutableList())

@@ -1,4 +1,4 @@
-package com.jeanwest.reader.features.shelf.view
+package com.jeanwest.reader.features.shelf.newShelfIn.view
 
 import android.os.Bundle
 import android.view.KeyEvent
@@ -6,8 +6,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import com.jeanwest.reader.features.shelf.model.RequestType
-import com.jeanwest.reader.features.shelf.viewmodel.CreateEnterShelfRequestViewModel
+import com.jeanwest.reader.features.shelf.newShelfIn.model.RequestType
+import com.jeanwest.reader.features.shelf.newShelfIn.viewModel.CreateEnterShelfRequestViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 /**

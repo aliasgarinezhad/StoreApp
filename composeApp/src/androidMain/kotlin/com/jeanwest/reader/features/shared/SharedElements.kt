@@ -74,7 +74,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -100,7 +99,6 @@ import com.jeanwest.reader.features.main.mainPage.viewModel.MainViewModel
 import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.models.ShelfItem
 import com.jeanwest.reader.models.StockDraftRequestItem
-import org.jetbrains.compose.resources.StringResource
 import storeapp.composeapp.generated.resources.NewShelfInRequest
 import storeapp.composeapp.generated.resources.Res
 import storeapp.composeapp.generated.resources.ic_shelf
@@ -3492,7 +3490,8 @@ fun AlertDialogWith2ButtonDropDownList(
                 color = MaterialTheme.colorScheme.background,
                 shape = MaterialTheme.shapes.small
             )
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+            .padding(horizontal = 16.dp, vertical = 16.dp)
+            .fillMaxSize(),
         onDismissRequest = {
             onDismiss()
         },

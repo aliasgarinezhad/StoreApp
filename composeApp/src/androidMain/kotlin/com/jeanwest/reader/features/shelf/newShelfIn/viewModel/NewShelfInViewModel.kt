@@ -1,4 +1,4 @@
-package com.jeanwest.reader.features.shelf.viewmodel
+package com.jeanwest.reader.features.shelf.newShelfIn.viewModel
 
 import android.content.Context
 import android.util.Log

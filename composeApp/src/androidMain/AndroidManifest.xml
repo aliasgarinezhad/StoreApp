@@ -104,8 +104,8 @@
         <activity android:name=".features.write.view.FixTagErrors" />
         <activity android:name=".features.shelf.view.ShelfContentStore" />
         <activity android:name=".features.carton.view.CartonModification"/>
-        <activity android:name=".features.shelf.view.CreateShelfInRequest"/>
-        <activity android:name=".features.shelf.view.NewShelfIn"/>
+        <activity android:name=".features.shelf.newShelfIn.view.CreateShelfInRequest"/>
+        <activity android:name=".features.shelf.newShelfIn.view.NewShelfIn"/>
         <activity android:name=".features.shelf.view.TransferShelf"/>
         <activity android:name=".features.shelf.inventory.view.ShelfInventory"/>
 

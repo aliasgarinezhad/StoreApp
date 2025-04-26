@@ -1,4 +1,4 @@
-package com.jeanwest.reader.features.shelf.model
+package com.jeanwest.reader.features.shelf.newShelfIn.model
 
 /**
  * Enum class representing the type of request.

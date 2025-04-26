@@ -1,4 +1,4 @@
-package com.jeanwest.reader.features.shelf.view
+package com.jeanwest.reader.features.shelf.newShelfIn.view
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -43,7 +43,7 @@ import com.jeanwest.reader.features.shared.NotificationPopupHost
 import com.jeanwest.reader.features.shared.SimpleTextField
 import com.jeanwest.reader.features.shared.errorContainerLight
 import com.jeanwest.reader.features.shared.errorLight
-import com.jeanwest.reader.features.shelf.model.RequestType
+import com.jeanwest.reader.features.shelf.newShelfIn.model.RequestType
 import com.jeanwest.reader.models.Carton
 import com.jeanwest.reader.models.Product
 

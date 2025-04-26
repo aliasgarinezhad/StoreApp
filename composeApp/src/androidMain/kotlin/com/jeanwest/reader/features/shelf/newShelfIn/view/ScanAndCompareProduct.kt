@@ -1,6 +1,5 @@
-package com.jeanwest.reader.features.shelf.view
+package com.jeanwest.reader.features.shelf.newShelfIn.view
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
