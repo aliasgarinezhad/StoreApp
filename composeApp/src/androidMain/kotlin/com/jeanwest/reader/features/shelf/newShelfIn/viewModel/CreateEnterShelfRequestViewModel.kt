@@ -1,4 +1,4 @@
-package com.jeanwest.reader.features.shelf.viewmodel
+package com.jeanwest.reader.features.shelf.newShelfIn.viewModel
 
 import android.content.Context
 import androidx.compose.material3.SnackbarHostState
@@ -12,7 +12,7 @@ import com.jeanwest.reader.data.local.SharedPreference
 import com.jeanwest.reader.data.remote.API
 import com.jeanwest.reader.features.shared.NotificationPopupHost
 import com.jeanwest.reader.features.shared.showLog
-import com.jeanwest.reader.features.shelf.model.RequestType
+import com.jeanwest.reader.features.shelf.newShelfIn.model.RequestType
 import com.jeanwest.reader.models.Carton
 import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.useCases.Barcode
@@ -130,6 +130,7 @@ class CreateEnterShelfRequestViewModel @Inject constructor(
 
             repository.createShelfInRequestByCartons(
                 cartons = cartonsUiList,
+                createRequestByRFID = newFeature,
                 onSuccess = { stockDraftNumber, requestNumber ->
                     popupHost.showPopupWithAButton(
                         message = "حواله به فروشگاه مرکزی با شماره $stockDraftNumber ایجاد و $requestNumber ",

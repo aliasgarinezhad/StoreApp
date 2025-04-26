@@ -37,9 +37,9 @@ import com.jeanwest.reader.features.refillStore.view.Refill2
 import com.jeanwest.reader.features.refillStore.view.RefillManual
 import com.jeanwest.reader.features.shelf.inventory.view.ShelfInventory
 import com.jeanwest.reader.features.shelf.view.AddressProductShelf
-import com.jeanwest.reader.features.shelf.view.CreateShelfInRequest
+import com.jeanwest.reader.features.shelf.newShelfIn.view.CreateShelfInRequest
 import com.jeanwest.reader.features.shelf.view.CreateShelfStore
-import com.jeanwest.reader.features.shelf.view.NewShelfIn
+import com.jeanwest.reader.features.shelf.newShelfIn.view.NewShelfIn
 import com.jeanwest.reader.features.shelf.view.ShelfAddress
 import com.jeanwest.reader.features.shelf.view.ShelfContent
 import com.jeanwest.reader.features.shelf.view.ShelfContentStore

@@ -8,7 +8,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
-import com.jeanwest.reader.features.shelf.view.CreateShelfInRequest
+import com.jeanwest.reader.features.shelf.newShelfIn.view.CreateShelfInRequest
 import com.jeanwest.reader.models.Carton
 import com.jeanwest.reader.models.Product
 import org.junit.Rule

@@ -1,4 +1,4 @@
-package com.jeanwest.reader.features.shelf.view
+package com.jeanwest.reader.features.shelf.newShelfIn.view
 
 import android.os.Bundle
 import android.view.KeyEvent
@@ -11,7 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.jeanwest.reader.features.carton.view.ShelfEnterScreen
 import com.jeanwest.reader.features.carton.view.StockDraftRequestItemScreen
-import com.jeanwest.reader.features.shelf.viewmodel.NewShelfInViewModel
+import com.jeanwest.reader.features.shelf.newShelfIn.viewModel.NewShelfInViewModel
 import com.jeanwest.reader.features.stockDraftRequest.view.StockDraftRequestScreen
 import dagger.hilt.android.AndroidEntryPoint
 
