@@ -15,11 +15,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.Text
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -31,11 +31,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jeanwest.reader.factory.addTaskFeature.model.Product
-import com.jeanwest.reader.view.BorderLight
-import com.jeanwest.reader.view.Jeanswest
 import com.jeanwest.reader.view.MyApplicationTheme
 import com.jeanwest.reader.view.Shapes
-import com.jeanwest.reader.view.innerBackground
 import com.jeanwest.reader.view.ErrorSnackBar
 import com.jeanwest.reader.view.LoadingIndicator
 import kotlinx.serialization.Serializable
@@ -130,7 +127,7 @@ private fun ProductLineItem(
             )
             .shadow(elevation = 5.dp, shape = MaterialTheme.shapes.small)
             .background(
-                color = MaterialTheme.colors.onPrimary,
+                color = MaterialTheme.colorScheme.onPrimary,
                 shape = MaterialTheme.shapes.small
             )
             .fillMaxWidth()
@@ -148,7 +145,7 @@ private fun ProductLineItem(
                     shape = Shapes.large
                 )
                 .border(
-                    BorderStroke(2.dp, color = BorderLight),
+                    BorderStroke(2.dp, color = MaterialTheme.colorScheme.onPrimary),
                     shape = Shapes.large
                 )
                 .fillMaxHeight()
@@ -172,20 +169,20 @@ private fun ProductLineItem(
 
                     Text(
                         text = product.style.substring(product.style.length - 3, product.style.length) + "-",
-                        style = MaterialTheme.typography.h1,
+                        style = MaterialTheme.typography.headlineMedium,
                         textAlign = TextAlign.Right,
                         fontSize = 14.sp,
                     )
                     Text(
                         text = product.style.substring(0 , product.style.length - 3),
-                        style = MaterialTheme.typography.body2,
+                        style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Right,
                     )
                 }
 
                 Text(
                     text = product.name,
-                    style = MaterialTheme.typography.h4,
+                    style = MaterialTheme.typography.headlineMedium,
                     textAlign = TextAlign.Right,
                     maxLines = 1
                 )
@@ -198,7 +195,7 @@ private fun ProductLineItem(
                     .padding(top = 16.dp, bottom = 16.dp)
                     .wrapContentWidth()
                     .background(
-                        color = innerBackground,
+                        color = MaterialTheme.colorScheme.surfaceContainerLow,
                         shape = Shapes.large
                     ),
 
@@ -206,12 +203,12 @@ private fun ProductLineItem(
             ) {
                 Text(
                     text = "رنگ: " + product.color,
-                    style = MaterialTheme.typography.h3,
+                    style = MaterialTheme.typography.headlineMedium,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
                 )
                 Divider(
-                    color = Jeanswest,
+                    color = MaterialTheme.colorScheme.primary,
                     thickness = 1.dp,
                     modifier = Modifier
                         .padding(horizontal = 12.dp, vertical = 2.dp)
@@ -219,7 +216,7 @@ private fun ProductLineItem(
                 )
                 Text(
                     text = "پارت: " + product.part,
-                    style = MaterialTheme.typography.h3,
+                    style = MaterialTheme.typography.headlineMedium,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
                 )

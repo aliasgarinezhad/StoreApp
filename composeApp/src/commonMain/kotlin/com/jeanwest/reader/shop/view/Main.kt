@@ -19,20 +19,22 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -58,11 +60,9 @@ import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
 import com.jeanwest.reader.view.FilterDropDownList
 import com.jeanwest.reader.view.FullScreenImage
-import com.jeanwest.reader.view.Jeanswest
 import com.jeanwest.reader.view.MyApplicationTheme
 import com.jeanwest.reader.view.MyTypography
 import com.jeanwest.reader.view.Shapes
-import com.jeanwest.reader.view.iconColor
 import kotlinx.serialization.Serializable
 import com.jeanwest.reader.shop.data.Product
 import com.jeanwest.reader.view.ErrorSnackBar
@@ -168,25 +168,7 @@ fun MainPage(
     }
 }
 
-@Composable
-fun BarcodeScanButton(onBottomBarButtonClick: () -> Unit) {
-    Box(modifier = Modifier.fillMaxWidth().padding(start = 16.dp)) {
-        Button(
-            modifier = Modifier.align(BottomStart).padding(start = 16.dp),
-            onClick = onBottomBarButtonClick
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_barcode_scan),
-                contentDescription = "",
-                modifier = Modifier.size(36.dp).padding(end = 8.dp)
-            )
-            Text(
-                text = "اسکن کالای جدید", style = MaterialTheme.typography.h1
-            )
-        }
-    }
-}
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchContent(
     colorFilterValue: String,
@@ -220,9 +202,9 @@ fun SearchContent(
             LoadingIndicator()
         } else {
             if (isAccountDialogOpen) {
-                AlertDialog(onDismissRequest = {
+                BasicAlertDialog(onDismissRequest = {
                     onAccountBtnClick()
-                }, buttons = {
+                }, content = {
                     Column(
                         modifier = Modifier.fillMaxWidth()
                             .padding(top = 24.dp, bottom = 16.dp, start = 24.dp, end = 24.dp),
@@ -231,7 +213,7 @@ fun SearchContent(
                         Text(
                             "تنظیمات حساب کاربری",
                             modifier = Modifier.fillMaxWidth().align(CenterHorizontally),
-                            style = MaterialTheme.typography.h1
+                            style = MaterialTheme.typography.headlineMedium
                         )
 
                         Row(horizontalArrangement = Arrangement.Center) {
@@ -249,7 +231,7 @@ fun SearchContent(
                                     Icon(
                                         painter = painterResource(Res.drawable.store),
                                         contentDescription = "",
-                                        tint = iconColor,
+                                        tint = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier.size(28.dp)
                                             .align(Alignment.CenterVertically).padding(start = 6.dp)
                                     )
@@ -257,7 +239,7 @@ fun SearchContent(
                                 text = {
                                     Text(
                                         text = storesFilterValue,
-                                        style = MaterialTheme.typography.body2,
+                                        style = MaterialTheme.typography.bodyMedium,
                                         modifier = Modifier.align(Alignment.CenterVertically)
                                             .padding(start = 6.dp)
                                     )
@@ -294,7 +276,7 @@ fun SearchContent(
             Column(
                 modifier = Modifier.padding(bottom = 0.dp)
                     .shadow(elevation = 1.dp, shape = RectangleShape).background(
-                        color = MaterialTheme.colors.onPrimary, shape = RectangleShape
+                        color = MaterialTheme.colorScheme.onPrimary, shape = RectangleShape
                     ).fillMaxWidth(), verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(
@@ -359,7 +341,7 @@ fun SearchContent(
                         Text(
                             text = uiList[0].SalePrice.toString().dropLast(4).reversed().chunked(3)
                                 .joinToString(",").reversed() + "T",
-                            style = MaterialTheme.typography.h1,
+                            style = MaterialTheme.typography.headlineMedium,
                             modifier = Modifier.padding(start = 16.dp, top = 16.dp),
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp,
@@ -383,17 +365,17 @@ fun SearchContent(
                             Column(modifier = Modifier.padding(end = 16.dp)) {
                                 Text(
                                     text = "سایز",
-                                    style = MaterialTheme.typography.body2,
+                                    style = MaterialTheme.typography.bodyMedium,
                                     modifier = Modifier.padding(vertical = 8.dp)
                                 )
                                 Text(
                                     text = "سطح",
-                                    style = MaterialTheme.typography.body2,
+                                    style = MaterialTheme.typography.bodyMedium,
                                     modifier = Modifier.padding(vertical = 8.dp)
                                 )
                                 Text(
                                     text = "دپو",
-                                    style = MaterialTheme.typography.body2,
+                                    style = MaterialTheme.typography.bodyMedium,
                                     modifier = Modifier.padding(vertical = 8.dp)
                                 )
                             }
@@ -423,9 +405,14 @@ fun SearchContent(
                                             Modifier.clickable {
                                                 onColorFilterValueChange(colorFilterList.keys.toList()[index])
                                             }.border(
-                                                width = 0.5.dp, shape = RoundedCornerShape(0.dp), color = Jeanswest
+                                                width = 0.5.dp,
+                                                shape = RoundedCornerShape(0.dp),
+                                                color = MaterialTheme.colorScheme.primary
                                             ).shadow(
-                                                elevation = 1.dp, shape = RoundedCornerShape(0.dp), spotColor = Jeanswest, ambientColor = Jeanswest
+                                                elevation = 1.dp,
+                                                shape = RoundedCornerShape(0.dp),
+                                                spotColor = MaterialTheme.colorScheme.primary,
+                                                ambientColor = MaterialTheme.colorScheme.primary
                                             ).background(
                                                 color = Color.White, RoundedCornerShape(0.dp)
                                             )
@@ -447,7 +434,7 @@ fun SearchContent(
                                         )
                                         Text(
                                             text = colorFilterList.keys.toList()[index],
-                                            style = MyTypography().body1,
+                                            style = MaterialTheme.typography.bodyMedium,
                                             modifier = Modifier.align(Alignment.CenterHorizontally),
                                         )
                                     }
@@ -471,7 +458,8 @@ fun ProductCodeTextField(
 
     val focusManager = LocalFocusManager.current
 
-    OutlinedTextField(textStyle = MaterialTheme.typography.body2,
+    OutlinedTextField(
+        textStyle = MaterialTheme.typography.bodyMedium,
 
         leadingIcon = {
             Icon(
@@ -481,7 +469,7 @@ fun ProductCodeTextField(
         value = textFieldValue,
         onValueChange = onTextValueChange,
         modifier = modifier.testTag("SearchProductCodeTextField").background(
-            color = MaterialTheme.colors.secondary, shape = MaterialTheme.shapes.small
+            color = MaterialTheme.colorScheme.secondary, shape = MaterialTheme.shapes.small
         ),
         keyboardActions = KeyboardActions(onSearch = {
             focusManager.clearFocus()
@@ -489,9 +477,6 @@ fun ProductCodeTextField(
         }),
         singleLine = true,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            unfocusedBorderColor = MaterialTheme.colors.secondary
-        ),
         placeholder = { Text(text = "کد محصول") })
 }
 
@@ -509,7 +494,8 @@ fun EmptyList(
                 modifier = Modifier.background(color = Color.White, shape = Shapes.medium)
                     .size(256.dp)
             ) {
-                Icon(painter = painterResource(Res.drawable.ic_big_barcode_scan),
+                Icon(
+                    painter = painterResource(Res.drawable.ic_big_barcode_scan),
                     contentDescription = "",
                     tint = Color.Unspecified,
                     modifier = Modifier.align(Center).clickable {
@@ -519,7 +505,7 @@ fun EmptyList(
 
             Text(
                 "بارکد را اسکن یا کد محصول را در کادر جستجو وارد کنید",
-                style = MaterialTheme.typography.h1,
+                style = MaterialTheme.typography.headlineMedium,
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                 modifier = Modifier.padding(top = 16.dp, start = 4.dp, end = 4.dp),
             )
@@ -555,17 +541,17 @@ fun sizeAndCountItem(
                 else it
             },
             color = Color.Black,
-            style = MyTypography().h1,
+            style = MyTypography().headlineMedium,
             modifier = Modifier.padding(vertical = 8.dp)
         )
         Text(
             text = list[i].StoreMojodi.toString(),
-            style = MyTypography().h3,
+            style = MyTypography().labelMedium,
             modifier = Modifier.padding(vertical = 8.dp)
         )
         Text(
             text = list[i].DepoMojodi.toString(),
-            style = MyTypography().h3,
+            style = MyTypography().labelMedium,
             modifier = Modifier.padding(vertical = 8.dp)
         )
     }

@@ -5,35 +5,35 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarDuration
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.jeanwest.reader.view.doneColor
+import com.jeanwest.reader.view.errorLight
+import com.jeanwest.reader.view.warningColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
 /**
- * A composable function that displays a snackbar for showing errors, success, or warning messages.
- * The snackbar is anchored to the bottom of the screen and provides a dismiss action.
- * The color of the message text is determined by the action label provided via the SnackbarHostState.
+ * Composable function that displays an error snackbar at the bottom of the screen.
  *
- * @param state The [SnackbarHostState] that manages the snackbar's visibility and data.  The state's
- * `currentSnackbarData` property provides access to the message and action label.
+ * The snackbar's appearance (text color) is determined by the action label of the current
+ * snackbar data in the provided [SnackbarHostState].
  *
- *  The `actionLabel` is used to determine the message color:
- *    - "ERROR" (from `SnackBarActions.ERROR.toString()`):  Displays the message in `errorColor`.
- *    - "SUCCESS" (from `SnackBarActions.SUCCESS.toString()`): Displays the message in `doneColor`.
- *    - "WARNING" (from `SnackBarActions.WARNING.toString()`): Displays the message in `warningColor`.
- *    - Any other value or null: Displays the message in `errorColor` (default).
- *
- * The dismiss action is labeled "متوجه شدم" (Understood) and closes the snackbar when clicked.
+ * @param state The [SnackbarHostState] that manages the display of the snackbar.  The message
+ *              displayed in the snackbar will be taken from `state.currentSnackbarData?.visuals?.message`,
+ *              and the color will be determined based on `state.currentSnackbarData?.visuals?.actionLabel`.
+ *              If the action label is "ERROR", the color will be [errorLight].  If it is "SUCCESS",
+ *              the color will be [doneColor].  If it is "WARNING", the color will be [warningColor].
+ *              Otherwise, the color defaults to [errorLight]. The snackbar will also include a
+ *              dismiss button labeled "متوجه شدم" (Understood).
  */
 @Composable
 fun ErrorSnackBar(state: SnackbarHostState) {
@@ -50,8 +50,8 @@ fun ErrorSnackBar(state: SnackbarHostState) {
                 action = {
                     Text(
                         text = "متوجه شدم",
-                        color = MaterialTheme.colors.secondary,
-                        style = MaterialTheme.typography.h2,
+                        color = MaterialTheme.colorScheme.secondary,
+                        style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier
                             .padding(end = 16.dp)
                             .clickable {
@@ -61,10 +61,10 @@ fun ErrorSnackBar(state: SnackbarHostState) {
                 }
             ) {
                 Text(
-                    text = state.currentSnackbarData?.message ?: "",
-                    color = when (state.currentSnackbarData?.actionLabel) {
+                    text = state.currentSnackbarData?.visuals?.message ?: "",
+                    color = when (state.currentSnackbarData?.visuals?.actionLabel) {
                         SnackBarActions.ERROR.toString() -> {
-                            errorColor
+                            errorLight
                         }
 
                         SnackBarActions.SUCCESS.toString() -> {
@@ -76,10 +76,10 @@ fun ErrorSnackBar(state: SnackbarHostState) {
                         }
 
                         else -> {
-                            errorColor
+                            errorLight
                         }
                     },
-                    style = MaterialTheme.typography.h2,
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
         })
@@ -102,7 +102,7 @@ fun showLog(
         state.showSnackbar(
             data,
             action.toString(),
-            if (action == SnackBarActions.WARNING) SnackbarDuration.Indefinite else SnackbarDuration.Short
+            duration = if (action == SnackBarActions.WARNING) SnackbarDuration.Indefinite else SnackbarDuration.Long
         )
     }
 }

@@ -1,7 +1,7 @@
 package com.jeanwest.reader.shop.viewModel
 
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material.SnackbarHostState
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf

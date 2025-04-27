@@ -8,9 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -108,7 +106,10 @@ fun ContentScanOrTypeNumberScreen(
                             .width(256.dp)
                     ) {
 
-                        ScanBox(item = "$item را اسکن یا در کادر جستجو وارد کنید", modifier = Modifier)
+                        ScanBox(
+                            item = "$item را اسکن یا در کادر جستجو وارد کنید",
+                            modifier = Modifier
+                        )
                     }
                 }
             }

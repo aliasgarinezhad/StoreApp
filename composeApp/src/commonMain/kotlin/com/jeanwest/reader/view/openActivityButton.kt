@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,10 +37,10 @@ fun OpenActivityButton(title: String, icon: Painter, onClick: () -> Unit) {
                 .size(iconSize)
                 .align(Alignment.CenterHorizontally)
                 .background(
-                    color = MaterialTheme.colors.primary,
+                    color = MaterialTheme.colorScheme.primary,
                     shape = MaterialTheme.shapes.large
                 )
-                .padding(4.dp), tint = MaterialTheme.colors.onPrimary
+                .padding(4.dp), tint = MaterialTheme.colorScheme.onPrimary
         )
         Text(
             title,
@@ -48,7 +48,7 @@ fun OpenActivityButton(title: String, icon: Painter, onClick: () -> Unit) {
                 .width(textSize)
                 .padding(top = 4.dp),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.body1
+            style = MaterialTheme.typography.bodyMedium
         )
     }
 }

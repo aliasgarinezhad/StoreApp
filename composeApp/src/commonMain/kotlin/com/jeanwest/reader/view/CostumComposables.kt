@@ -22,18 +22,18 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Divider
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -69,16 +69,11 @@ fun BigButton(
             .padding(start = 24.dp, end = 24.dp, bottom = 24.dp)
             .fillMaxWidth()
             .height(48.dp),
-        colors = ButtonDefaults.buttonColors(
-            backgroundColor = Jeanswest,
-            disabledBackgroundColor = DisableButtonColor,
-            disabledContentColor = Color.White
-        ),
         onClick = onClick
     ) {
         Text(
             text = text,
-            style = MyTypography().h2
+            style = MyTypography().headlineMedium
         )
     }
 }
@@ -100,7 +95,7 @@ fun Item(
             .padding(start = 16.dp, end = 16.dp, bottom = bottomPadding, top = topPadding)
             .shadow(elevation = 5.dp, shape = MaterialTheme.shapes.small)
             .background(
-                color = MaterialTheme.colors.onPrimary,
+                color = MaterialTheme.colorScheme.onPrimary,
                 shape = MaterialTheme.shapes.small
             )
             .fillMaxWidth()
@@ -119,11 +114,11 @@ fun Item(
                     .padding(end = 4.dp, top = 12.dp, bottom = 12.dp, start = 12.dp)
                     .shadow(0.dp, shape = Shapes.large)
                     .background(
-                        color = MaterialTheme.colors.onPrimary,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         shape = Shapes.large
                     )
                     .border(
-                        BorderStroke(2.dp, color = BorderLight),
+                        BorderStroke(2.dp, color = MaterialTheme.colorScheme.surfaceContainerLow),
                         shape = Shapes.large
                     )
                     .fillMaxHeight()
@@ -134,7 +129,7 @@ fun Item(
                     .padding(top = 6.dp, start = 6.dp)
                     .background(
                         shape = RoundedCornerShape(24.dp),
-                        color = discountBackground
+                        color = MaterialTheme.colorScheme.background
                     )
                     .size(24.dp)
                     .testTag("sign")
@@ -163,12 +158,12 @@ fun Item(
 
                 Text(
                     text = uiList[i].KBarCode ?: "not found",
-                    style = MaterialTheme.typography.body2,
+                    style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Right,
                 )
                 Text(
                     text = "قیمت: " + uiList[i].SalePrice.toString(),
-                    style = MaterialTheme.typography.h4,
+                    style = MaterialTheme.typography.headlineMedium,
                     textAlign = TextAlign.Right,
                 )
             }
@@ -180,7 +175,7 @@ fun Item(
                     .padding(top = 16.dp, bottom = 16.dp)
                     .wrapContentWidth()
                     .background(
-                        color = innerBackground,
+                        color = MaterialTheme.colorScheme.background,
                         shape = Shapes.large
                     ),
 
@@ -188,12 +183,12 @@ fun Item(
             ) {
                 Text(
                     text = "فروشگاه: " + uiList[i].StoreMojodi,
-                    style = MaterialTheme.typography.h3,
+                    style = MaterialTheme.typography.labelMedium,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
                 )
                 Divider(
-                    color = Jeanswest,
+                    color = MaterialTheme.colorScheme.primary,
                     thickness = 1.dp,
                     modifier = Modifier
                         .padding(horizontal = 12.dp, vertical = 2.dp)
@@ -201,7 +196,7 @@ fun Item(
                 )
                 Text(
                     text = "انبار: " + uiList[i].DepoMojodi.toString(),
-                    style = MaterialTheme.typography.h3,
+                    style = MaterialTheme.typography.labelMedium,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
                 )
@@ -227,11 +222,14 @@ fun FilterDropDownList(
         modifier = modifier
             .shadow(elevation = 1.dp, shape = MaterialTheme.shapes.small)
             .background(
-                color = MaterialTheme.colors.onPrimary,
+                color = MaterialTheme.colorScheme.onPrimary,
                 shape = MaterialTheme.shapes.small
             )
             .border(
-                BorderStroke(1.dp, if (expanded) Jeanswest else borderColor),
+                BorderStroke(
+                    1.dp,
+                    if (expanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow
+                ),
                 shape = MaterialTheme.shapes.small
             )
             .height(48.dp)
@@ -264,15 +262,15 @@ fun FilterDropDownList(
             onDismissRequest = { expanded = false },
             modifier = Modifier
                 .wrapContentWidth()
-                .background(color = BottomBar, shape = Shapes.small)
+                .background(color = MaterialTheme.colorScheme.primary, shape = Shapes.small)
         ) {
             values.forEach {
                 DropdownMenuItem(onClick = {
                     expanded = false
                     onClick(it)
-                }) {
-                    Text(text = it)
-                }
+                }, text = { Text(text = it) })
+
+
             }
         }
     }

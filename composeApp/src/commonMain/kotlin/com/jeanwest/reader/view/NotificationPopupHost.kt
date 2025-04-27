@@ -5,9 +5,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -171,6 +172,7 @@ fun NotificationPopUp(state: NotificationPopupHost) {
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlertDialogWith1Button(
     title: String,
@@ -178,11 +180,11 @@ fun AlertDialogWith1Button(
     btnOnClick: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    AlertDialog(
+    BasicAlertDialog(
         onDismissRequest = {
             onDismiss()
         },
-        buttons = {
+        content = {
 
             Column(
                 modifier = Modifier

@@ -11,11 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -202,7 +202,7 @@ fun Content(
 
                 Text(
                     text = "مجموع: ${uiListProduct.sumOf { it.scannedNumber } + uiListCarton.size}",
-                    style = MaterialTheme.typography.body1,
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
                         .padding(start = 16.dp, top = 8.dp)
                         .align(Alignment.CenterVertically)
