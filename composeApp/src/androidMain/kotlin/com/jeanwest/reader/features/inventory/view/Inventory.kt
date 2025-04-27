@@ -46,17 +46,16 @@ import com.google.gson.Gson
 import com.jeanwest.reader.R
 import com.jeanwest.reader.features.inventory.viewmodel.InventoryViewModel
 import com.jeanwest.reader.features.kiosk.view.SearchProduct
-import com.jeanwest.reader.features.shared.BottomBarButton
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.FilterDropDownList
-import com.jeanwest.reader.features.shared.Item
-import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.NotificationPopUp
-import com.jeanwest.reader.features.shared.NotificationPopupHost
-import com.jeanwest.reader.features.shared.Shapes
-import com.jeanwest.reader.features.shared.Typography
-import com.jeanwest.reader.features.shared.primaryLight
+import com.jeanwest.reader.view.BottomBarButton
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.FilterDropDownList
+import com.jeanwest.reader.view.Item
+import com.jeanwest.reader.view.LoadingCircularProgressIndicator
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.NotificationPopUp
+import com.jeanwest.reader.view.NotificationPopupHost
+import com.jeanwest.reader.view.Shapes
+import com.jeanwest.reader.view.primaryLight
 import com.jeanwest.reader.models.Product
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
@@ -303,7 +302,7 @@ private fun Content(
                             Alignment.Center
                         ),
                     textAlign = TextAlign.Center,
-                    style = Typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge
                 )
             }
         }

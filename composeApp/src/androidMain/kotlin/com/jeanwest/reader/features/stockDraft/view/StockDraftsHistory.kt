@@ -14,7 +14,7 @@ import com.jeanwest.reader.data.remote.API
 import com.jeanwest.reader.useCases.Barcode
 import com.jeanwest.reader.useCases.ExceptionHandler
 import com.jeanwest.reader.useCases.jalaliDate.JalaliDateConverter
-import com.jeanwest.reader.features.shared.showLog
+import com.jeanwest.reader.view.showLog
 import dagger.hilt.android.AndroidEntryPoint
 import ir.huri.jcal.JalaliCalendar
 import java.text.SimpleDateFormat

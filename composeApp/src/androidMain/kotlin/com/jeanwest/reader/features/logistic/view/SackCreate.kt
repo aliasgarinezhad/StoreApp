@@ -36,19 +36,18 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.jeanwest.reader.R
 import com.jeanwest.reader.features.logistic.viewmodel.SackCreateViewModel
-import com.jeanwest.reader.features.shared.AppBarWithBack
-import com.jeanwest.reader.features.shared.AppBarWithDeleteButton
-import com.jeanwest.reader.features.shared.BottomBarButton
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.Item3
-import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.NotificationPopUp
-import com.jeanwest.reader.features.shared.Shapes
-import com.jeanwest.reader.features.shared.SimpleTextField
-import com.jeanwest.reader.features.shared.Typography
-import com.jeanwest.reader.features.shared.errorContainerLight
-import com.jeanwest.reader.features.shared.errorLight
+import com.jeanwest.reader.view.AppBarWithBack
+import com.jeanwest.reader.view.AppBarWithDeleteButton
+import com.jeanwest.reader.view.BottomBarButton
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.Item3
+import com.jeanwest.reader.view.LoadingCircularProgressIndicator
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.NotificationPopUp
+import com.jeanwest.reader.view.Shapes
+import com.jeanwest.reader.view.SimpleTextField
+import com.jeanwest.reader.view.errorContainerLight
+import com.jeanwest.reader.view.errorLight
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -205,7 +204,7 @@ private fun Content(viewModel: SackCreateViewModel) {
 
                             Text(
                                 "هنوز حواله ای برای ایجاد گونی اسکن نکرده اید",
-                                style = Typography.headlineMedium,
+                                style = MaterialTheme.typography.headlineMedium,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(
                                     top = 16.dp,

@@ -10,10 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.navigation.NavController
-import com.jeanwest.reader.features.shared.AppBarWithBack
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.ScanOrTypeNumberPage
+import com.jeanwest.reader.view.AppBarWithBack
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.ScanOrTypeNumberPage
 
 //@Serializable
 //object ScanCartonScreen

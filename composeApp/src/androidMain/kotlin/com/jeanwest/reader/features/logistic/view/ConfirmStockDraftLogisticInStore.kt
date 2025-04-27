@@ -55,18 +55,17 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import com.jeanwest.reader.R
 import com.jeanwest.reader.features.logistic.viewmodel.ConfirmStockDraftLogisticInStoreViewModel
-import com.jeanwest.reader.features.shared.BottomBarButton
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.Item2
-import com.jeanwest.reader.features.shared.Item4
-import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.NotificationPopUp
-import com.jeanwest.reader.features.shared.NotificationPopupHost
-import com.jeanwest.reader.features.shared.Shapes
-import com.jeanwest.reader.features.shared.SimpleTextField
-import com.jeanwest.reader.features.shared.Typography
-import com.jeanwest.reader.features.shared.onPrimaryLight
+import com.jeanwest.reader.view.BottomBarButton
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.Item2
+import com.jeanwest.reader.view.Item4
+import com.jeanwest.reader.view.LoadingCircularProgressIndicator
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.NotificationPopUp
+import com.jeanwest.reader.view.NotificationPopupHost
+import com.jeanwest.reader.view.Shapes
+import com.jeanwest.reader.view.SimpleTextField
+import com.jeanwest.reader.view.onPrimaryLight
 import com.jeanwest.reader.models.Logistic
 import com.jeanwest.reader.models.StockDraft
 import dagger.hilt.android.AndroidEntryPoint
@@ -355,7 +354,7 @@ private fun Content(
 
                         Text(
                             "هنوز حواله ای برای ارسال اسکن نکرده اید",
-                            style = Typography.headlineMedium,
+                            style = MaterialTheme.typography.headlineMedium,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(
                                 top = 16.dp,

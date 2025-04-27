@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.shelf.viewmodel
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,15 +20,15 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.jeanwest.reader.features.shared.AppBarWithBack
-import com.jeanwest.reader.features.shared.EmptyBox
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.Item4
-import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.ScanOrTypeNumberPage
-import com.jeanwest.reader.features.shared.Shapes
-import com.jeanwest.reader.features.shared.onPrimaryLight
+import com.jeanwest.reader.view.AppBarWithBack
+import com.jeanwest.reader.view.EmptyBox
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.Item4
+import com.jeanwest.reader.view.LoadingCircularProgressIndicator
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.ScanOrTypeNumberPage
+import com.jeanwest.reader.view.Shapes
+import com.jeanwest.reader.view.onPrimaryLight
 import com.jeanwest.reader.models.ShelfBarcodeAddress
 
 

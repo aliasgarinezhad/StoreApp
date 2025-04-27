@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -58,25 +59,6 @@ import coil3.compose.rememberAsyncImagePainter
 import com.jeanwest.reader.shop.data.Product
 import kotlin.math.max
 import kotlin.math.min
-
-@Composable
-fun BigButton(
-    modifier: Modifier = Modifier,
-    text: String, onClick: () -> Unit,
-) {
-    Button(
-        modifier = modifier
-            .padding(start = 24.dp, end = 24.dp, bottom = 24.dp)
-            .fillMaxWidth()
-            .height(48.dp),
-        onClick = onClick
-    ) {
-        Text(
-            text = text,
-            style = MyTypography().headlineMedium
-        )
-    }
-}
 
 @Composable
 fun Item(
@@ -200,77 +182,6 @@ fun Item(
                     textAlign = TextAlign.Right,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
                 )
-            }
-        }
-    }
-}
-
-@Composable
-fun FilterDropDownList(
-    modifier: Modifier,
-    icon: @Composable () -> Unit,
-    text: @Composable () -> Unit,
-    values: List<String>,
-    onClick: (item: String) -> Unit
-) {
-
-    var expanded by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    Box(
-        modifier = modifier
-            .shadow(elevation = 1.dp, shape = MaterialTheme.shapes.small)
-            .background(
-                color = MaterialTheme.colorScheme.onPrimary,
-                shape = MaterialTheme.shapes.small
-            )
-            .border(
-                BorderStroke(
-                    1.dp,
-                    if (expanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow
-                ),
-                shape = MaterialTheme.shapes.small
-            )
-            .height(48.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .clickable { expanded = true }
-                .testTag("FilterDropDownList")
-                .fillMaxHeight(),
-        ) {
-
-            icon()
-            text()
-            Icon(
-                imageVector =
-                    if (expanded) {
-                        Icons.Filled.KeyboardArrowUp
-                    } else {
-                        Icons.Filled.KeyboardArrowDown
-                    },
-                "",
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(start = 4.dp, end = 4.dp)
-            )
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier
-                .wrapContentWidth()
-                .background(color = MaterialTheme.colorScheme.primary, shape = Shapes.small)
-        ) {
-            values.forEach {
-                DropdownMenuItem(onClick = {
-                    expanded = false
-                    onClick(it)
-                }, text = { Text(text = it) })
-
-
             }
         }
     }

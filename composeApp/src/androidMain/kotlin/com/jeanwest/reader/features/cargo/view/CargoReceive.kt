@@ -25,15 +25,15 @@ import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import com.jeanwest.reader.R
 import com.jeanwest.reader.features.cargo.viewmodel.CargoReceiveViewModel
-import com.jeanwest.reader.features.shared.AppBarWithBack
-import com.jeanwest.reader.features.shared.BottomBarButton
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.FilterDropDownList
-import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.Shapes
-import com.jeanwest.reader.features.shared.SimpleTextField
-import com.jeanwest.reader.features.shared.onPrimaryLight
+import com.jeanwest.reader.view.AppBarWithBack
+import com.jeanwest.reader.view.BottomBarButton
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.FilterDropDownList
+import com.jeanwest.reader.view.LoadingCircularProgressIndicator
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.Shapes
+import com.jeanwest.reader.view.SimpleTextField
+import com.jeanwest.reader.view.onPrimaryLight
 import com.jeanwest.reader.useCases.ExceptionHandler
 import dagger.hilt.android.AndroidEntryPoint
 

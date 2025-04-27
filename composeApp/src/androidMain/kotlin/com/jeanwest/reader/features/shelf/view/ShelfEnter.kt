@@ -2,7 +2,6 @@
 
 package com.jeanwest.reader.features.shelf.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
@@ -51,20 +50,20 @@ import androidx.core.text.isDigitsOnly
 import com.jeanwest.reader.R
 import com.jeanwest.reader.data.local.SharedPreference
 import com.jeanwest.reader.data.remote.API
-import com.jeanwest.reader.features.shared.BottomBarButton
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.ItemWithInputText
-import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.ScanOrTypeNumberPage
-import com.jeanwest.reader.features.shared.Shapes
-import com.jeanwest.reader.features.shared.SimpleTextField
-import com.jeanwest.reader.features.shared.SnackBarActions
-import com.jeanwest.reader.features.shared.Typography
-import com.jeanwest.reader.features.shared.errorContainerLight
-import com.jeanwest.reader.features.shared.errorLight
-import com.jeanwest.reader.features.shared.onPrimaryLight
-import com.jeanwest.reader.features.shared.showLog
+import com.jeanwest.reader.view.BottomBarButton
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.ItemWithInputText
+import com.jeanwest.reader.view.LoadingCircularProgressIndicator
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.ScanOrTypeNumberPage
+import com.jeanwest.reader.view.Shapes
+import com.jeanwest.reader.view.SimpleTextField
+import com.jeanwest.reader.view.SnackBarActions
+import com.jeanwest.reader.view.Typography
+import com.jeanwest.reader.view.errorContainerLight
+import com.jeanwest.reader.view.errorLight
+import com.jeanwest.reader.view.onPrimaryLight
+import com.jeanwest.reader.view.showLog
 import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.useCases.Barcode
 import com.jeanwest.reader.useCases.ExceptionHandler
@@ -425,7 +424,7 @@ class ShelfEnter : ComponentActivity() {
 
                             Text(
                                 "هنوز کالایی برای ورود به قفسه اسکن نکرده اید",
-                                style = Typography.headlineMedium,
+                                style = MaterialTheme.typography.headlineMedium,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(top = 16.dp, start = 4.dp, end = 4.dp),
                             )

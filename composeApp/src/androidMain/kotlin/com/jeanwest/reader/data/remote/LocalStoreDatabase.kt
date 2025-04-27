@@ -13,8 +13,8 @@ import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.models.StockDraft
 import com.jeanwest.reader.models.User
 import com.jeanwest.reader.useCases.commonCatchHandler
-import com.jeanwest.reader.features.shared.NotificationPopupHost
-import com.jeanwest.reader.features.shared.showLog
+import com.jeanwest.reader.view.NotificationPopupHost
+import com.jeanwest.reader.view.showLog
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.sentry.Sentry
 import io.sentry.SentryLevel

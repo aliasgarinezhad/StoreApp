@@ -11,8 +11,8 @@ import com.jeanwest.reader.models.BaniReturn
 import com.jeanwest.reader.data.local.SharedPreference
 import com.jeanwest.reader.data.remote.API
 import com.jeanwest.reader.useCases.Barcode
-import com.jeanwest.reader.features.shared.SnackBarActions
-import com.jeanwest.reader.features.shared.showLog
+import com.jeanwest.reader.view.SnackBarActions
+import com.jeanwest.reader.view.showLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject

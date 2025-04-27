@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.jeanwest.reader.features.shared
+package com.jeanwest.reader.view
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -33,7 +33,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -99,6 +98,7 @@ import com.jeanwest.reader.features.main.mainPage.viewModel.MainViewModel
 import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.models.ShelfItem
 import com.jeanwest.reader.models.StockDraftRequestItem
+import org.jetbrains.compose.resources.stringResource
 import storeapp.composeapp.generated.resources.NewShelfInRequest
 import storeapp.composeapp.generated.resources.Res
 import storeapp.composeapp.generated.resources.ic_shelf
@@ -213,48 +213,7 @@ fun EmptyBox(text: String) {
 
             Text(
                 text,
-                style = Typography.bodyLarge,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
-        }
-    }
-}
-
-
-@Composable
-fun EmptyBarcode(text: String, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .testTag("emptyBox")
-    ) {
-        Column(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .width(256.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .background(
-                        color = MaterialTheme.colorScheme.surfaceContainer,
-                        shape = Shapes.medium
-                    )
-                    .size(256.dp)
-                    .clickable(onClick = onClick)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_big_barcode_scan),
-                    contentDescription = "",
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
-
-            Text(
-                text,
-                style = Typography.headlineMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(top = 16.dp, start = 16.dp, end = 16.dp)
@@ -296,7 +255,7 @@ fun EmptyShelf(text: String) {
             }
             Text(
                 text,
-                style = Typography.headlineMedium,
+                style = MaterialTheme.typography.headlineMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(top = 16.dp, start = 16.dp, end = 16.dp)
@@ -340,7 +299,7 @@ fun ShowProductDetails(
         Column {
             Text(
                 text = product.name,
-                style = Typography.headlineMedium,
+                style = MaterialTheme.typography.headlineMedium,
                 textAlign = TextAlign.Right,
                 modifier = textModifier,
             )
@@ -385,64 +344,6 @@ fun ShowProductDetails(
 }
 
 @Composable
-fun OpenActivityButton(title: String, icon: Painter, onClick: () -> Unit) {
-
-    val iconSize = 48.dp
-    val textSize = 64.dp
-
-    Column(
-        verticalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier
-            .padding(8.dp)
-            .clickable {
-                onClick()
-            }
-    ) {
-
-        Icon(
-            painter = icon,
-            tint = MaterialTheme.colorScheme.primary,
-            contentDescription = "",
-            modifier = Modifier
-                .size(iconSize)
-                .align(Alignment.CenterHorizontally)
-                .background(
-                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    shape = MaterialTheme.shapes.large
-                )
-                .padding(4.dp)
-        )
-        Text(
-            title,
-            modifier = Modifier
-                .width(textSize)
-                .padding(top = 4.dp),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.labelSmall
-        )
-    }
-}
-
-@Composable
-fun BigButton(
-    modifier: Modifier = Modifier,
-    text: String, onClick: () -> Unit,
-) {
-    Button(
-        modifier = modifier
-            .padding(start = 24.dp, end = 24.dp, bottom = 24.dp)
-            .fillMaxWidth()
-            .height(48.dp),
-        onClick = onClick
-    ) {
-        Text(
-            text = text,
-            style = Typography.labelLarge
-        )
-    }
-}
-
-@Composable
 fun BottomBarButton(text: String, onClick: () -> Unit) {
 
     Box(
@@ -462,7 +363,7 @@ fun BottomBarButton(text: String, onClick: () -> Unit) {
         ) {
             Text(
                 text = text,
-                style = Typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }
@@ -602,7 +503,7 @@ fun ExpandableCard(key: String, features: MutableList<Feature>, viewModel: MainV
                         for (i in 0..3) {
                             val it = featureList[rowIndex * 4 + i]
                             OpenActivityButton(
-                                title = org.jetbrains.compose.resources.stringResource(it.title),
+                                title = stringResource(it.title),
                                 icon = org.jetbrains.compose.resources.painterResource(it.iconRes)
                             ) {
                                 var data: String? = null
@@ -627,7 +528,7 @@ fun ExpandableCard(key: String, features: MutableList<Feature>, viewModel: MainV
                         for (i in 0 until numberOfFeaturesInLastRow) {
                             val it = featureList[numberOfRowsBeforeLastRow * 4 + i]
                             OpenActivityButton(
-                                title = org.jetbrains.compose.resources.stringResource(it.title),
+                                title = stringResource(it.title),
                                 icon = org.jetbrains.compose.resources.painterResource(it.iconRes)
                             ) {
                                 var data: String? = null
@@ -2528,66 +2429,6 @@ fun Item7(
 }
 
 @Composable
-fun FilterDropDownList(
-    modifier: Modifier = Modifier,
-    icon: @Composable () -> Unit = {},
-    text: @Composable () -> Unit,
-    values: List<String>,
-    onClick: (item: String) -> Unit,
-) {
-
-    var expanded by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    Box(
-        modifier = modifier
-            //.shadow(elevation = 1.dp, shape = MaterialTheme.shapes.small)
-            .border(
-                BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                shape = MaterialTheme.shapes.small
-            )
-            .height(48.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .clickable { expanded = true }
-                .testTag("FilterDropDownList")
-                .fillMaxHeight(),
-        ) {
-
-            icon()
-            text()
-            Icon(
-                imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                "",
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(start = 0.dp, end = 4.dp)
-            )
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier
-                .wrapContentWidth()
-                .wrapContentHeight()
-                //.background(color = Color.White, shape = Shapes.small)
-                .align(Alignment.Center)
-        ) {
-            values.forEach {
-                DropdownMenuItem(onClick = {
-                    expanded = false
-                    onClick(it)
-                }, text = { Text(text = it, color = MaterialTheme.colorScheme.onPrimaryContainer) })
-            }
-        }
-    }
-}
-
-
-@Composable
 fun FilterDropDownListWithSearch(
     modifier: Modifier = Modifier,
     icon: @Composable () -> Unit = {},
@@ -2963,7 +2804,7 @@ fun NotFound(text: String) {
 
             Text(
                 text,
-                style = Typography.headlineMedium,
+                style = MaterialTheme.typography.headlineMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(top = 16.dp, start = 4.dp, end = 4.dp)
@@ -3070,7 +2911,7 @@ fun ScanBox(item: String, modifier: Modifier) {
 
             Text(
                 item,
-                style = Typography.bodyLarge,
+                style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(
@@ -3144,7 +2985,7 @@ fun ScanOrTypeNumberPage(
 
                         Text(
                             "$item را اسکن یا در کادر جستجو وارد کنید",
-                            style = Typography.headlineSmall,
+                            style = MaterialTheme.typography.headlineSmall,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(
                                 top = 16.dp,
@@ -3159,406 +3000,6 @@ fun ScanOrTypeNumberPage(
     }
 }
 
-@Composable
-fun AlertDialogWith2Button(
-    title: String,
-    btnConfirm: String,
-    btnNotConfirm: String,
-    btnNotConfirmOnClick: () -> Unit,
-    btnConfirmOnClick: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    BasicAlertDialog(
-        modifier = Modifier
-            .background(
-                color = MaterialTheme.colorScheme.background,
-                shape = MaterialTheme.shapes.small
-            )
-            .padding(horizontal = 16.dp, vertical = 16.dp),
-        onDismissRequest = {
-            onDismiss()
-        },
-        content = {
-            Column(
-                verticalArrangement = Arrangement.SpaceAround
-            ) {
-
-                Text(
-                    text = title,
-                    modifier = Modifier.padding(bottom = 12.dp),
-                    fontSize = 18.sp
-                )
-
-                Row(horizontalArrangement = Arrangement.SpaceAround) {
-
-                    OutlinedButton(
-                        onClick = {
-                            btnNotConfirmOnClick()
-                        }, modifier = Modifier
-                            .padding(top = 12.dp, end = 16.dp)
-                            .testTag("notConfirm")
-                    )
-                    {
-                        Text(
-                            text = btnNotConfirm,
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                    }
-                    Button(
-                        onClick = {
-                            btnConfirmOnClick()
-                        },
-                        modifier = Modifier
-                            .padding(top = 12.dp)
-                            .testTag("confirm")
-                    ) {
-                        Text(
-                            text = btnConfirm,
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                    }
-                }
-            }
-        }
-    )
-}
-
-@Composable
-fun AlertDialogWith2ButtonAndAppVersion(
-    title: String,
-    appVersion: String,
-    btnConfirm: String,
-    btnNotConfirm: String,
-    btnNotConfirmOnClick: () -> Unit,
-    btnConfirmOnClick: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    BasicAlertDialog(
-        modifier = Modifier
-            .background(
-                color = MaterialTheme.colorScheme.background,
-                shape = MaterialTheme.shapes.small
-            )
-            .padding(horizontal = 16.dp, vertical = 16.dp),
-
-        onDismissRequest = {
-            onDismiss()
-        },
-        content = {
-            Column(
-                verticalArrangement = Arrangement.SpaceAround
-            ) {
-
-                Text(
-                    text = title,
-                    modifier = Modifier.padding(bottom = 12.dp),
-                    fontSize = 18.sp
-                )
-                Text(
-                    text = "ورژن برنامه: $appVersion",
-                    modifier = Modifier.padding(bottom = 12.dp),
-                    fontSize = 18.sp
-                )
-
-                Row(horizontalArrangement = Arrangement.SpaceAround) {
-
-                    OutlinedButton(
-                        onClick = {
-                            btnNotConfirmOnClick()
-                        }, modifier = Modifier
-                            .padding(top = 12.dp, end = 16.dp)
-                            .testTag("notConfirm")
-                    )
-                    {
-                        Text(
-                            text = btnNotConfirm,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                    Button(
-                        onClick = {
-                            btnConfirmOnClick()
-                        },
-                        modifier = Modifier
-                            .padding(top = 12.dp)
-                            .testTag("confirm")
-                    ) {
-                        Text(
-                            text = btnConfirm,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-            }
-        }
-    )
-}
-
-@Composable
-fun AlertDialogWithHeadlineMediumButton(
-    title: String,
-    btnTxt: String,
-    btnOnClick: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    BasicAlertDialog(
-        modifier = Modifier
-            .background(
-                color = MaterialTheme.colorScheme.background,
-                shape = MaterialTheme.shapes.small
-            )
-            .padding(horizontal = 16.dp, vertical = 16.dp),
-        onDismissRequest = {
-            onDismiss()
-        },
-        content = {
-
-            Column(
-
-                verticalArrangement = Arrangement.SpaceAround
-            ) {
-
-                Text(
-                    text = title,
-                    modifier = Modifier.padding(bottom = 10.dp),
-                    fontSize = 18.sp
-                )
-
-                Button(
-                    onClick = { btnOnClick() },
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .testTag("alertBtn")
-                ) {
-                    Text(
-                        text = btnTxt,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-            }
-        }
-    )
-}
-
-@Composable
-fun AlertDialogWithHeadlineMediumButton1InputText(
-    title: String,
-    btnTxt: String,
-    btnOnClick: () -> Unit,
-    defaultText: String,
-    onDismiss: () -> Unit,
-    onValueChange: (it: String) -> Unit,
-) {
-    BasicAlertDialog(
-        modifier = Modifier
-            .background(
-                color = MaterialTheme.colorScheme.background,
-                shape = MaterialTheme.shapes.small
-            )
-            .padding(horizontal = 16.dp, vertical = 16.dp),
-        content = {
-            Column {
-                Text(
-                    text = title, modifier = Modifier
-                        .padding(top = 10.dp, start = 10.dp, end = 10.dp)
-                )
-                OutlinedTextField(
-                    value = defaultText, onValueChange = {
-                        onValueChange(it)
-                    },
-                    modifier = Modifier
-                        .padding(top = 10.dp, start = 10.dp, end = 10.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .testTag("alertDialogInput")
-                )
-
-                Button(
-                    modifier = Modifier
-                        .padding(
-                            bottom = 12.dp,
-                            top = 12.dp,
-                            start = 12.dp,
-                            end = 12.dp
-                        )
-                        .align(Alignment.CenterHorizontally)
-                        .testTag("alertBtn"),
-                    onClick = {
-                        btnOnClick()
-                    }) {
-                    Text(
-                        text = btnTxt,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-            }
-        },
-        onDismissRequest = {
-            onDismiss()
-        }
-    )
-}
-
-@Composable
-fun AlertDialogWithHeadlineMediumButtonDropDownList(
-    title: String,
-    btnTxt: String,
-    btnOnClick: () -> Unit,
-    dropDownText: String,
-    onDismiss: () -> Unit,
-    dropDownRes: MutableList<String>,
-    onSelectItem: (item: String) -> Unit,
-) {
-
-    BasicAlertDialog(
-        modifier = Modifier
-            .background(
-                color = MaterialTheme.colorScheme.background,
-                shape = MaterialTheme.shapes.small
-            )
-            .padding(horizontal = 16.dp, vertical = 16.dp),
-        onDismissRequest = {
-            onDismiss()
-        },
-        content = {
-            Column {
-
-                Text(
-                    title,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-
-                Row {
-                    var text = dropDownText
-                    FilterDropDownList(
-                        modifier = Modifier
-                            .padding(top = 24.dp, end = 16.dp),
-                        icon = {},
-                        text = {
-                            Text(
-                                text = text,
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically)
-                                    .padding(start = 16.dp)
-                            )
-                        },
-                        onClick = {
-                            text = it
-                            onSelectItem(it)
-                        },
-                        values = dropDownRes
-                    )
-
-                    Button(
-                        onClick = {
-                            btnOnClick()
-                        }, modifier = Modifier
-                            .padding(top = 24.dp)
-                            .align(Alignment.CenterVertically)
-                            .testTag("alertBtn")
-                    ) {
-                        Text(
-                            text = btnTxt,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-            }
-        }
-    )
-}
-
-
-@Composable
-fun AlertDialogWith2ButtonDropDownList(
-    title: String,
-    btnTxt: String,
-    btnOnClick: () -> Unit,
-    dropDownText: String,
-    onDismiss: () -> Unit,
-    dropDownRes: List<String>,
-    onSelectItem: (item: String) -> Unit,
-    dropDown2Text: String,
-    dropDown2Res: List<String>,
-    onSelectItem2: (item: String) -> Unit,
-) {
-
-    BasicAlertDialog(
-        modifier = Modifier
-            .background(
-                color = MaterialTheme.colorScheme.background,
-                shape = MaterialTheme.shapes.small
-            )
-            .padding(horizontal = 16.dp, vertical = 16.dp)
-            .fillMaxSize(),
-        onDismissRequest = {
-            onDismiss()
-        },
-        content = {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
-                Text(
-                    title,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-
-                Row {
-                    var text = dropDownText
-                    FilterDropDownList(
-                        modifier = Modifier
-                            .padding(top = 24.dp, end = 16.dp),
-                        icon = {},
-                        text = {
-                            Text(
-                                text = text,
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically)
-                                    .padding(start = 16.dp)
-                            )
-                        },
-                        onClick = {
-                            text = it
-                            onSelectItem(it)
-                        },
-                        values = dropDownRes
-                    )
-
-                    var text2 = dropDown2Text
-                    FilterDropDownList(
-                        modifier = Modifier
-                            .padding(top = 24.dp, end = 16.dp),
-                        icon = {},
-                        text = {
-                            Text(
-                                text = text2,
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically)
-                                    .padding(start = 16.dp)
-                            )
-                        },
-                        onClick = {
-                            text2 = it
-                            onSelectItem2(it)
-                        },
-                        values = dropDown2Res
-                    )
-                }
-                Row {
-                    BigButton(
-                        onClick = {
-                            btnOnClick()
-                        },
-                        modifier = Modifier.padding(top = 32.dp),
-                        text = btnTxt
-                    )
-                }
-            }
-        }
-    )
-}
 
 @Preview
 @Composable

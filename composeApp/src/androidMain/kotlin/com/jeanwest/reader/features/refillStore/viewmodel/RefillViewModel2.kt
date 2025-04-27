@@ -25,8 +25,8 @@ import com.jeanwest.reader.useCases.errorBeep
 import com.jeanwest.reader.useCases.successBeep
 import com.jeanwest.reader.features.kiosk.view.SearchProduct
 import com.jeanwest.reader.features.print.view.PrintPricePerProduct
-import com.jeanwest.reader.features.shared.NotificationPopupHost
-import com.jeanwest.reader.features.shared.showLog
+import com.jeanwest.reader.view.NotificationPopupHost
+import com.jeanwest.reader.view.showLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.json.JSONArray

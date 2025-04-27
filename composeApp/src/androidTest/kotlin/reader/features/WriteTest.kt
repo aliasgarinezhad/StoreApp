@@ -5,9 +5,9 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.jeanwest.reader.useCases.epcDecoder
-import com.jeanwest.reader.features.shared.doneColor
-import com.jeanwest.reader.features.shared.errorLight
-import com.jeanwest.reader.features.shared.warningColor
+import com.jeanwest.reader.view.doneColor
+import com.jeanwest.reader.view.errorLight
+import com.jeanwest.reader.view.warningColor
 import com.jeanwest.reader.features.write.view.WriteTag
 import org.junit.Rule
 import org.junit.Test

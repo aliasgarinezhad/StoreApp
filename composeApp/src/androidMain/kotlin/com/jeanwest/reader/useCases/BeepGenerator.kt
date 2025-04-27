@@ -3,7 +3,7 @@ package com.jeanwest.reader.useCases
 import android.media.AudioManager
 import android.media.ToneGenerator
 import androidx.compose.material3.SnackbarHostState
-import com.jeanwest.reader.features.shared.showLog
+import com.jeanwest.reader.view.showLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

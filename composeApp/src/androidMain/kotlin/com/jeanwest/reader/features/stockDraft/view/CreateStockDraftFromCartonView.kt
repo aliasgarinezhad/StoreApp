@@ -2,7 +2,6 @@
 
 package com.jeanwest.reader.features.stockDraft.view
 
-import android.annotation.SuppressLint
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -50,22 +49,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jeanwest.reader.R
 import com.jeanwest.reader.data.local.SharedPreference
-import com.jeanwest.reader.features.shared.AlertDialogWith2Button
-import com.jeanwest.reader.features.shared.AlertDialogWithHeadlineMediumButtonDropDownList
-import com.jeanwest.reader.features.shared.AppBarWithBack
-import com.jeanwest.reader.features.shared.AppBarWithDeleteButton
-import com.jeanwest.reader.features.shared.BottomBarButton
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.Item2
-import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.NotificationPopUp
-import com.jeanwest.reader.features.shared.NotificationPopupHost
-import com.jeanwest.reader.features.shared.Shapes
-import com.jeanwest.reader.features.shared.SimpleTextField
-import com.jeanwest.reader.features.shared.Typography
-import com.jeanwest.reader.features.shared.errorContainerLight
-import com.jeanwest.reader.features.shared.errorLight
+import com.jeanwest.reader.view.AlertDialogWith2Button
+import com.jeanwest.reader.view.AlertDialogWithHeadlineMediumButtonDropDownList
+import com.jeanwest.reader.view.AppBarWithBack
+import com.jeanwest.reader.view.AppBarWithDeleteButton
+import com.jeanwest.reader.view.BottomBarButton
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.Item2
+import com.jeanwest.reader.view.LoadingCircularProgressIndicator
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.NotificationPopUp
+import com.jeanwest.reader.view.NotificationPopupHost
+import com.jeanwest.reader.view.Shapes
+import com.jeanwest.reader.view.SimpleTextField
+import com.jeanwest.reader.view.errorContainerLight
+import com.jeanwest.reader.view.errorLight
 import com.jeanwest.reader.models.Carton
 import com.jeanwest.reader.models.StockDraft
 import dagger.hilt.android.AndroidEntryPoint
@@ -304,7 +302,7 @@ fun Content(viewModel: CreateStockDraftFromCartonView) {
 
                             Text(
                                 "هنوز حواله ای اسکن نکرده اید",
-                                style = Typography.headlineMedium,
+                                style = MaterialTheme.typography.headlineMedium,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
                                     .padding(

@@ -2,7 +2,6 @@ package com.jeanwest.reader.features.main.mainPage.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
@@ -49,24 +48,24 @@ import com.jeanwest.reader.data.remote.IotHub
 import com.jeanwest.reader.features.main.utility.requestPermissions
 import com.jeanwest.reader.features.main.mainPage.viewModel.MainViewModel
 import com.jeanwest.reader.features.main.view.DeviceRegister
-import com.jeanwest.reader.features.shared.AlertDialogWith2ButtonAndAppVersion
-import com.jeanwest.reader.features.shared.AlertDialogWithHeadlineMediumButton
-import com.jeanwest.reader.features.shared.AppBarWithNavigationButton
-import com.jeanwest.reader.features.shared.BigButton
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.ExpandableCard
-import com.jeanwest.reader.features.shared.FilterDropDownListWithSearch
-import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.OpenActivityButton
-import com.jeanwest.reader.features.shared.SimpleTextField
+import com.jeanwest.reader.view.AlertDialogWith2ButtonAndAppVersion
+import com.jeanwest.reader.view.AlertDialogWithHeadlineMediumButton
+import com.jeanwest.reader.view.AppBarWithNavigationButton
+import com.jeanwest.reader.view.BigButton
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.ExpandableCard
+import com.jeanwest.reader.view.FilterDropDownListWithSearch
+import com.jeanwest.reader.view.LoadingCircularProgressIndicator
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.OpenActivityButton
+import com.jeanwest.reader.view.SimpleTextField
 import com.jeanwest.reader.features.write.view.WriteTag
 import dagger.hilt.android.AndroidEntryPoint
-import io.ktor.util.reflect.instanceOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * The main activity of the application.
@@ -238,7 +237,7 @@ fun MainContent(viewModel: MainViewModel) {
                                 for (i in 0..3) {
                                     val it = viewModel.featuresList[rowIndex * 4 + i]
                                     OpenActivityButton(
-                                        title = org.jetbrains.compose.resources.stringResource(it.title),
+                                        title = stringResource(it.title),
                                         icon = org.jetbrains.compose.resources.painterResource(it.iconRes)
                                     ) {
                                         viewModel.onFeatureButtonClick(
@@ -263,7 +262,7 @@ fun MainContent(viewModel: MainViewModel) {
                                     val it =
                                         viewModel.featuresList[numberOfRowsBeforeLastRow * 4 + i]
                                     OpenActivityButton(
-                                        title = org.jetbrains.compose.resources.stringResource(it.title),
+                                        title = stringResource(it.title),
                                         icon = org.jetbrains.compose.resources.painterResource(it.iconRes)
                                     ) {
                                         viewModel.onFeatureButtonClick(

@@ -36,15 +36,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jeanwest.reader.R
 import com.jeanwest.reader.features.banimode.viewmodel.BanimodeReturnViewModel
-import com.jeanwest.reader.features.shared.AlertDialogWith2Button
-import com.jeanwest.reader.features.shared.AppBarWithBack
-import com.jeanwest.reader.features.shared.EmptyBox
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.Shapes
-import com.jeanwest.reader.features.shared.Typography
-import com.jeanwest.reader.features.shared.onPrimaryLight
+import com.jeanwest.reader.view.AlertDialogWith2Button
+import com.jeanwest.reader.view.AppBarWithBack
+import com.jeanwest.reader.view.EmptyBox
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.LoadingCircularProgressIndicator
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.Shapes
+import com.jeanwest.reader.view.onPrimaryLight
 import com.jeanwest.reader.models.BaniReturn
 import com.jeanwest.reader.useCases.ExceptionHandler
 import dagger.hilt.android.AndroidEntryPoint
@@ -257,7 +256,7 @@ fun BaniReturnItems(i: Int, uiList: List<BaniReturn>, view: BanimodeReturnViewMo
             ) {
                 Text(
                     text = "نهایی",
-                    style = Typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                 )

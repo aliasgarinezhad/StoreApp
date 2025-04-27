@@ -164,13 +164,10 @@ fun ComposableHost(
                 state = viewModel.state,
                 isCameraOn = viewModel.isCameraOn,
                 colorFilterValue = viewModel.colorFilterValue,
-                sizeFilterValue = viewModel.sizeFilterValue,
                 onBottomBarButtonClick = { viewModel.openCamera() },
                 loading = viewModel.loading,
                 uiList = viewModel.filteredUiList,
-                onScanButtonClick = { viewModel.openCamera() },
                 onColorFilterValueChange = { viewModel.onColorFilterValueChange(it) },
-                onSizeFilterValueChange = { viewModel.onSizeFilterValueChange(it) },
                 textFieldValue = viewModel.productCode,
                 onTextValueChange = { viewModel.onTextValueChange(it) },
                 onImeAction = { viewModel.onImeAction() },
@@ -178,18 +175,14 @@ fun ComposableHost(
                     viewModel.barcodeScanner(it)
                 },
                 barcodeScanner = barcodeScanner,
-                onLogoutClick = { viewModel.onLogoutClick(navHostController) },
-                storesFilterValue = viewModel.storeFilterValue,
-                storesFilterValues = viewModel.storeFilterValues.keys.toMutableList(),
-                onStoreFilterValueChange = { viewModel.onStoreFilterValueChange(it) },
                 isFullScreenImage = viewModel.isFullScreenImage,
                 changeImageFullScreen = { viewModel.changeFullScreenState() },
                 colorFilterList = viewModel.uiListColorFiltered,
                 filteredUiList = viewModel.filteredUiList,
-                onAccountBtnClick = { viewModel.onAccountBtnClick() },
-                isAccountDialogOpen = viewModel.isAccountDialogOpen,
+                onAccountBtnClick = { viewModel.onAccountBtnClick(navHostController) },
                 imgAlbumUrl = viewModel.imgUrls,
-                colorFilterLazyRowState = viewModel.colorFilterLazyRowState.value
+                colorFilterLazyRowState = viewModel.colorFilterLazyRowState.value,
+                popupState = viewModel.popupHost
             )
         }
     }

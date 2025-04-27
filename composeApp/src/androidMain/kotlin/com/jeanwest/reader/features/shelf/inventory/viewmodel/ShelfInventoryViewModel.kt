@@ -11,8 +11,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jeanwest.reader.data.RepositoryImpl
 import com.jeanwest.reader.data.local.SharedPreference
-import com.jeanwest.reader.features.shared.NotificationPopupHost
-import com.jeanwest.reader.features.shared.showLog
+import com.jeanwest.reader.view.NotificationPopupHost
+import com.jeanwest.reader.view.showLog
 import com.jeanwest.reader.features.shelf.inventory.view.NavigationEvent
 import com.jeanwest.reader.models.ShelfItem
 import com.jeanwest.reader.useCases.Barcode

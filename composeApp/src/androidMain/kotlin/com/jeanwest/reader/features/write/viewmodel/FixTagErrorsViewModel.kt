@@ -20,7 +20,7 @@ import com.jeanwest.reader.useCases.epcDecoder
 import com.jeanwest.reader.useCases.epcGenerator
 import com.jeanwest.reader.useCases.errorBeep
 import com.jeanwest.reader.useCases.successBeep
-import com.jeanwest.reader.features.shared.NotificationPopupHost
+import com.jeanwest.reader.view.NotificationPopupHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.sentry.Sentry

@@ -56,22 +56,21 @@ import com.jeanwest.reader.data.local.SharedPreference
 import com.jeanwest.reader.data.remote.LocalStoreDatabase
 import com.jeanwest.reader.features.kiosk.view.SearchProduct
 import com.jeanwest.reader.features.print.view.PrintPricePerProduct
-import com.jeanwest.reader.features.shared.AppBarWithBack
-import com.jeanwest.reader.features.shared.AppBarWithDeleteButton
-import com.jeanwest.reader.features.shared.BottomBarButton
-import com.jeanwest.reader.features.shared.EmptyBox
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.Item
-import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.NotificationPopUp
-import com.jeanwest.reader.features.shared.NotificationPopupHost
-import com.jeanwest.reader.features.shared.Shapes
-import com.jeanwest.reader.features.shared.Typography
-import com.jeanwest.reader.features.shared.errorContainerLight
-import com.jeanwest.reader.features.shared.errorLight
-import com.jeanwest.reader.features.shared.onPrimaryLight
-import com.jeanwest.reader.features.shared.showLog
+import com.jeanwest.reader.view.AppBarWithBack
+import com.jeanwest.reader.view.AppBarWithDeleteButton
+import com.jeanwest.reader.view.BottomBarButton
+import com.jeanwest.reader.view.EmptyBox
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.Item
+import com.jeanwest.reader.view.LoadingCircularProgressIndicator
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.NotificationPopUp
+import com.jeanwest.reader.view.NotificationPopupHost
+import com.jeanwest.reader.view.Shapes
+import com.jeanwest.reader.view.errorContainerLight
+import com.jeanwest.reader.view.errorLight
+import com.jeanwest.reader.view.onPrimaryLight
+import com.jeanwest.reader.view.showLog
 import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.models.StockDraft
 import com.jeanwest.reader.useCases.Barcode
@@ -822,7 +821,7 @@ class RefillManual : ComponentActivity() {
                             }
                             Text(
                                 "هنوز کالایی برای ارسال به فروشگاه اسکن نکرده اید",
-                                style = Typography.headlineMedium,
+                                style = MaterialTheme.typography.headlineMedium,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(top = 16.dp, start = 4.dp, end = 4.dp),
                             )

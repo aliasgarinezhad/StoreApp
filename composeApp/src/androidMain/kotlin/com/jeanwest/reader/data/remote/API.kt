@@ -13,8 +13,8 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.jeanwest.reader.data.local.SharedPreference
-import com.jeanwest.reader.features.shared.SnackBarActions
-import com.jeanwest.reader.features.shared.showLog
+import com.jeanwest.reader.view.SnackBarActions
+import com.jeanwest.reader.view.showLog
 import com.jeanwest.reader.models.BaniReturn
 import com.jeanwest.reader.models.Cardex
 import com.jeanwest.reader.models.Carton

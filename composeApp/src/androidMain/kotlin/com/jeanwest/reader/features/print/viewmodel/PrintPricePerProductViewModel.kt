@@ -12,8 +12,8 @@ import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.jeanwest.reader.data.remote.API
 import com.jeanwest.reader.data.remote.LocalStoreDatabase
-import com.jeanwest.reader.features.shared.SnackBarActions
-import com.jeanwest.reader.features.shared.showLog
+import com.jeanwest.reader.view.SnackBarActions
+import com.jeanwest.reader.view.showLog
 import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.models.StockDraft
 import com.jeanwest.reader.useCases.Barcode

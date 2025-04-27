@@ -22,25 +22,17 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.BottomStart
-import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
@@ -58,21 +50,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
-import com.jeanwest.reader.view.FilterDropDownList
 import com.jeanwest.reader.view.FullScreenImage
 import com.jeanwest.reader.view.MyApplicationTheme
-import com.jeanwest.reader.view.MyTypography
-import com.jeanwest.reader.view.Shapes
 import kotlinx.serialization.Serializable
 import com.jeanwest.reader.shop.data.Product
+import com.jeanwest.reader.view.EmptyBarcode
 import com.jeanwest.reader.view.ErrorSnackBar
 import com.jeanwest.reader.view.LoadingIndicator
+import com.jeanwest.reader.view.NotificationPopUp
+import com.jeanwest.reader.view.NotificationPopupHost
+import com.jeanwest.reader.view.backgroundLight
 import org.jetbrains.compose.resources.painterResource
 import storeapp.composeapp.generated.resources.Res
 import storeapp.composeapp.generated.resources.barcode_scan_icon
-import storeapp.composeapp.generated.resources.ic_barcode_scan
-import storeapp.composeapp.generated.resources.ic_big_barcode_scan
-import storeapp.composeapp.generated.resources.store
 
 @Serializable
 object MainScreen
@@ -108,50 +98,37 @@ fun MainPage(
     state: SnackbarHostState,
     isCameraOn: Boolean,
     colorFilterValue: String,
-    sizeFilterValue: String,
     onBottomBarButtonClick: () -> Unit,
     loading: Boolean,
     uiList: List<Product>,
-    onScanButtonClick: () -> Unit,
     onColorFilterValueChange: (value: String) -> Unit,
-    onSizeFilterValueChange: (value: String) -> Unit,
     textFieldValue: String,
     onTextValueChange: (value: String) -> Unit,
     onImeAction: () -> Unit,
     onScanSuccess: (barcodes: String) -> Unit,
     barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit,
-    onLogoutClick: () -> Unit,
-    storesFilterValue: String,
-    storesFilterValues: List<String>,
-    onStoreFilterValueChange: (value: String) -> Unit,
     isFullScreenImage: Boolean,
     changeImageFullScreen: () -> Unit,
     colorFilterList: Map<String, String>,
     filteredUiList: List<Product>,
     onAccountBtnClick: () -> Unit,
-    isAccountDialogOpen: Boolean,
     imgAlbumUrl: List<String>,
-    colorFilterLazyRowState: LazyListState
+    colorFilterLazyRowState: LazyListState,
+    popupState: NotificationPopupHost
 ) {
     MyApplicationTheme {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
             Scaffold(content = {
                 SearchContent(
                     colorFilterValue = colorFilterValue,
-                    sizeFilterValue = sizeFilterValue,
-                    storesFilterValues = storesFilterValues,
-                    storesFilterValue = storesFilterValue,
-                    onStoreFilterValueChange = onStoreFilterValueChange,
                     isCameraOn = isCameraOn,
                     loading = loading,
                     uiList = uiList,
                     onColorFilterValueChange = onColorFilterValueChange,
-                    onSizeFilterValueChange = onSizeFilterValueChange,
                     onScanButtonClick = onBottomBarButtonClick,
                     textFieldValue = textFieldValue,
                     onTextValueChange = onTextValueChange,
                     onImeAction = onImeAction,
-                    onLogoutClick = onLogoutClick,
                     onScanSuccess = onScanSuccess,
                     barcodeScanner = barcodeScanner,
                     isFullScreenImage = isFullScreenImage,
@@ -159,33 +136,26 @@ fun MainPage(
                     colorFilterList = colorFilterList,
                     filteredUiList = filteredUiList,
                     onAccountBtnClick = onAccountBtnClick,
-                    isAccountDialogOpen = isAccountDialogOpen,
                     imgAlbumUrl = imgAlbumUrl,
-                    colorFilterLazyRowState = colorFilterLazyRowState
+                    colorFilterLazyRowState = colorFilterLazyRowState,
+                    popupState = popupState
                 )
             }, snackbarHost = { ErrorSnackBar(state) })
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchContent(
     colorFilterValue: String,
-    sizeFilterValue: String,
-    storesFilterValues: List<String>,
-    storesFilterValue: String,
-    onStoreFilterValueChange: (value: String) -> Unit,
     isCameraOn: Boolean,
     loading: Boolean,
     uiList: List<Product>,
     onColorFilterValueChange: (value: String) -> Unit,
-    onSizeFilterValueChange: (value: String) -> Unit,
     onScanButtonClick: () -> Unit,
     textFieldValue: String,
     onTextValueChange: (value: String) -> Unit,
     onImeAction: () -> Unit,
-    onLogoutClick: () -> Unit,
     onScanSuccess: (barcodes: String) -> Unit,
     barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit,
     isFullScreenImage: Boolean,
@@ -193,86 +163,16 @@ fun SearchContent(
     colorFilterList: Map<String, String>,
     filteredUiList: List<Product>,
     onAccountBtnClick: () -> Unit,
-    isAccountDialogOpen: Boolean,
     imgAlbumUrl: List<String>,
-    colorFilterLazyRowState: LazyListState
+    colorFilterLazyRowState: LazyListState,
+    popupState: NotificationPopupHost
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         if (loading) {
             LoadingIndicator()
         } else {
-            if (isAccountDialogOpen) {
-                BasicAlertDialog(onDismissRequest = {
-                    onAccountBtnClick()
-                }, content = {
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(top = 24.dp, bottom = 16.dp, start = 24.dp, end = 24.dp),
-                    ) {
 
-                        Text(
-                            "تنظیمات حساب کاربری",
-                            modifier = Modifier.fillMaxWidth().align(CenterHorizontally),
-                            style = MaterialTheme.typography.headlineMedium
-                        )
-
-                        Row(horizontalArrangement = Arrangement.Center) {
-
-//                                Text(
-//                                    "انتخاب فروشگاه",
-//                                    modifier = Modifier.padding(start = 16.dp, end = 16.dp).align(
-//                                        CenterVertically
-//                                    )
-//                                )
-
-                            FilterDropDownList(
-                                modifier = Modifier.padding(bottom = 24.dp, top = 24.dp),
-                                icon = {
-                                    Icon(
-                                        painter = painterResource(Res.drawable.store),
-                                        contentDescription = "",
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.size(28.dp)
-                                            .align(Alignment.CenterVertically).padding(start = 6.dp)
-                                    )
-                                },
-                                text = {
-                                    Text(
-                                        text = storesFilterValue,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        modifier = Modifier.align(Alignment.CenterVertically)
-                                            .padding(start = 6.dp)
-                                    )
-                                },
-                                onClick = onStoreFilterValueChange,
-                                values = storesFilterValues
-                            )
-                        }
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-
-                            OutlinedButton(
-                                onClick = {
-                                    onLogoutClick()
-                                },
-                                modifier = Modifier.testTag("alertBtn"),
-                            ) {
-                                Text(text = "خروج از حساب")
-                            }
-
-                            Button(
-                                onClick = {
-                                    onAccountBtnClick()
-                                }, modifier = Modifier.testTag("alertBtn")
-                            ) {
-                                Text(text = "ذخیره")
-                            }
-                        }
-                    }
-                })
-            }
+            NotificationPopUp(popupState)
             Column(
                 modifier = Modifier.padding(bottom = 0.dp)
                     .shadow(elevation = 1.dp, shape = RectangleShape).background(
@@ -293,12 +193,11 @@ fun SearchContent(
                         onTextValueChange = onTextValueChange,
                         textFieldValue = textFieldValue
                     )
-                    IconButton(
-                        onClick = {
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp).align(Alignment.CenterVertically).clickable  {
                             onScanButtonClick()
-                        }, modifier = Modifier
-                            //.padding(start = 4.dp)
-                            .size(32.dp).align(Alignment.CenterVertically)
+                        }
                     ) {
                         Icon(
                             painter = painterResource(Res.drawable.barcode_scan_icon),
@@ -327,7 +226,11 @@ fun SearchContent(
                 }
             } else {
                 if (uiList.isEmpty()) {
-                    EmptyList(onScanButtonClick = onScanButtonClick)
+                    EmptyBarcode(
+                        onClick = onScanButtonClick,
+                        text = "بارکد را اسکن یا کد محصول را در کادر جستجو وارد کنید",
+                        modifier = Modifier.padding(bottom = 52.dp)
+                    )
                 } else {
                     if (isFullScreenImage) {
                         var currentImage = uiList[0].ImgUrl
@@ -468,49 +371,21 @@ fun ProductCodeTextField(
         },
         value = textFieldValue,
         onValueChange = onTextValueChange,
-        modifier = modifier.testTag("SearchProductCodeTextField").background(
-            color = MaterialTheme.colorScheme.secondary, shape = MaterialTheme.shapes.small
-        ),
+        modifier = modifier.testTag("SearchProductCodeTextField"),
         keyboardActions = KeyboardActions(onSearch = {
             focusManager.clearFocus()
             onImeAction()
         }),
         singleLine = true,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        placeholder = { Text(text = "کد محصول") })
-}
-
-@Composable
-fun EmptyList(
-    onScanButtonClick: () -> Unit,
-) {
-    Box(
-        modifier = Modifier.padding(bottom = 56.dp).fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier.align(Center).width(256.dp)
-        ) {
-            Box(
-                modifier = Modifier.background(color = Color.White, shape = Shapes.medium)
-                    .size(256.dp)
-            ) {
-                Icon(
-                    painter = painterResource(Res.drawable.ic_big_barcode_scan),
-                    contentDescription = "",
-                    tint = Color.Unspecified,
-                    modifier = Modifier.align(Center).clickable {
-                        onScanButtonClick()
-                    })
-            }
-
-            Text(
-                "بارکد را اسکن یا کد محصول را در کادر جستجو وارد کنید",
-                style = MaterialTheme.typography.headlineMedium,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                modifier = Modifier.padding(top = 16.dp, start = 4.dp, end = 4.dp),
-            )
-        }
-    }
+        placeholder = { Text(text = "کد محصول") },
+        shape = MaterialTheme.shapes.medium,
+        colors = OutlinedTextFieldDefaults.colors(
+            unfocusedContainerColor = MaterialTheme.colorScheme.background,
+            focusedContainerColor = MaterialTheme.colorScheme.background,
+            unfocusedBorderColor = MaterialTheme.colorScheme.background
+        )
+    )
 }
 
 @Composable
@@ -541,17 +416,17 @@ fun sizeAndCountItem(
                 else it
             },
             color = Color.Black,
-            style = MyTypography().headlineMedium,
+            style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(vertical = 8.dp)
         )
         Text(
             text = list[i].StoreMojodi.toString(),
-            style = MyTypography().labelMedium,
+            style = MaterialTheme.typography.titleSmall,
             modifier = Modifier.padding(vertical = 8.dp)
         )
         Text(
             text = list[i].DepoMojodi.toString(),
-            style = MyTypography().labelMedium,
+            style = MaterialTheme.typography.titleSmall,
             modifier = Modifier.padding(vertical = 8.dp)
         )
     }

@@ -14,8 +14,8 @@ import com.jeanwest.reader.data.remote.API
 import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.models.StoreShelf
 import com.jeanwest.reader.useCases.Barcode
-import com.jeanwest.reader.features.shared.NotificationPopupHost
-import com.jeanwest.reader.features.shared.showLog
+import com.jeanwest.reader.view.NotificationPopupHost
+import com.jeanwest.reader.view.showLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
