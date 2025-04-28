@@ -70,6 +70,7 @@ import com.jeanwest.reader.useCases.Barcode
 import com.jeanwest.reader.useCases.ExceptionHandler
 import com.jeanwest.reader.useCases.errorBeep
 import com.jeanwest.reader.useCases.successBeep
+import com.jeanwest.reader.view.EmptyBox
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

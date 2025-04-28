@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -201,7 +202,7 @@ fun Content(
                 if (uiListCarton.isNotEmpty()) {
                     Text(
                         text = "مجموع کالاهای کارتن: ${uiListCarton.sumOf { it.numberOfItems }}",
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier
                             .padding(start = 16.dp, top = 8.dp)
                             .align(Alignment.CenterVertically)
@@ -209,7 +210,7 @@ fun Content(
                 }else if (uiListProduct.isNotEmpty()){
                     Text(
                         text = "مجموع: ${uiListProduct.sumOf { it.scannedNumber }}",
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier
                             .padding(start = 16.dp, top = 8.dp)
                             .align(Alignment.CenterVertically)
