@@ -26,8 +26,8 @@ build_dev:
     # Accept licenses and install required SDK components
     - export HTTP_PROXY=http://10.0.1.98:1080
     - export HTTPS_PROXY=http://10.0.1.98:1080
-    - yes | sdkmanager --licenses
-    - sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+    - yes | sdkmanager --licenses >/dev/null 2>&1 || true
+    - sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
   script:
       - ./gradlew assembleRelease
       - export VERSION_NUMBER=$(grep versionName ./composeApp/build.gradle.kts | cut -d '"' -f 2)
