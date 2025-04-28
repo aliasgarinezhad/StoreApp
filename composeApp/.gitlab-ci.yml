@@ -1,0 +1,61 @@
+stages:
+  - build
+  - publish
+
+build_dev:
+  stage: build
+  tags:
+    - build_apk
+  only:
+    - develop
+  script:
+      - ./gradlew assembleRelease
+      - export VERSION_NUMBER=$(grep versionName ./composeApp/build.gradle.kts | cut -d '"' -f 2)
+      - mv release-$VERSION_NUMBER.apk app-debug-$VERSION_NUMBER.apk
+  artifacts:
+    paths:
+      - ./app/build/outputs/apk/release/
+    when: on_success
+    expire_in: 10 days
+  environment:
+    name: build
+
+publish_dev:
+  stage: publish
+  tags:
+    - rfid_dev
+  only:
+    - develop
+  script:
+      - cp ./app/build/outputs/apk/release/app-debug-$VERSION_NUMBER.apk /opt/rfid_gateway/storage
+  environment:
+    name: publish
+
+build_prod:
+  stage: build
+  tags:
+    - build_apk
+  only:
+    - master
+  script:
+      - ./gradlew assembleRelease
+      - export VERSION_NUMBER=$(grep versionName ./composeApp/build.gradle.kts | cut -d '"' -f 2)
+      - mv release-$VERSION_NUMBER.apk app-debug-$VERSION_NUMBER.apk
+  artifacts:
+    paths:
+      - ./app/build/outputs/apk/release/
+    when: on_success
+    expire_in: 10 days
+  environment:
+    name: build
+
+publish_prod:
+  stage: publish
+  tags:
+    - rfid_prod
+  only:
+    - master
+  script:
+      - cp ./app/build/outputs/apk/release/app-debug-$VERSION_NUMBER.apk /opt/rfid_gateway/storage
+  environment:
+    name: publish
