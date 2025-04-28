@@ -2,6 +2,7 @@ package com.jeanwest.reader.factory.addTaskFeature.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,10 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -58,11 +59,13 @@ fun SelectTaskScreen(
                     AppBarWithBack(title = pageTitle, onBackPressed = onBack)
                 },
                 content = {
-                    Content(
-                        loading = loading,
-                        product = product,
-                        onClick = onClick
-                    )
+                    Box(modifier = Modifier.padding(it)) {
+                        Content(
+                            loading = loading,
+                            product = product,
+                            onClick = onClick
+                        )
+                    }
                 },
                 snackbarHost = { ErrorSnackBar(state) },
             )
@@ -83,26 +86,26 @@ private fun Content(
 
             Text(
                 text = "استایل: ",
-                style = MaterialTheme.typography.body2,
+                style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Right,
             )
 
             Text(
                 text = product.style.substring(product.style.length - 3, product.style.length) + "-",
-                style = MaterialTheme.typography.h1,
+                style = MaterialTheme.typography.titleSmall,
                 textAlign = TextAlign.Right,
                 fontSize = 14.sp,
             )
             Text(
                 text = product.style.substring(0 , product.style.length - 3),
-                style = MaterialTheme.typography.body2,
+                style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Right,
             )
 
             Text(
                 text = "رنگ: " + product.color,
                 modifier = Modifier.padding(start = 16.dp),
-                style = MaterialTheme.typography.body2,
+                style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Right,
             )
         }
@@ -113,13 +116,13 @@ private fun Content(
                     Text(
 
                         text = task.key,
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Right,
                         modifier = Modifier
                             .padding(top = 16.dp, start = 16.dp, end = 16.dp)
                             .shadow(4.dp, Shapes.medium)
                             .background(
-                                color = MaterialTheme.colors.onPrimary,
+                                color = MaterialTheme.colorScheme.onPrimary,
                                 shape = MaterialTheme.shapes.small
                             )
                             .clickable { onClick(task.key) }

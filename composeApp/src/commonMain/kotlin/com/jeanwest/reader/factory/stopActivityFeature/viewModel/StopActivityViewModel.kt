@@ -1,6 +1,6 @@
 package com.jeanwest.reader.factory.stopActivityFeature.viewModel
 
-import androidx.compose.material.SnackbarHostState
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue

@@ -1,7 +1,7 @@
 package com.jeanwest.reader.shop.viewModel
 
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material.SnackbarHostState
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -23,6 +23,7 @@ import com.jeanwest.reader.shop.data.User
 import com.jeanwest.reader.data.createHttpClient
 import com.jeanwest.reader.data.onError
 import com.jeanwest.reader.data.onSuccess
+import com.jeanwest.reader.view.NotificationPopupHost
 
 /**
  * ViewModel for the application, managing UI state and interactions related to product data, user authentication, and navigation.
@@ -37,6 +38,7 @@ class AppViewModel(
     val savedUser: User,
 ) {
 
+    var popupHost = NotificationPopupHost()
     private var user = User()
     private var client = GetProductData(user, createHttpClient())
     private var searchUiList = mutableStateListOf<Product>()
@@ -135,8 +137,18 @@ class AppViewModel(
         filterUiList()
     }
 
-    fun onAccountBtnClick() {
-        isAccountDialogOpen = !isAccountDialogOpen
+    fun onAccountBtnClick(navHostController: NavHostController) {
+        popupHost.showPopupWith2Button1DropDownList(
+            message = "تنظیمات حساب کاربری",
+            dropDownText = storeFilterValue,
+            dropDownList = storeFilterValues.keys.toList(),
+            onOkClick = {
+                onStoreFilterValueChange(it)
+            },
+            okButtonTitle = "ذخیره",
+            onCancelClick = { onLogoutClick(navHostController = navHostController) },
+            cancelButtonTitle = "خروج از حساب",
+        )
     }
 
     fun onStoreFilterValueChange(value: String) {

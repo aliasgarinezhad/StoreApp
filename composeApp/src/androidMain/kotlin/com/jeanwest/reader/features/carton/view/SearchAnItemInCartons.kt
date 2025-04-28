@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.carton.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
@@ -22,17 +21,16 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.jeanwest.reader.features.carton.viewmodel.SearchAnItemInCartonsViewModel
-import com.jeanwest.reader.features.shared.AppBarWithBack
-import com.jeanwest.reader.features.shared.EmptyBox
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.Item3
-import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.ScanOrTypeNumberPage
-import com.jeanwest.reader.features.shared.Shapes
+import com.jeanwest.reader.view.AppBarWithBack
+import com.jeanwest.reader.view.EmptyBox
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.Item3
+import com.jeanwest.reader.view.LoadingCircularProgressIndicator
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.ScanOrTypeNumberPage
+import com.jeanwest.reader.view.Shapes
 import com.jeanwest.reader.models.CartonItem
-import com.jeanwest.reader.features.shared.onPrimaryLight
-import com.jeanwest.reader.models.Product
+import com.jeanwest.reader.view.onPrimaryLight
 import com.jeanwest.reader.useCases.ExceptionHandler
 import dagger.hilt.android.AndroidEntryPoint
 

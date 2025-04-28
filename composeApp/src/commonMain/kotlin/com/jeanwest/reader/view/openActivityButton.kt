@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,8 +20,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun OpenActivityButton(title: String, icon: Painter, onClick: () -> Unit) {
 
-    val iconSize = 88.dp
-    val textSize = 96.dp
+    val iconSize = 48.dp
+    val textSize = 64.dp
 
     Column(
         verticalArrangement = Arrangement.SpaceEvenly,
@@ -33,14 +33,17 @@ fun OpenActivityButton(title: String, icon: Painter, onClick: () -> Unit) {
     ) {
 
         Icon(
-            painter = icon, contentDescription = "", modifier = Modifier
+            painter = icon,
+            tint = MaterialTheme.colorScheme.primary,
+            contentDescription = "",
+            modifier = Modifier
                 .size(iconSize)
                 .align(Alignment.CenterHorizontally)
                 .background(
-                    color = MaterialTheme.colors.primary,
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
                     shape = MaterialTheme.shapes.large
                 )
-                .padding(4.dp), tint = MaterialTheme.colors.onPrimary
+                .padding(4.dp)
         )
         Text(
             title,
@@ -48,7 +51,7 @@ fun OpenActivityButton(title: String, icon: Painter, onClick: () -> Unit) {
                 .width(textSize)
                 .padding(top = 4.dp),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.body1
+            style = MaterialTheme.typography.labelSmall
         )
     }
 }

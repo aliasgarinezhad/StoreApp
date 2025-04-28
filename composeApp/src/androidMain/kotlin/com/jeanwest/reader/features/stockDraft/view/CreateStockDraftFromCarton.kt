@@ -12,8 +12,8 @@ import com.jeanwest.reader.useCases.ExceptionHandler
 import com.jeanwest.reader.useCases.RFID
 import com.jeanwest.reader.useCases.errorBeep
 import com.jeanwest.reader.useCases.successBeep
-import com.jeanwest.reader.features.shared.SnackBarActions
-import com.jeanwest.reader.features.shared.showLog
+import com.jeanwest.reader.view.SnackBarActions
+import com.jeanwest.reader.view.showLog
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

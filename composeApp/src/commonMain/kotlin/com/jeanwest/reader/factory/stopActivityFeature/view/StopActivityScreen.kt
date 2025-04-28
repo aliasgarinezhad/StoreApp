@@ -1,18 +1,19 @@
 package com.jeanwest.reader.factory.stopActivityFeature.view
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.RadioButton
-import androidx.compose.material.RadioButtonDefaults
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
@@ -65,11 +66,13 @@ fun StopActivityScreen(
                     AppBarWithBack(title = pageTitle, onBackPressed = onBack)
                 },
                 content = {
-                    Content(
-                        loading = loading,
-                        reasons = reasons,
-                        onConfirm = onConfirm
-                    )
+                    Box(modifier = Modifier.padding(it)) {
+                        Content(
+                            loading = loading,
+                            reasons = reasons,
+                            onConfirm = onConfirm
+                        )
+                    }
                 },
                 snackbarHost = { ErrorSnackBar(state) },
             )
@@ -107,7 +110,7 @@ fun Content(
                         selected = (reason.id == selectedId),
                         onClick = { selectedId = reason.id },
                         colors = RadioButtonDefaults.colors(
-                            selectedColor = MaterialTheme.colors.primary
+                            selectedColor = MaterialTheme.colorScheme.primary
                         )
                     )
                     Text(

@@ -7,12 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.Text
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -90,7 +90,7 @@ fun Content(
                     .padding(32.dp)
                     .fillMaxWidth(), horizontalArrangement = Arrangement.Center
             ) {
-                CircularProgressIndicator(color = MaterialTheme.colors.primary)
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 Text(
                     text = "در حال بارگذاری",
                     modifier = Modifier

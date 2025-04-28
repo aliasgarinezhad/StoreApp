@@ -38,25 +38,23 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.jeanwest.reader.R
-import com.jeanwest.reader.features.shared.AppBarWithBack
-import com.jeanwest.reader.features.shared.EmptyShelf
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.FilterDropDownList
-import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.Shapes
-import com.jeanwest.reader.features.shared.SimpleTextField
-import com.jeanwest.reader.features.shared.Typography
-import com.jeanwest.reader.features.shared.onPrimaryLight
-import com.jeanwest.reader.features.shared.primaryLight
+import com.jeanwest.reader.view.AppBarWithBack
+import com.jeanwest.reader.view.EmptyShelf
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.FilterDropDownList
+import com.jeanwest.reader.view.LoadingCircularProgressIndicator
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.Shapes
+import com.jeanwest.reader.view.SimpleTextField
+import com.jeanwest.reader.view.Typography
+import com.jeanwest.reader.view.onPrimaryLight
+import com.jeanwest.reader.view.primaryLight
 import com.jeanwest.reader.features.shelf.viewmodel.CreateShelfStoreViewModel
 import com.jeanwest.reader.models.StoreShelf
 import com.jeanwest.reader.useCases.ExceptionHandler
@@ -402,7 +400,7 @@ fun CreateShelfItems(i: Int, uiList: List<StoreShelf>, view: CreateShelfStoreVie
             ) {
                 Text(
                     text = "پرینت",
-                    style = Typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                 )

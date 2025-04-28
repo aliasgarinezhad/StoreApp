@@ -12,7 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.jeanwest.reader.data.local.SharedPreference
 import com.jeanwest.reader.data.remote.API
-import com.jeanwest.reader.features.shared.showLog
+import com.jeanwest.reader.view.showLog
 import com.jeanwest.reader.models.Cardex
 import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.useCases.Barcode

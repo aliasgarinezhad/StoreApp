@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.inventory.view
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
@@ -47,13 +46,13 @@ import com.jeanwest.reader.R
 import com.jeanwest.reader.data.local.SharedPreference
 import com.jeanwest.reader.data.remote.API
 import com.jeanwest.reader.features.kiosk.view.SearchProduct
-import com.jeanwest.reader.features.shared.AlertDialogWith2Button
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.Item
-import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.PowerSlider
-import com.jeanwest.reader.features.shared.primaryLight
+import com.jeanwest.reader.view.AlertDialogWith2Button
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.Item
+import com.jeanwest.reader.view.LoadingCircularProgressIndicator
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.PowerSlider
+import com.jeanwest.reader.view.primaryLight
 import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.useCases.Barcode
 import com.jeanwest.reader.useCases.ExceptionHandler

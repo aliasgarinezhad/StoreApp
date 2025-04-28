@@ -4,7 +4,6 @@ package com.jeanwest.reader.features.refillStore.view
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -51,12 +50,12 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.jeanwest.reader.R
 import com.jeanwest.reader.data.local.SharedPreference
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.FilterDropDownList
-import com.jeanwest.reader.features.shared.Item
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.SimpleTextField
-import com.jeanwest.reader.features.shared.primaryLight
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.FilterDropDownList
+import com.jeanwest.reader.view.Item
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.SimpleTextField
+import com.jeanwest.reader.view.primaryLight
 import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.useCases.Barcode
 import com.jeanwest.reader.useCases.ExceptionHandler

@@ -18,7 +18,7 @@ import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.useCases.Barcode
 import com.jeanwest.reader.useCases.RFID
 import com.jeanwest.reader.features.kiosk.view.SearchProduct
-import com.jeanwest.reader.features.shared.showLog
+import com.jeanwest.reader.view.showLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject

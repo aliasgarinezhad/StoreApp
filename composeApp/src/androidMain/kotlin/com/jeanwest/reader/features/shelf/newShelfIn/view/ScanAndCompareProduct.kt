@@ -5,10 +5,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -16,15 +16,15 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.jeanwest.reader.features.shared.AppBarWithBack
-import com.jeanwest.reader.features.shared.BottomBarButton
-import com.jeanwest.reader.features.shared.EmptyBox
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.Item
-import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.NotificationPopUp
-import com.jeanwest.reader.features.shared.NotificationPopupHost
+import com.jeanwest.reader.view.AppBarWithBack
+import com.jeanwest.reader.view.BottomBarButton
+import com.jeanwest.reader.view.EmptyBox
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.Item
+import com.jeanwest.reader.view.LoadingCircularProgressIndicator
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.NotificationPopUp
+import com.jeanwest.reader.view.NotificationPopupHost
 import com.jeanwest.reader.models.Product
 
 /**
@@ -99,13 +99,13 @@ fun Content(
 
             Text(
                 text = "لطفا کالا های دارای موجودی فیزیکی را اسکن کنید.",
-                style = MaterialTheme.typography.body1,
+                style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp)
             )
 
             Text(
                 text = "مجموع اسکن: ${uiListProduct.sumOf { it.scannedBarcodeNumber }}",
-                style = MaterialTheme.typography.body1,
+                style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp)
             )
             if (uiListProduct.isEmpty()) {

@@ -14,9 +14,9 @@ import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.jeanwest.reader.data.local.SharedPreference
 import com.jeanwest.reader.data.remote.API
-import com.jeanwest.reader.features.shared.NotificationPopupHost
-import com.jeanwest.reader.features.shared.SnackBarActions
-import com.jeanwest.reader.features.shared.showLog
+import com.jeanwest.reader.view.NotificationPopupHost
+import com.jeanwest.reader.view.SnackBarActions
+import com.jeanwest.reader.view.showLog
 import com.jeanwest.reader.models.Logistic
 import com.jeanwest.reader.models.StockDraft
 import com.jeanwest.reader.useCases.Barcode

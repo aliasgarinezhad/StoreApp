@@ -1,36 +1,31 @@
 package com.jeanwest.reader.view
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 /**
- * A class to manage and display different types of notification popups.
- * This class uses mutable state to control the visibility and content of the popups,
- * allowing for reactive updates in a UI.
+ *  Manages the display and interaction of different types of notification popups.
+ *
+ *  This class provides methods to show various popups with different configurations,
+ *  including single-button, two-button, dropdown list, and text field input popups.
+ *  It uses Compose's state management to control the visibility of these popups and
+ *  handles button clicks and dismiss events.
+ *
+ *  @constructor Injects an instance of [NotificationPopupHost].
  */
 class NotificationPopupHost {
 
     var showPopup1Button by mutableStateOf(false)
         private set
     var showPopup2Button by mutableStateOf(false)
+        private set
     var showPopUpWithAButtonAndDropDownList by mutableStateOf(false)
         private set
     var showPopUpWithAButtonAndTextField by mutableStateOf(false)
+        private set
+    var showPopUpWith2ButtonAndDropDownList by mutableStateOf(false)
         private set
 
     var doneButtonTitle = ""
@@ -50,6 +45,7 @@ class NotificationPopupHost {
         showPopup2Button = false
         showPopUpWithAButtonAndTextField = false
         showPopUpWithAButtonAndDropDownList = false
+        showPopUpWith2ButtonAndDropDownList = false
     }
 
     var dropDownText by mutableStateOf("")
@@ -78,6 +74,7 @@ class NotificationPopupHost {
         showPopUpWithAButtonAndTextField = false
         showPopUpWithAButtonAndDropDownList = false
         showPopup1Button = true
+        showPopUpWith2ButtonAndDropDownList = false
     }
 
     fun showPopupWith2Button(
@@ -108,9 +105,10 @@ class NotificationPopupHost {
         showPopUpWithAButtonAndDropDownList = false
         showPopup1Button = false
         showPopup2Button = true
+        showPopUpWith2ButtonAndDropDownList = false
     }
 
-    fun showPopupWith1ButtonDropDownList(
+    fun showPopupWitheadlineMediumButtonDropDownList(
         message: String,
         dropDownText: String,
         dropDownList: List<String>,
@@ -129,6 +127,37 @@ class NotificationPopupHost {
         showPopup2Button = false
         showPopup1Button = false
         showPopUpWithAButtonAndDropDownList = true
+        showPopUpWithAButtonAndTextField = false
+        showPopUpWith2ButtonAndDropDownList = false
+    }
+
+    fun showPopupWith2Button1DropDownList(
+        message: String,
+        dropDownText: String,
+        dropDownList: List<String>,
+        onOkClick: (value: String) -> Unit = {},
+        okButtonTitle: String,
+        onCancelClick: () -> Unit,
+        cancelButtonTitle: String,
+    ) {
+        this.message = message
+        this.oKButtonTitle = okButtonTitle
+        this.cancelButtonTitle = cancelButtonTitle
+        this.dropDownList.clear()
+        this.dropDownList.addAll(dropDownList)
+        this.dropDownText = dropDownText
+        this.onDropDownDoneButtonClick = { value ->
+            onOkClick(value)
+            showPopUpWith2ButtonAndDropDownList = false
+        }
+        this.onCancelButtonClick = {
+            onCancelClick()
+            showPopUpWith2ButtonAndDropDownList = false
+        }
+        showPopup2Button = false
+        showPopup1Button = false
+        showPopUpWithAButtonAndDropDownList = false
+        showPopUpWith2ButtonAndDropDownList = true
         showPopUpWithAButtonAndTextField = false
     }
 
@@ -154,6 +183,7 @@ class NotificationPopupHost {
         showPopup1Button = false
         showPopUpWithAButtonAndDropDownList = false
         showPopUpWithAButtonAndTextField = true
+        showPopUpWith2ButtonAndDropDownList = false
     }
 }
 
@@ -161,53 +191,55 @@ class NotificationPopupHost {
 fun NotificationPopUp(state: NotificationPopupHost) {
 
     if (state.showPopup1Button) {
-        AlertDialogWith1Button(
+        AlertDialogWithHeadlineMediumButton(
             onDismiss = { state.onDismiss() },
             title = state.message,
             btnTxt = "باشه",
             btnOnClick = { state.onDoneButtonClick() })
 
+    } else if (state.showPopup2Button) {
+        AlertDialogWith2Button(
+            title = state.message,
+            btnConfirm = state.oKButtonTitle,
+            btnNotConfirm = state.cancelButtonTitle,
+            btnNotConfirmOnClick = { state.onCancelButtonClick() },
+            btnConfirmOnClick = { state.onOkButtonClick() },
+            onDismiss = { state.onDismiss() }
+        )
+    } else if (state.showPopUpWithAButtonAndDropDownList) {
+        AlertDialogWithHeadlineMediumButtonDropDownList(
+            title = state.message,
+            btnTxt = state.doneButtonTitle,
+            btnOnClick = { state.onDropDownDoneButtonClick(state.dropDownText) },
+            dropDownText = state.dropDownText,
+            onDismiss = { state.onDismiss() },
+            onSelectItem = {
+                state.dropDownText = it
+            },
+            dropDownRes = state.dropDownList
+        )
+    } else if(state.showPopUpWithAButtonAndTextField) {
+
+        AlertDialogWithHeadlineMediumButton1InputText(
+            title = state.message,
+            btnTxt = state.doneButtonTitle,
+            btnOnClick = {
+                state.onTextFieldDoneButtonClick(state.textFieldValue)
+            },
+            defaultText = state.textFieldValue,
+            onValueChange = { state.onTextFieldValueChange(it) },
+            onDismiss = { state.onDismiss() }
+        )
+    } else if(state.showPopUpWith2ButtonAndDropDownList) {
+        AlertDialogWith2Button1DropDownList(
+            title = state.message,
+            okTitle = state.oKButtonTitle,
+            cancelTitle = state.cancelButtonTitle,
+            onOKClick = state.onDropDownDoneButtonClick,
+            onCancelClick = state.onCancelButtonClick,
+            dropDownText = state.dropDownText,
+            onDismiss = state.onDismiss,
+            dropDownRes = state.dropDownList,
+        )
     }
-}
-
-
-@Composable
-fun AlertDialogWith1Button(
-    title: String,
-    btnTxt: String,
-    btnOnClick: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = {
-            onDismiss()
-        },
-        buttons = {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(220.dp)
-                    .padding(horizontal = 20.dp, vertical = 10.dp),
-                verticalArrangement = Arrangement.SpaceAround
-            ) {
-
-                Text(
-                    text = title,
-                    modifier = Modifier.padding(bottom = 10.dp),
-                    fontSize = 18.sp
-                )
-
-                Button(
-                    onClick = { btnOnClick() },
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .testTag("alertBtn")
-                ) {
-                    Text(text = btnTxt)
-                }
-            }
-        }
-    )
 }

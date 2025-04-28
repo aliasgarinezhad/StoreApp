@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.main.view
 
-import android.content.Intent
 import android.os.Build
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
@@ -36,16 +35,14 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.preference.PreferenceManager
 import com.jeanwest.reader.R
 import com.jeanwest.reader.data.local.SharedPreference
 import com.jeanwest.reader.data.remote.API
-import com.jeanwest.reader.features.main.mainPage.view.MainActivity
-import com.jeanwest.reader.features.shared.BigButton
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.SimpleTextField
+import com.jeanwest.reader.view.BigButton
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.LoadingCircularProgressIndicator
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.SimpleTextField
 import com.jeanwest.reader.models.Device
 import com.jeanwest.reader.useCases.Barcode
 import dagger.hilt.android.AndroidEntryPoint

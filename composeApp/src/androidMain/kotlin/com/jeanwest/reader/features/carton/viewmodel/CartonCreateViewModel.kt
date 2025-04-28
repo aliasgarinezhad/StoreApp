@@ -14,7 +14,7 @@ import com.google.gson.Gson
 import com.jeanwest.reader.data.local.SharedPreference
 import com.jeanwest.reader.data.remote.API
 import com.jeanwest.reader.features.kiosk.view.SearchProduct
-import com.jeanwest.reader.features.shared.NotificationPopupHost
+import com.jeanwest.reader.view.NotificationPopupHost
 import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.useCases.Barcode
 import com.jeanwest.reader.useCases.RFID

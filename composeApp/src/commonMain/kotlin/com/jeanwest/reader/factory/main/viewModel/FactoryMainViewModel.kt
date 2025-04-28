@@ -1,6 +1,6 @@
 package com.jeanwest.reader.factory.main.viewModel
 
-import androidx.compose.material.SnackbarHostState
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -83,7 +83,11 @@ class FactoryMainViewModel {
     }
 
     fun onFeatureIconClick(screen: Any) {
-        changeScreen(screen)
+        if (machineCodeTextFieldValue == "") {
+            showLog(data = "لطفا شماره چرخ را وارد کنید.", state = state)
+        } else {
+            changeScreen(screen)
+        }
     }
 
     private fun changeScreen(screen: Any) {

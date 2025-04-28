@@ -2,7 +2,6 @@
 
 package com.jeanwest.reader.features.kiosk.view
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
@@ -48,14 +47,14 @@ import com.google.gson.Gson
 import com.jeanwest.reader.R
 import com.jeanwest.reader.data.local.SharedPreference
 import com.jeanwest.reader.data.remote.API
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.Item
-import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.ScanOrTypeNumberPage
-import com.jeanwest.reader.features.shared.Shapes
-import com.jeanwest.reader.features.shared.onPrimaryLight
-import com.jeanwest.reader.features.shared.showLog
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.Item
+import com.jeanwest.reader.view.LoadingCircularProgressIndicator
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.ScanOrTypeNumberPage
+import com.jeanwest.reader.view.Shapes
+import com.jeanwest.reader.view.onPrimaryLight
+import com.jeanwest.reader.view.showLog
 import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.useCases.Barcode
 import com.jeanwest.reader.useCases.ExceptionHandler

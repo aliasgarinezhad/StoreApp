@@ -41,11 +41,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import com.jeanwest.reader.data.local.SharedPreference
-import com.jeanwest.reader.features.shared.AlertDialogWith2Button
-import com.jeanwest.reader.features.shared.AppBarWithBack
-import com.jeanwest.reader.features.shared.BottomBarButton
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.showLog
+import com.jeanwest.reader.view.AlertDialogWith2Button
+import com.jeanwest.reader.view.AppBarWithBack
+import com.jeanwest.reader.view.BottomBarButton
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.showLog
 import com.jeanwest.reader.models.User
 import com.jeanwest.reader.useCases.Barcode
 import com.jeanwest.reader.useCases.RFID

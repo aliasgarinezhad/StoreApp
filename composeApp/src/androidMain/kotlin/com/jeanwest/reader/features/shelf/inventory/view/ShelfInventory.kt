@@ -13,7 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.jeanwest.reader.R
-import com.jeanwest.reader.features.shared.ScanOrTypeNumberScreen
+import com.jeanwest.reader.view.ScanOrTypeNumberScreen
 import com.jeanwest.reader.features.shelf.inventory.viewmodel.ShelfInventoryViewModel
 import com.jeanwest.reader.features.shelf.view.ShelfItemsScreen
 import com.jeanwest.reader.useCases.ExceptionHandler

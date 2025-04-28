@@ -2,7 +2,6 @@
 
 package com.jeanwest.reader.features.stockDraftRequest.view
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
@@ -85,28 +84,27 @@ import com.jeanwest.reader.R
 import com.jeanwest.reader.data.local.SharedPreference
 import com.jeanwest.reader.data.remote.API
 import com.jeanwest.reader.features.kiosk.view.SearchProduct
-import com.jeanwest.reader.features.shared.AlertDialogWith2Button
-import com.jeanwest.reader.features.shared.AlertDialogWith2ButtonDropDownList
-import com.jeanwest.reader.features.shared.BottomBarButton
-import com.jeanwest.reader.features.shared.EmptyBox
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.FilterDropDownList
-import com.jeanwest.reader.features.shared.FilterDropDownListWithSearch
-import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.NotificationPopUp
-import com.jeanwest.reader.features.shared.NotificationPopupHost
-import com.jeanwest.reader.features.shared.ScanTypeDropDownList
-import com.jeanwest.reader.features.shared.Shapes
-import com.jeanwest.reader.features.shared.SimpleTextField
-import com.jeanwest.reader.features.shared.Typography
-import com.jeanwest.reader.features.shared.errorContainerLight
-import com.jeanwest.reader.features.shared.errorLight
-import com.jeanwest.reader.features.shared.primaryContainerLight
-import com.jeanwest.reader.features.shared.primaryLight
-import com.jeanwest.reader.features.shared.secondaryLight
-import com.jeanwest.reader.features.shared.showLog
-import com.jeanwest.reader.features.shared.warningColor
+import com.jeanwest.reader.view.AlertDialogWith2Button
+import com.jeanwest.reader.view.AlertDialogWith2ButtonDropDownList
+import com.jeanwest.reader.view.BottomBarButton
+import com.jeanwest.reader.view.EmptyBox
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.FilterDropDownList
+import com.jeanwest.reader.view.FilterDropDownListWithSearch
+import com.jeanwest.reader.view.LoadingCircularProgressIndicator
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.NotificationPopUp
+import com.jeanwest.reader.view.NotificationPopupHost
+import com.jeanwest.reader.view.ScanTypeDropDownList
+import com.jeanwest.reader.view.Shapes
+import com.jeanwest.reader.view.SimpleTextField
+import com.jeanwest.reader.view.errorContainerLight
+import com.jeanwest.reader.view.errorLight
+import com.jeanwest.reader.view.primaryContainerLight
+import com.jeanwest.reader.view.primaryLight
+import com.jeanwest.reader.view.secondaryLight
+import com.jeanwest.reader.view.showLog
+import com.jeanwest.reader.view.warningColor
 import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.models.StockDraftRequest
 import com.jeanwest.reader.models.StockDraftRequestItem
@@ -1524,7 +1522,7 @@ class StockDraftRequestConfirm : ComponentActivity() {
 
                                 Text(
                                     "هنوز کالایی برای ثبت حواله اسکن نکرده اید",
-                                    style = Typography.headlineMedium,
+                                    style = MaterialTheme.typography.headlineMedium,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.padding(
                                         top = 16.dp,

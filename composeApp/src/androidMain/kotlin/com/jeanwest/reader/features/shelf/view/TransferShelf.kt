@@ -10,7 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.jeanwest.reader.features.shared.ScanOrTypeNumberScreen
+import com.jeanwest.reader.view.ScanOrTypeNumberScreen
 import com.jeanwest.reader.features.shelf.viewmodel.TransferShelfViewModel
 import dagger.hilt.android.AndroidEntryPoint
 

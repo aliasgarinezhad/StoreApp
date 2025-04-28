@@ -1,9 +1,8 @@
 package com.jeanwest.reader.features.carton.view
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -11,10 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.navigation.NavController
-import com.jeanwest.reader.features.shared.AppBarWithBack
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.ScanOrTypeNumberPage
+import com.jeanwest.reader.view.AppBarWithBack
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.ScanOrTypeNumberPage
 
 //@Serializable
 //object ScanCartonScreen

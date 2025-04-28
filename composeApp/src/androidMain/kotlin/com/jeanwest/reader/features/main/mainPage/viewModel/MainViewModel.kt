@@ -20,7 +20,7 @@ import com.jeanwest.reader.data.remote.LocalStoreDatabase
 import com.jeanwest.reader.factory.main.model.Feature
 import com.jeanwest.reader.features.main.mainPage.view.NavigationEvents
 import com.jeanwest.reader.features.main.view.Update
-import com.jeanwest.reader.features.shared.showLog
+import com.jeanwest.reader.view.showLog
 import com.jeanwest.reader.models.User
 import com.jeanwest.reader.useCases.Barcode
 import com.jeanwest.reader.useCases.ExceptionHandler

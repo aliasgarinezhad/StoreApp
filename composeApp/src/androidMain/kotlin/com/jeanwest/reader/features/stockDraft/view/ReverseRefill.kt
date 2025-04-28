@@ -27,7 +27,7 @@ import com.jeanwest.reader.useCases.ExceptionHandler
 import com.jeanwest.reader.useCases.errorBeep
 import com.jeanwest.reader.useCases.successBeep
 import com.jeanwest.reader.features.kiosk.view.SearchProduct
-import com.jeanwest.reader.features.shared.NotificationPopupHost
+import com.jeanwest.reader.view.NotificationPopupHost
 import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONArray
 import javax.inject.Inject

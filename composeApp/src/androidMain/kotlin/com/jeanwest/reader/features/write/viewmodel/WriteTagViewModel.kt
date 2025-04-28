@@ -11,9 +11,9 @@ import androidx.lifecycle.ViewModel
 import androidx.preference.PreferenceManager
 import com.jeanwest.reader.data.local.SharedPreference
 import com.jeanwest.reader.data.remote.API
-import com.jeanwest.reader.features.shared.doneColor
-import com.jeanwest.reader.features.shared.showLog
-import com.jeanwest.reader.features.shared.warningColor
+import com.jeanwest.reader.view.doneColor
+import com.jeanwest.reader.view.showLog
+import com.jeanwest.reader.view.warningColor
 import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.useCases.Barcode
 import com.jeanwest.reader.useCases.EncodingType
@@ -22,12 +22,9 @@ import com.jeanwest.reader.useCases.epcDecoder
 import com.jeanwest.reader.useCases.epcGenerator
 import com.jeanwest.reader.useCases.errorBeep
 import com.jeanwest.reader.useCases.successBeep
-import com.jeanwest.reader.features.shared.NotificationPopupHost
-import com.jeanwest.reader.features.shared.SnackBarActions
-import com.jeanwest.reader.features.shared.doneColor
-import com.jeanwest.reader.features.shared.errorLight
-import com.jeanwest.reader.features.shared.showLog
-import com.jeanwest.reader.features.shared.warningColor
+import com.jeanwest.reader.view.NotificationPopupHost
+import com.jeanwest.reader.view.SnackBarActions
+import com.jeanwest.reader.view.errorLight
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext

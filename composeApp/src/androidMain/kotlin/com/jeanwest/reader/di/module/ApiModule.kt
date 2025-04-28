@@ -1,9 +1,12 @@
 package com.jeanwest.reader.di.module
 
 import androidx.compose.material3.SnackbarHostState
+import com.jeanwest.reader.di.qualifier.ViewModelState
+import com.jeanwest.reader.view.NotificationPopupHost
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -20,5 +23,11 @@ class ApiModule {
     @Provides
     fun state(): SnackbarHostState {
         return SnackbarHostState()
+    }
+
+    @Singleton
+    @Provides
+    fun provideNotificationPopupHost(): NotificationPopupHost {
+        return NotificationPopupHost()
     }
 }

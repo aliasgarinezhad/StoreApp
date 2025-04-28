@@ -1,6 +1,5 @@
 package com.jeanwest.reader.features.inventory.view
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -46,17 +45,17 @@ import com.jeanwest.reader.R
 import com.jeanwest.reader.data.local.SharedPreference
 import com.jeanwest.reader.data.remote.API
 import com.jeanwest.reader.features.kiosk.view.SearchProduct
-import com.jeanwest.reader.features.shared.AlertDialogWithHeadlineMediumButton1InputText
-import com.jeanwest.reader.features.shared.AppBarWithBack
-import com.jeanwest.reader.features.shared.AppBarWithFileButton
-import com.jeanwest.reader.features.shared.ErrorSnackBar
-import com.jeanwest.reader.features.shared.FilterDropDownList
-import com.jeanwest.reader.features.shared.InventoryReportItem
-import com.jeanwest.reader.features.shared.Item
-import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
-import com.jeanwest.reader.features.shared.MyApplicationTheme
-import com.jeanwest.reader.features.shared.NotFound
-import com.jeanwest.reader.features.shared.showLog
+import com.jeanwest.reader.view.AlertDialogWithHeadlineMediumButton1InputText
+import com.jeanwest.reader.view.AppBarWithBack
+import com.jeanwest.reader.view.AppBarWithFileButton
+import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.FilterDropDownList
+import com.jeanwest.reader.view.InventoryReportItem
+import com.jeanwest.reader.view.Item
+import com.jeanwest.reader.view.LoadingCircularProgressIndicator
+import com.jeanwest.reader.view.MyApplicationTheme
+import com.jeanwest.reader.view.NotFound
+import com.jeanwest.reader.view.showLog
 import com.jeanwest.reader.models.Inventory
 import com.jeanwest.reader.models.InventoryItem
 import com.jeanwest.reader.models.Product

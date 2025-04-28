@@ -18,8 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import com.jeanwest.reader.R
-import com.jeanwest.reader.features.shared.showLog
-import com.jeanwest.reader.models.EPC
+import com.jeanwest.reader.view.showLog
 import com.jeanwest.reader.models.Product
 import com.jeanwest.reader.useCases.pointMobileSDK.DeviceManager
 import com.jeanwest.reader.useCases.pointMobileSDK.DeviceState
