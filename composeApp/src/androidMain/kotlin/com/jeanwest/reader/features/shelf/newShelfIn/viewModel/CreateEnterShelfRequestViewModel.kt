@@ -77,7 +77,6 @@ class CreateEnterShelfRequestViewModel @Inject constructor(
     }
 
     fun scanTrigger() {
-
         if (requestType == RequestType.Product && newFeature) {
             if (rf.scanning) {
                 rf.stopScanning()
@@ -99,8 +98,7 @@ class CreateEnterShelfRequestViewModel @Inject constructor(
             )
             loading = false
             return
-        }
-        else if (productsUiList.isNotEmpty() && cartonsUiList.isNotEmpty()) {
+        } else if (productsUiList.isNotEmpty() && cartonsUiList.isNotEmpty()) {
             showLog(data = "لیست باید فقط شامل کارتن یا فقط شامل کالا باشد.", state = state)
             loading = false
             return
@@ -114,7 +112,7 @@ class CreateEnterShelfRequestViewModel @Inject constructor(
                     products = productsUiList,
                     onSuccess = { stockDraftNumber, requestNumber ->
                         popupHost.showPopupWithAButton(
-                            message = "حواله به فروشگاه مرکزی با شماره $stockDraftNumber ایجاد و $requestNumber ",
+                            message = "حواله به فروشگاه مرکزی به تعداد ${productsUiList.size} کالا با شماره $stockDraftNumber ایجاد و $requestNumber ",
                             onDismiss = { clearAll() },
                             onDoneButtonClick = { clearAll() }
                         )
@@ -127,13 +125,12 @@ class CreateEnterShelfRequestViewModel @Inject constructor(
                 )
             }
         } else if (cartonsUiList.isNotEmpty()) {
-
             repository.createShelfInRequestByCartons(
                 cartons = cartonsUiList,
                 createRequestByRFID = newFeature,
                 onSuccess = { stockDraftNumber, requestNumber ->
                     popupHost.showPopupWithAButton(
-                        message = "حواله به فروشگاه مرکزی با شماره $stockDraftNumber ایجاد و $requestNumber ",
+                        message = "حواله به فروشگاه مرکزی بامجموع کالا ${cartonsUiList.sumOf { it.numberOfItems }} با شماره $stockDraftNumber ایجاد و $requestNumber ",
                         onDismiss = { clearAll() },
                         onDoneButtonClick = { clearAll() }
                     )
@@ -144,13 +141,11 @@ class CreateEnterShelfRequestViewModel @Inject constructor(
                     loading = false
                 }
             )
-
         } else {
             showLog(data = "لیست خالی است.", state = state)
             loading = false
             return
         }
-
     }
 
     fun deleteProduct(index: Int) {
@@ -160,7 +155,7 @@ class CreateEnterShelfRequestViewModel @Inject constructor(
         } else {
             uiListWithBarcodeMainMap.remove(productsUiList[index].primaryKey)
             barcode.scannedBarcodes.removeIf { it == productsUiList[index].scannedBarcode }
-            for (i in 0 until productsUiList[index].scannedEPCs.size){
+            for (i in 0 until productsUiList[index].scannedEPCs.size) {
                 scannedEpcsWithDetails.remove(productsUiList[index].scannedEPCs[i])
             }
             productsUiList.removeAt(index)
@@ -213,7 +208,6 @@ class CreateEnterShelfRequestViewModel @Inject constructor(
                 }
             }
         } else {
-
             if (productsUiList.isEmpty() && barcode.startsWith("CN")) {
                 getCartonDetails(barcode)
             } else if (cartonsUiList.isEmpty()) {
@@ -233,9 +227,7 @@ class CreateEnterShelfRequestViewModel @Inject constructor(
     }
 
     private fun getProductDetails(productCode: String) {
-
         loading = true
-
         scannedBarcodesWithDetails[productCode].let { productDetails ->
             if (productDetails == null) {
                 repository.getBarcodeDetails(productCode, onSuccess = {
@@ -255,11 +247,8 @@ class CreateEnterShelfRequestViewModel @Inject constructor(
     }
 
     private fun getEPCsDetails() {
-
         loading = true
-
         rf.epcs.filter { it !in scannedEpcsWithDetails }.let { newEpcs ->
-
             if (newEpcs.isNotEmpty()) {
                 repository.getItemDetailsAndInventory(
                     epcs = newEpcs,
@@ -284,7 +273,6 @@ class CreateEnterShelfRequestViewModel @Inject constructor(
     }
 
     private fun addEPCToUiList(product: Product) {
-
         uiListWithBarcodeMainMap[product.primaryKey].let { productDetails ->
             if (productDetails == null) {
                 uiListWithBarcodeMainMap[product.primaryKey] = product

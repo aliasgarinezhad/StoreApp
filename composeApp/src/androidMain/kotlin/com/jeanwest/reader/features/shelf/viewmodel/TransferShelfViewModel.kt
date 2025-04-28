@@ -69,20 +69,32 @@ class TransferShelfViewModel @Inject constructor(
         setupExceptionHandler()
         // Initialize barcode scanning with a callback.
         barcode = Barcode(context) { scannedText ->
-            if (scannedText.trim().uppercase(Locale.getDefault()).startsWith("SH")) {
-                when (screen) {
-                    "ScanShelfToExit" -> {
+            when (screen) {
+                "ScanShelfToExit" -> {
+                    if (scannedText.trim().uppercase(Locale.getDefault()).startsWith("SH")) {
                         shelfToExitItems = scannedText
                         onFirstTextFieldImeAction()
-                    }
-
-                    "ScanShelfToEnter" -> {
-                        shelfToEnterItems = scannedText
-                        onSecondTextFieldImeAction()
+                    } else {
+                        showLog("قفسه معتبر نیست", state)
                     }
                 }
-            } else {
-                showLog("قفسه معتبر نیست", state)
+
+                "ScanShelfToEnter" -> {
+                    if (scannedText.trim().uppercase(Locale.getDefault()).startsWith("SH")) {
+                        shelfToEnterItems = scannedText
+                        onSecondTextFieldImeAction()
+                    } else {
+                        showLog("قفسه معتبر نیست", state)
+                    }
+                }
+
+                "SelectProductsScreen" -> {
+                    uiList.forEach {
+                        if (it.product.KBarCode == scannedText) {
+                            scanAndCompareProductsUiList.add(it)
+                        }
+                    }
+                }
             }
         }
 
@@ -193,7 +205,7 @@ class TransferShelfViewModel @Inject constructor(
     }
 
     private fun setBarcodeScan() {
-        if (screen == "ScanShelfToExit" || screen == "ScanShelfToEnter") barcode.enable() else barcode.disable()
+        if (screen != "ScanProductsScreen") barcode.enable() else barcode.disable()
     }
 
 

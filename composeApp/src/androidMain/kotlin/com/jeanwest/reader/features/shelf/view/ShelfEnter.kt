@@ -2,7 +2,6 @@
 
 package com.jeanwest.reader.features.shelf.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,7 +36,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -52,6 +49,7 @@ import com.jeanwest.reader.R
 import com.jeanwest.reader.data.local.SharedPreference
 import com.jeanwest.reader.data.remote.API
 import com.jeanwest.reader.features.shared.BottomBarButton
+import com.jeanwest.reader.features.shared.EmptyBox
 import com.jeanwest.reader.features.shared.ErrorSnackBar
 import com.jeanwest.reader.features.shared.ItemWithInputText
 import com.jeanwest.reader.features.shared.LoadingCircularProgressIndicator
@@ -60,7 +58,6 @@ import com.jeanwest.reader.features.shared.ScanOrTypeNumberPage
 import com.jeanwest.reader.features.shared.Shapes
 import com.jeanwest.reader.features.shared.SimpleTextField
 import com.jeanwest.reader.features.shared.SnackBarActions
-import com.jeanwest.reader.features.shared.Typography
 import com.jeanwest.reader.features.shared.errorContainerLight
 import com.jeanwest.reader.features.shared.errorLight
 import com.jeanwest.reader.features.shared.onPrimaryLight
@@ -400,37 +397,7 @@ class ShelfEnter : ComponentActivity() {
                 }
 
                 if (uiList.isEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .padding(bottom = 56.dp)
-                            .fillMaxSize()
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .width(256.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .background(color = Color.White, shape = Shapes.medium)
-                                    .size(256.dp)
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_empty_box),
-                                    contentDescription = "",
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier.align(Alignment.Center)
-                                )
-                            }
-
-                            Text(
-                                "هنوز کالایی برای ورود به قفسه اسکن نکرده اید",
-                                style = Typography.headlineMedium,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(top = 16.dp, start = 4.dp, end = 4.dp),
-                            )
-                        }
-                    }
+                    EmptyBox("هنوز کالایی برای ورود به قفسه اسکن نکرده اید")
                 } else {
                     LazyColumn(modifier = Modifier.padding(bottom = 56.dp)) {
                         items(uiList.size) { i ->

@@ -64,7 +64,7 @@
     <string name="scan_or_enter_barcode">بارکد کالا یا حواله را اسکن یا وارد کنید</string>
     <string name="CartonModification">اصلاح کارتن</string>
     <string name="ShelfInRequest">درخواست ورود به قفسه</string>
-    <string name="NewShelfInRequest"> درخواست ورود به قفسه جدید</string>
+    <string name="NewShelfInRequest">درخواست ورود به قفسه با rfid</string>
     <string name="ShelfInNew">ورود به قفسه با درخواست</string>
     <string name="ShelfInventory">کنترل موجودی قفسه</string>
     <string name="stop">توقف</string>

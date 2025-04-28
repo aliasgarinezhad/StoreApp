@@ -1,6 +1,7 @@
 package com.jeanwest.reader.features.shelf.inventory.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -44,6 +45,7 @@ class ShelfInventoryViewModel @Inject constructor(
     var navigationEvent by mutableStateOf<NavigationEvent>(NavigationEvent.BackToEnterShelfNumberEvent)
 
     private var shelfEPCs = mutableListOf<String>()
+    private val processedEpcs = mutableSetOf<String>()
 
     val rfid = RFID(context, state) {
         scanTrigger()
@@ -76,15 +78,18 @@ class ShelfInventoryViewModel @Inject constructor(
 
     fun onResumeActivity() {
         state.currentSnackbarData?.dismiss()
+        barcode.connectWithContext()
     }
 
     private fun calculateShortages() {
         loading = true
         CoroutineScope(Dispatchers.Default).launch {
+
             uiList.forEach { shelfItem ->
                 shelfItem.epcs.forEach { epc ->
-                    if (rfid.epcs.contains(epc)) {
+                    if (rfid.epcs.contains(epc) && !processedEpcs.contains(epc)) {
                         shelfItem.product.scannedEPCs.add(epc)
+                        processedEpcs.add(epc)
                     }
                 }
             }
@@ -118,6 +123,7 @@ class ShelfInventoryViewModel @Inject constructor(
             products = uiList,
             onSuccess = {
                 showLog(data = "گزارش با موفقیت ثبت شد.", state = state)
+                processedEpcs.clear()
                 backToScanShelfPage()
                 loading = false
             },

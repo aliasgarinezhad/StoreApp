@@ -199,14 +199,23 @@ fun Content(
                         onClick = onTypeFilterChange
                     )
                 }
-
-                Text(
-                    text = "مجموع: ${uiListProduct.sumOf { it.scannedNumber } + uiListCarton.size}",
-                    style = MaterialTheme.typography.body1,
-                    modifier = Modifier
-                        .padding(start = 16.dp, top = 8.dp)
-                        .align(Alignment.CenterVertically)
-                )
+                if (uiListCarton.isNotEmpty()) {
+                    Text(
+                        text = "مجموع کالاهای کارتن: ${uiListCarton.sumOf { it.numberOfItems }}",
+                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier
+                            .padding(start = 16.dp, top = 8.dp)
+                            .align(Alignment.CenterVertically)
+                    )
+                }else if (uiListProduct.isNotEmpty()){
+                    Text(
+                        text = "مجموع: ${uiListProduct.sumOf { it.scannedNumber }}",
+                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier
+                            .padding(start = 16.dp, top = 8.dp)
+                            .align(Alignment.CenterVertically)
+                    )
+                }
             }
             if (uiListProduct.isEmpty() && uiListCarton.isEmpty()) {
                 EmptyBox("هنوز کالایی اسکن نکرده اید")

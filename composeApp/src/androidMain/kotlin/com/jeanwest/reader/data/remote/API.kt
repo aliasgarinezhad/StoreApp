@@ -2397,6 +2397,13 @@ class API @Inject constructor(
                         productJson.put("epc", epc)
                         productList.put(productJson)
                     }
+                }else{
+                    val productJson = JSONObject()
+                    productJson.put("BarcodeMain_ID", products.product.primaryKey)
+                    productJson.put("KBarCode", products.product.KBarCode)
+                    productJson.put("qty", products.product.scannedBarcodeNumber)
+                    productJson.put("epc", "")
+                    productList.put(productJson)
                 }
                 body.put("products", productList)
                 return body.toString().toByteArray()
