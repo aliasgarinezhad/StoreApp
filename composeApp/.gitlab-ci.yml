@@ -17,6 +17,9 @@ build_dev:
     - mkdir -p /opt/android-sdk/cmdline-tools/latest
     - mv /tmp/cmdline-tools/* /opt/android-sdk/cmdline-tools/latest/
     - rm cmdline-tools.zip
+    - mv /opt/android-sdk/cmdline-tools/latest/cmdline-tools/* /opt/android-sdk/cmdline-tools/latest/
+    - rmdir /opt/android-sdk/cmdline-tools/latest/cmdline-tools
+    - ls -ltrha /opt/android-sdk/cmdline-tools/latest/bin/sdkmanager
     # Set ANDROID_HOME
     - export ANDROID_HOME=/opt/android-sdk
     - export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
