@@ -2702,45 +2702,6 @@ fun AppBarWithFileButton(
 }
 
 @Composable
-fun SimpleTextField(
-    modifier: Modifier,
-    hint: String,
-    onValueChange: (it: String) -> Unit,
-    value: String,
-    isError: Boolean = false,
-    onDone: () -> Unit = {},
-    keyboardType: KeyboardType = KeyboardType.Text,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-) {
-
-    val focusManager = LocalFocusManager.current
-
-    OutlinedTextField(
-        //textStyle = MaterialTheme.typography.bodyMedium,
-        value = value,
-        onValueChange = {
-            onValueChange(it)
-        },
-        modifier = modifier
-            .testTag("TextField")
-            .fillMaxWidth(),
-        keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.Done,
-            keyboardType = keyboardType
-        ),
-        keyboardActions = KeyboardActions(onDone = {
-            focusManager.clearFocus()
-            onDone()
-        }),
-        label = { Text(text = hint) },
-        isError = isError,
-        visualTransformation = visualTransformation,
-        singleLine = true,
-
-        )
-}
-
-@Composable
 fun LoadingCircularProgressIndicator(
     isScanning: Boolean = false,
     isDataLoading: Boolean = false,

@@ -2,6 +2,7 @@ package com.jeanwest.reader.factory.addTaskFeature.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -58,11 +59,13 @@ fun SelectTaskScreen(
                     AppBarWithBack(title = pageTitle, onBackPressed = onBack)
                 },
                 content = {
-                    Content(
-                        loading = loading,
-                        product = product,
-                        onClick = onClick
-                    )
+                    Box(modifier = Modifier.padding(it)) {
+                        Content(
+                            loading = loading,
+                            product = product,
+                            onClick = onClick
+                        )
+                    }
                 },
                 snackbarHost = { ErrorSnackBar(state) },
             )
@@ -89,7 +92,7 @@ private fun Content(
 
             Text(
                 text = product.style.substring(product.style.length - 3, product.style.length) + "-",
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.titleSmall,
                 textAlign = TextAlign.Right,
                 fontSize = 14.sp,
             )

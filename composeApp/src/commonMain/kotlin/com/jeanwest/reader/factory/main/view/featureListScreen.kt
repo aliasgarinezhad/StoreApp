@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.jeanwest.reader.factory.addTaskFeature.data.FactoryUser
 import com.jeanwest.reader.factory.main.model.Feature
+import com.jeanwest.reader.view.ClearAbleTextField
 import com.jeanwest.reader.view.MyApplicationTheme
 import com.jeanwest.reader.view.ErrorSnackBar
 import com.jeanwest.reader.view.LoadingIndicator
@@ -67,21 +68,23 @@ fun FeatureListScreen(
     onTextFieldChanged: (value: String) -> Unit,
     onFeatureIconClick: (screen: Any) -> Unit,
     onTextFieldFocused: () -> Unit,
-    ) {
+) {
 
     MyApplicationTheme {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
             Scaffold(
                 content = {
-                    MainContent(
-                        loading = loading,
-                        featuresList = featuresList,
-                        onFeatureIconClick = onFeatureIconClick,
-                        factoryUser = factoryUser,
-                        textFieldValue = textFieldValue,
-                        onTextFieldChanged = onTextFieldChanged,
-                        onTextFieldFocused = onTextFieldFocused,
-                    )
+                    Box(modifier = Modifier.padding(it)) {
+                        MainContent(
+                            loading = loading,
+                            featuresList = featuresList,
+                            onFeatureIconClick = onFeatureIconClick,
+                            factoryUser = factoryUser,
+                            textFieldValue = textFieldValue,
+                            onTextFieldChanged = onTextFieldChanged,
+                            onTextFieldFocused = onTextFieldFocused,
+                        )
+                    }
                 },
                 snackbarHost = { ErrorSnackBar(state) },
             )
@@ -112,24 +115,17 @@ fun MainContent(
                         .align(Alignment.CenterVertically)
                 )
 
-                var isFocused by remember { mutableStateOf(false) }
-                OutlinedTextField(
-                    value = textFieldValue,
-                    onValueChange = { newValue ->
-                        // Allow only digits
-                        onTextFieldChanged(newValue)
-                    },
-                    label = { Text("شماره چرخ") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                ClearAbleTextField(
                     modifier = Modifier
                         .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-                        .fillMaxWidth()
-                        .onFocusChanged {
-                            isFocused = it.isFocused
-                            if (isFocused) {
-                                onTextFieldFocused()
-                            }
-                        },
+                        .fillMaxWidth(),
+                    hint = "شماره چرخ",
+                    onValueChange = onTextFieldChanged,
+                    value = if (textFieldValue !in listOf("null", "Null", "NULL")) textFieldValue else "",
+                    isError = textFieldValue in listOf("null", "Null", "NULL", ""),
+                    onDone = {},
+                    keyboardType = KeyboardType.Number,
+                    onTextFieldFocused = onTextFieldFocused
                 )
             }
 

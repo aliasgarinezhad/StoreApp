@@ -1,5 +1,6 @@
 package com.jeanwest.reader.factory.stopActivityFeature.view
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -65,11 +66,13 @@ fun StopActivityScreen(
                     AppBarWithBack(title = pageTitle, onBackPressed = onBack)
                 },
                 content = {
-                    Content(
-                        loading = loading,
-                        reasons = reasons,
-                        onConfirm = onConfirm
-                    )
+                    Box(modifier = Modifier.padding(it)) {
+                        Content(
+                            loading = loading,
+                            reasons = reasons,
+                            onConfirm = onConfirm
+                        )
+                    }
                 },
                 snackbarHost = { ErrorSnackBar(state) },
             )

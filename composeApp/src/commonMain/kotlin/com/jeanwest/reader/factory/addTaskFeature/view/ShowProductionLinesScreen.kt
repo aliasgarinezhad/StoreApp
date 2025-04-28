@@ -68,11 +68,13 @@ fun ShowProductionLinesScreen(
                     AppBarWithBack(title = pageTitle, onBackPressed = onBack)
                 },
                 content = {
-                    Content(
-                        loading = loading,
-                        products = products,
-                        onClick = onClick
-                    )
+                    Box(modifier = Modifier.padding(it)) {
+                        Content(
+                            loading = loading,
+                            products = products,
+                            onClick = onClick
+                        )
+                    }
                 },
                 snackbarHost = { ErrorSnackBar(state) },
             )
@@ -169,9 +171,8 @@ private fun ProductLineItem(
 
                     Text(
                         text = product.style.substring(product.style.length - 3, product.style.length) + "-",
-                        style = MaterialTheme.typography.headlineMedium,
+                        style = MaterialTheme.typography.titleSmall,
                         textAlign = TextAlign.Right,
-                        fontSize = 14.sp,
                     )
                     Text(
                         text = product.style.substring(0 , product.style.length - 3),
@@ -182,7 +183,7 @@ private fun ProductLineItem(
 
                 Text(
                     text = product.name,
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Right,
                     maxLines = 1
                 )
@@ -195,15 +196,15 @@ private fun ProductLineItem(
                     .padding(top = 16.dp, bottom = 16.dp)
                     .wrapContentWidth()
                     .background(
-                        color = MaterialTheme.colorScheme.surfaceContainerLow,
-                        shape = Shapes.large
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = MaterialTheme.shapes.large
                     ),
 
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Text(
                     text = "رنگ: " + product.color,
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.labelMedium,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
                 )
@@ -216,7 +217,7 @@ private fun ProductLineItem(
                 )
                 Text(
                     text = "پارت: " + product.part,
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.labelMedium,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
                 )

@@ -83,7 +83,11 @@ class FactoryMainViewModel {
     }
 
     fun onFeatureIconClick(screen: Any) {
-        changeScreen(screen)
+        if (machineCodeTextFieldValue == "") {
+            showLog(data = "لطفا شماره چرخ را وارد کنید.", state = state)
+        } else {
+            changeScreen(screen)
+        }
     }
 
     private fun changeScreen(screen: Any) {
