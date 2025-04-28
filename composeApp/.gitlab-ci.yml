@@ -24,9 +24,9 @@ build_dev:
     - export ANDROID_HOME=/opt/android-sdk
     - export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
     # Accept licenses and install required SDK components
-    - export HTTP_PROXY=socks5://10.0.1.98:1080
-    - export HTTPS_PROXY=socks5://10.0.1.98:1080
     - yes | sdkmanager --licenses || true
+    - export HTTP_PROXY=http:://10.0.1.98:1080
+    - export HTTPS_PROXY=http:://10.0.1.98:1080
     - sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
   script:
       - ./gradlew assembleRelease
