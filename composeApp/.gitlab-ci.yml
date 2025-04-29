@@ -12,14 +12,12 @@ build_dev:
     - apt-get update && apt-get install -y unzip
     # Download and install Android Command Line Tools
     - curl -x socks5h://10.0.1.98:1080 -L -o cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip    
-    - ls -ltrha | grep cmdline
     - unzip cmdline-tools.zip -d /tmp/cmdline-tools
     - mkdir -p /opt/android-sdk/cmdline-tools/latest
     - mv /tmp/cmdline-tools/* /opt/android-sdk/cmdline-tools/latest/
     - rm cmdline-tools.zip
     - mv /opt/android-sdk/cmdline-tools/latest/cmdline-tools/* /opt/android-sdk/cmdline-tools/latest/
     - rmdir /opt/android-sdk/cmdline-tools/latest/cmdline-tools
-    - ls -ltrha /opt/android-sdk/cmdline-tools/latest/bin/sdkmanager
     # Set ANDROID_HOME
     - export ANDROID_HOME=/opt/android-sdk
     - export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
@@ -31,12 +29,10 @@ build_dev:
   script:
       - ./gradlew assembleRelease
       - export VERSION_NUMBER=$(grep versionName ./composeApp/build.gradle.kts | cut -d '"' -f 2)
-      - ls -ltrha .
-      - find . -name "*.apk"
-      - mv ./app/build/outputs/apk/release/app-release.apk ./app/build/outputs/apk/release/app-debug-$VERSION_NUMBER.apk
+      - mv ./composeApp/build/outputs/apk/release/composeApp-release.apk ./composeApp/build/outputs/apk/release//app-debug-$VERSION_NUMBER.apk
   artifacts:
     paths:
-      - ./app/build/outputs/apk/release/
+      - ./composeApp/build/outputs/apk/release/
     when: on_success
     expire_in: 10 days
   environment:
@@ -49,7 +45,7 @@ publish_dev:
   only:
     - develop
   script:
-      - cp ./app/build/outputs/apk/release/app-debug-$VERSION_NUMBER.apk /opt/rfid_gateway/storage
+      - cp ./composeApp/build/outputs/apk/release//app-debug-$VERSION_NUMBER.apk /opt/rfid_gateway/storage
   environment:
     name: publish
 
@@ -63,29 +59,27 @@ build_prod:
     - apt-get update && apt-get install -y unzip
     # Download and install Android Command Line Tools
     - curl -x socks5h://10.0.1.98:1080 -L -o cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip    
-    - ls -ltrha | grep cmdline
     - unzip cmdline-tools.zip -d /tmp/cmdline-tools
     - mkdir -p /opt/android-sdk/cmdline-tools/latest
     - mv /tmp/cmdline-tools/* /opt/android-sdk/cmdline-tools/latest/
     - rm cmdline-tools.zip
     - mv /opt/android-sdk/cmdline-tools/latest/cmdline-tools/* /opt/android-sdk/cmdline-tools/latest/
     - rmdir /opt/android-sdk/cmdline-tools/latest/cmdline-tools
-    - ls -ltrha /opt/android-sdk/cmdline-tools/latest/bin/sdkmanager
     # Set ANDROID_HOME
     - export ANDROID_HOME=/opt/android-sdk
     - export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
     # Accept licenses and install required SDK components
     - export HTTP_PROXY=http://10.0.1.98:1080
     - export HTTPS_PROXY=http://10.0.1.98:1080
-    - yes | sdkmanager --licenses >/dev/null 2>&1 || true
+    - yes | sdkmanager --licenses || true
     - sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
   script:
       - ./gradlew assembleRelease
       - export VERSION_NUMBER=$(grep versionName ./composeApp/build.gradle.kts | cut -d '"' -f 2)
-      - mv ./app/build/outputs/apk/release/release-$VERSION_NUMBER.apk ./app/build/outputs/apk/release/app-debug-$VERSION_NUMBER.apk
+      - mv ./composeApp/build/outputs/apk/release/composeApp-release.apk ./composeApp/build/outputs/apk/release//app-debug-$VERSION_NUMBER.apk
   artifacts:
     paths:
-      - ./app/build/outputs/apk/release/
+      - ./composeApp/build/outputs/apk/release/
     when: on_success
     expire_in: 10 days
   environment:
@@ -98,6 +92,6 @@ publish_prod:
   only:
     - master
   script:
-      - cp ./app/build/outputs/apk/release/app-debug-$VERSION_NUMBER.apk /opt/rfid_gateway/storage
+      - cp ./composeApp/build/outputs/apk/release//app-debug-$VERSION_NUMBER.apk /opt/rfid_gateway/storage
   environment:
     name: publish
