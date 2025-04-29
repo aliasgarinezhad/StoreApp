@@ -32,7 +32,7 @@ build_dev:
       - mv ./composeApp/build/outputs/apk/release/composeApp-release.apk ./composeApp/build/outputs/apk/release/app-debug-$VERSION_NUMBER.apk
   artifacts:
     paths:
-      - ./composeApp/build/outputs/apk/release/app-debug-$VERSION_NUMBER.apk
+      - ./composeApp/build/outputs/apk/release/app-debug-*.apk
     when: on_success
     expire_in: 10 days
   environment:
@@ -80,7 +80,7 @@ build_prod:
       - mv ./composeApp/build/outputs/apk/release/composeApp-release.apk ./composeApp/build/outputs/apk/release/app-debug-$VERSION_NUMBER.apk
   artifacts:
     paths:
-      - ./composeApp/build/outputs/apk/release/app-debug-$VERSION_NUMBER.apk
+      - ./composeApp/build/outputs/apk/release/app-debug-*.apk
     when: on_success
     expire_in: 10 days
   environment:
