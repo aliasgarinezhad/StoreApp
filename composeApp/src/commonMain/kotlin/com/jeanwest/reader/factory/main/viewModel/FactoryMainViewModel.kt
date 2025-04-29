@@ -13,7 +13,8 @@ import com.jeanwest.reader.factory.main.useCase.features
 import com.jeanwest.reader.factory.main.view.FeatureListScreen
 import com.jeanwest.reader.data.onError
 import com.jeanwest.reader.data.onSuccess
-import com.jeanwest.reader.shop.view.LoginScreen
+import com.jeanwest.reader.getFactoryUserData
+import com.jeanwest.reader.login.view.LoginScreen
 import com.jeanwest.reader.view.showLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
@@ -25,16 +26,12 @@ import kotlinx.coroutines.withContext
  * ViewModel for the Factory Main screen, handling user authentication,
  * feature access, and navigation within the application.
  */
-class FactoryMainViewModel {
+class FactoryMainViewModel(factoryUser: FactoryUser) {
 
     //charge ui parameters
     var loading by mutableStateOf(false)
         private set
     var state = SnackbarHostState()
-        private set
-    var username by mutableStateOf("")
-        private set
-    var password by mutableStateOf("")
         private set
     val featureList = mutableStateListOf<Feature>()
 
@@ -43,43 +40,19 @@ class FactoryMainViewModel {
     var screenChangePending by mutableStateOf(false)
         private set
     var machineCodeTextFieldValue by mutableStateOf("")
-    private var factoryUser = FactoryUser()
+    var userFullName by mutableStateOf("")
+        private set
 
-
-    fun signIn() {
-        CoroutineScope(Default).launch {
-            if (username.isEmpty() || password.isEmpty()) {
-                showLog("لطفا تمامی مقادیر را وارد کنید", state)
-            } else if (!username.all { it.isDigit() } || !password.all { it.isDigit() }) {
-                showLog("تمام مقادیر وارد شده باید عددی باشد", state)
-            } else {
-                loading = true
-                RemoteConnection.loginUserFactory(username.toLong(), password.toLong()).onSuccess {
-                    factoryUser = it
-                    val userFeatures = factoryUser.icons.map { feature -> feature.iconLatinName }
-                    features.forEach { feature ->
-                        if (feature.accessKey in userFeatures) {
-                            featureList.add(feature)
-                        }
-                    }
-                    SharedRepository.machineCode = factoryUser.machineCode
-                    machineCodeTextFieldValue = SharedRepository.machineCode.toString()
-                    withContext(Main) {
-                        changeScreen(FeatureListScreen)
-                        loading = false
-                    }
-                }.onError {
-                    if (it.name == "UNKNOWN" || it.name == "UNAUTHORIZED") {
-                        showLog("نام کاربری یا رمزعبور اشتباه است", state)
-                    } else {
-                        showLog(it.toString(), state)
-                    }
-                    withContext(Main) {
-                        loading = false
-                    }
-                }
+    init {
+        userFullName = factoryUser.fullName
+        val userFeatures = factoryUser.icons.map { feature -> feature.iconLatinName }
+        features.forEach { feature ->
+            if (feature.accessKey in userFeatures) {
+                featureList.add(feature)
             }
         }
+        SharedRepository.machineCode = factoryUser.machineCode
+        machineCodeTextFieldValue = SharedRepository.machineCode.toString()
     }
 
     fun onFeatureIconClick(screen: Any) {
@@ -100,14 +73,6 @@ class FactoryMainViewModel {
     fun onScreenChanged() {
         currentScreen = destinationScreen
         screenChangePending = false
-    }
-
-    fun onUsernameValueChanges(value: String) {
-        username = value
-    }
-
-    fun onPasswordValueChanges(value: String) {
-        password = value
     }
 
     fun onTextFieldFocused() {

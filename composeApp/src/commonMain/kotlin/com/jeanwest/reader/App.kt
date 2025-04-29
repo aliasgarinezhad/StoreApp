@@ -1,11 +1,12 @@
 package com.jeanwest.reader
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.jeanwest.reader.factory.FactoryApp
+import com.jeanwest.reader.factory.addTaskFeature.data.RemoteConnection
 import com.jeanwest.reader.factory.addTaskFeature.view.EnterDateAndNumberScreen
 import com.jeanwest.reader.factory.addTaskFeature.view.SelectTaskScreen
 import com.jeanwest.reader.factory.addTaskFeature.view.ShowProductionLinesScreen
@@ -14,11 +15,16 @@ import com.jeanwest.reader.factory.main.view.FeatureListScreen
 import com.jeanwest.reader.factory.main.viewModel.FactoryMainViewModel
 import com.jeanwest.reader.factory.stopActivityFeature.view.StopActivityScreen
 import com.jeanwest.reader.factory.stopActivityFeature.viewModel.StopActivityViewModel
-import com.jeanwest.reader.shop.view.LoginPage
-import com.jeanwest.reader.shop.view.LoginScreen
-import com.jeanwest.reader.shop.view.MainPage
-import com.jeanwest.reader.shop.view.MainScreen
-import com.jeanwest.reader.shop.viewModel.AppViewModel
+import com.jeanwest.reader.login.view.NavigationEvents
+import com.jeanwest.reader.login.viewModel.LoginViewModel
+import com.jeanwest.reader.login.view.LoginPage
+import com.jeanwest.reader.login.view.LoginScreen
+import com.jeanwest.reader.shop.view.KioskMainPage
+import com.jeanwest.reader.shop.view.KioskScreen
+import com.jeanwest.reader.shop.viewModel.KioskViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * The main composable function for the application, handling navigation and screen changes.
@@ -37,29 +43,14 @@ import com.jeanwest.reader.shop.viewModel.AppViewModel
  */
 @Composable
 fun App(
-    viewModel: AppViewModel,
     mainViewModel: FactoryMainViewModel,
     addTaskViewModel: FactoryAddTaskViewModel,
     stopActivityViewModel: StopActivityViewModel,
-    isFactoryAppRequested: Boolean = false,
-    barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit,
 ) {
 
     val navHostController = rememberNavController()
-    if (isFactoryAppRequested) {
-        FactoryApp(
-            factoryMainViewModel = mainViewModel,
-            factoryAddTaskViewModel = addTaskViewModel,
-            navHostController = navHostController,
-            factoryStopActivityViewModel = stopActivityViewModel
-        )
-    } else {
-        ComposableHost(
-            viewModel,
-            navHostController = navHostController,
-            barcodeScanner = barcodeScanner,
-        )
-    }
+    println("nav host run")
+    CommonMainNavHost(navController = navHostController)
 
     if (mainViewModel.screenChangePending || addTaskViewModel.screenChangePending || stopActivityViewModel.screenChangePending) {
 
@@ -123,67 +114,154 @@ fun App(
     }
 }
 
-/**
- *  This Composable function hosts the navigation graph for the application.
- *  It uses Jetpack Compose Navigation to manage transitions between different screens.
- *
- * @param viewModel The shared [AppViewModel] instance containing the application's state and logic.
- * @param navHostController The [NavHostController] that manages navigation within the NavHost.
- * @param barcodeScanner A composable function that displays a barcode scanner UI.  It takes a lambda
- *  `onScanSuccess` which is called when a barcode is successfully scanned, passing the scanned barcode string.
- *
- *  The NavHost defines two routes:
- *  - **LoginScreen**: Displays the login page, handling user authentication via the [AppViewModel].
- *  - **MainScreen**: Displays the main application screen after successful login. This screen includes functionality for
- *     viewing data, filtering, interacting with the camera, and user logout, all managed by the [AppViewModel].  The barcode scanner UI
- *     is integrated within the MainPage composable, utilizing the provided [barcodeScanner] composable.
- */
 @Composable
-fun ComposableHost(
-    viewModel: AppViewModel,
-    navHostController: NavHostController,
-    barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit,
-) {
+fun CommonMainNavHost(navController: NavHostController) {
 
-    NavHost(navController = navHostController, startDestination = viewModel.routeScreen.value) {
+    NavHost(navController = navController, startDestination = LoginScreen) {
 
         composable<LoginScreen> {
+
+            val loginViewModel = remember { LoginViewModel() }
+
             LoginPage(
-                username = viewModel.username,
-                password = viewModel.password,
-                onSignInButtonClick = { viewModel.signIn(navHostController = navHostController) },
-                onPasswordValueChanged = { viewModel.onPasswordValueChanges(it) },
-                onUsernameValueChanged = { viewModel.onUsernameValueChanges(it) },
-                state = viewModel.state,
-                loading = viewModel.loading,
+                username = loginViewModel.username,
+                password = loginViewModel.password,
+                onSignInButtonClick = { loginViewModel.login() },
+                onPasswordValueChanged = { loginViewModel.onPasswordValueChanges(it) },
+                onUsernameValueChanged = { loginViewModel.onUsernameValueChanges(it) },
+                state = loginViewModel.state,
+                loading = loginViewModel.loading,
+                isFactoryModeRequested = loginViewModel.isFactoryMode,
+                onIsFactoryModeChanged = { loginViewModel.onIsFactoryModeChanged(it) }
+            )
+
+            CoroutineScope(Dispatchers.Main).launch {
+                loginViewModel.navigationEvents.collect {
+                    if (it is NavigationEvents.OpenStoreModuleEvent) {
+                        navController.navigate(KioskScreen)
+                    } else if (it is NavigationEvents.OpenFactoryModuleEvent) {
+                        navController.navigate(FeatureListScreen)
+                    }
+                }
+            }
+        }
+
+        composable<KioskScreen> {
+
+            val kioskViewModel = remember {
+                KioskViewModel(
+                    savedStoreUser = getERPUserData(),
+                    webPageRequestBarcode = ""
+                )
+            }
+
+            KioskMainPage(
+                state = kioskViewModel.state,
+                isCameraOn = kioskViewModel.isCameraOn,
+                colorFilterValue = kioskViewModel.colorFilterValue,
+                onBottomBarButtonClick = { kioskViewModel.openCamera() },
+                loading = kioskViewModel.loading,
+                uiList = kioskViewModel.filteredUiList,
+                onColorFilterValueChange = { kioskViewModel.onColorFilterValueChange(it) },
+                textFieldValue = kioskViewModel.productCode,
+                onTextValueChange = { kioskViewModel.onTextValueChange(it) },
+                onImeAction = { kioskViewModel.onImeAction() },
+                onScanSuccess = {
+                    kioskViewModel.barcodeScanner(it)
+                },
+                barcodeScanner = { barcodeScanner() },
+                isFullScreenImage = kioskViewModel.isFullScreenImage,
+                changeImageFullScreen = { kioskViewModel.changeFullScreenState() },
+                colorFilterList = kioskViewModel.uiListColorFiltered,
+                filteredUiList = kioskViewModel.filteredUiList,
+                onAccountBtnClick = { kioskViewModel.onAccountBtnClick(navHostController = navController) },
+                imgAlbumUrl = kioskViewModel.imgUrls,
+                colorFilterLazyRowState = kioskViewModel.colorFilterLazyRowState.value,
+                popupState = kioskViewModel.popupHost
             )
         }
 
-        composable<MainScreen> {
-            MainPage(
-                state = viewModel.state,
-                isCameraOn = viewModel.isCameraOn,
-                colorFilterValue = viewModel.colorFilterValue,
-                onBottomBarButtonClick = { viewModel.openCamera() },
-                loading = viewModel.loading,
-                uiList = viewModel.filteredUiList,
-                onColorFilterValueChange = { viewModel.onColorFilterValueChange(it) },
-                textFieldValue = viewModel.productCode,
-                onTextValueChange = { viewModel.onTextValueChange(it) },
-                onImeAction = { viewModel.onImeAction() },
-                onScanSuccess = {
-                    viewModel.barcodeScanner(it)
-                },
-                barcodeScanner = barcodeScanner,
-                isFullScreenImage = viewModel.isFullScreenImage,
-                changeImageFullScreen = { viewModel.changeFullScreenState() },
-                colorFilterList = viewModel.uiListColorFiltered,
-                filteredUiList = viewModel.filteredUiList,
-                onAccountBtnClick = { viewModel.onAccountBtnClick(navHostController) },
-                imgAlbumUrl = viewModel.imgUrls,
-                colorFilterLazyRowState = viewModel.colorFilterLazyRowState.value,
-                popupState = viewModel.popupHost
+        composable<FeatureListScreen> {
+
+            val factoryMainViewModel =
+                remember { FactoryMainViewModel(factoryUser = getFactoryUserData()) }
+
+            FeatureListScreen(
+                onFeatureIconClick = { factoryMainViewModel.onFeatureIconClick(it) },
+                state = factoryMainViewModel.state,
+                loading = factoryMainViewModel.loading,
+                featuresList = factoryMainViewModel.featureList,
+                factoryUser = factoryMainViewModel.userFullName,
+                textFieldValue = factoryMainViewModel.machineCodeTextFieldValue,
+                onTextFieldChanged = { factoryMainViewModel.changeMachineCode(it) },
+                onTextFieldFocused = { factoryMainViewModel.onTextFieldFocused() }
             )
         }
+
+//        composable<ShowProductionLinesScreen> {
+//            ShowProductionLinesScreen(
+//                loading = factoryAddTaskViewModel.loading,
+//                products = factoryAddTaskViewModel.products,
+//                onClick = { factoryAddTaskViewModel.onProductLineClick(it) },
+//                state = factoryAddTaskViewModel.state,
+//                pageTitle = "انتخاب کالا",
+//                onBack = { factoryAddTaskViewModel.changeScreen(FeatureListScreen) }
+//            )
+//        }
+//
+//        composable<SelectTaskScreen> {
+//            SelectTaskScreen(
+//                loading = factoryAddTaskViewModel.loading,
+//                product = factoryAddTaskViewModel.userTask.product,
+//                onClick = { factoryAddTaskViewModel.onTaskClick(it) },
+//                state = factoryAddTaskViewModel.state,
+//                pageTitle = "انتخاب نوع فعالیت",
+//                onBack = { factoryAddTaskViewModel.changeScreen(ShowProductionLinesScreen) }
+//            )
+//        }
+//
+//        composable<EnterDateAndNumberScreen> {
+//            EnterDateAndNumberScreen(
+//                popupHost = factoryAddTaskViewModel.popupHost,
+//                loading = factoryAddTaskViewModel.loading,
+//                product = factoryAddTaskViewModel.userTask.product,
+//                onClick = { factoryAddTaskViewModel.onAddTaskButtonClick() },
+//                state = factoryAddTaskViewModel.state,
+//                onSizeSelected = {
+//                    factoryAddTaskViewModel.onSizeChanged(it)
+//                },
+//                onTextFieldChanged = {
+//                    factoryAddTaskViewModel.onNumberChanged(it)
+//                },
+//                onStartHourChanged = {
+//                    factoryAddTaskViewModel.onStartHourChanged(it.toInt())
+//                },
+//                onStartMinuteChanged = {
+//                    factoryAddTaskViewModel.onStartMinuteChanged(it.toInt())
+//                },
+//                onEndHourChanged = {
+//                    factoryAddTaskViewModel.onEndHourChanged(it.toInt())
+//                },
+//                onEndMinuteChanged = {
+//                    factoryAddTaskViewModel.onEndMinuteChanged(it.toInt())
+//                },
+//                userTask = factoryAddTaskViewModel.userTask,
+//                pageTitle = "انتخاب سایز و تعداد",
+//                onBack = { factoryAddTaskViewModel.changeScreen(SelectTaskScreen) },
+//                textFieldValue = factoryAddTaskViewModel.textFieldValue,
+//                onTextFieldFocused = { factoryAddTaskViewModel.onNumberFieldFocused() },
+//
+//                )
+//        }
+//        composable<StopActivityScreen> {
+//            StopActivityScreen(
+//                loading = factoryStopActivityViewModel.loading,
+//                state = factoryStopActivityViewModel.state,
+//                pageTitle = "دلیل توقف",
+//                onBack = { factoryStopActivityViewModel.changeScreen(FeatureListScreen) },
+//                reasons = factoryStopActivityViewModel.reasons,
+//                onConfirm = { factoryStopActivityViewModel.confirmStopActivity(it) }
+//            )
+//        }
     }
 }

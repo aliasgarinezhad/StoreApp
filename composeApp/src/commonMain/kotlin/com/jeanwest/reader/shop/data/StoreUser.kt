@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
  * @property warehouses A list of [Warehouse] objects associated with the user. Default value is an empty list.
  */
 @Serializable
-data class User(
+data class StoreUser(
     var accessToken: String = "",
     var username: String = "",
     var fullName: String = "",

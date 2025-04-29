@@ -1,4 +1,4 @@
-package com.jeanwest.reader.shop.view
+package com.jeanwest.reader.login.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -23,8 +24,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.jeanwest.reader.view.BigButton
-import com.jeanwest.reader.view.MyApplicationTheme
 import com.jeanwest.reader.view.ErrorSnackBar
+import com.jeanwest.reader.view.MyApplicationTheme
 import kotlinx.serialization.Serializable
 
 
@@ -50,7 +51,9 @@ fun LoginPage(
     onUsernameValueChanged: (value: String) -> Unit,
     onPasswordValueChanged: (value: String) -> Unit,
     state: SnackbarHostState,
-    loading: Boolean
+    loading: Boolean,
+    isFactoryModeRequested: Boolean,
+    onIsFactoryModeChanged: (value: Boolean) -> Unit,
 ) {
     MyApplicationTheme {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
@@ -62,7 +65,9 @@ fun LoginPage(
                         onSignInButtonClick = onSignInButtonClick,
                         onUsernameValueChanged = onUsernameValueChanged,
                         onPasswordValueChanged = onPasswordValueChanged,
-                        loading = loading
+                        loading = loading,
+                        isFactoryModeRequested = isFactoryModeRequested,
+                        onIsFactoryModeChanged = onIsFactoryModeChanged
                     )
                 },
                 snackbarHost = { ErrorSnackBar(state) },
@@ -78,7 +83,9 @@ fun Content(
     onSignInButtonClick: () -> Unit,
     onUsernameValueChanged: (value: String) -> Unit,
     onPasswordValueChanged: (value: String) -> Unit,
-    loading: Boolean
+    loading: Boolean,
+    isFactoryModeRequested: Boolean,
+    onIsFactoryModeChanged: (value: Boolean) -> Unit,
 ) {
 
     val focus = LocalFocusManager.current
@@ -100,22 +107,45 @@ fun Content(
             }
         } else {
             UsernameTextField(
-            username = username,
-            onUsernameValueChanged = onUsernameValueChanged
-        )
-        PasswordTextField(
-            password = password,
-            onPasswordValueChanged = onPasswordValueChanged
-        )
-        BigButton(
-            text = "ورود به حساب کاربری",
-            onClick = {
-                focus.clearFocus()
-                onSignInButtonClick()
-            },
-        )
+                username = username,
+                onUsernameValueChanged = onUsernameValueChanged
+            )
+            PasswordTextField(
+                password = password,
+                onPasswordValueChanged = onPasswordValueChanged
+            )
+
+            Row(
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(bottom = 24.dp)
+                    .fillMaxWidth()
+            ) {
+
+                Text(
+                    text = "کاربر تولیدی",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(start = 24.dp, end = 24.dp)
+                )
+                Switch(
+                    checked = isFactoryModeRequested,
+                    onCheckedChange = onIsFactoryModeChanged,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .alignByBaseline()
+                )
+            }
+            BigButton(
+                text = "ورود به حساب کاربری",
+                onClick = {
+                    focus.clearFocus()
+                    onSignInButtonClick()
+                },
+            )
+        }
     }
-}
 }
 
 @Composable

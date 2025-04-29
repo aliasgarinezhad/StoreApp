@@ -22,7 +22,7 @@ import severAddress
  * This class is responsible for fetching product-related data from a remote server.
  * It uses Ktor's HttpClient for making network requests and handles various network errors.
  *
- * @property user The user object containing authentication information (e.g., access token).
+ * @property storeUser The user object containing authentication information (e.g., access token).
  * @property httpClient The Ktor HttpClient instance used for making network requests.  It is expected to be pre-configured, likely with a JSON content negotiator.  Example:
  * ```
  * val httpClient = HttpClient {
@@ -33,7 +33,7 @@ import severAddress
  * ```
  */
 class GetProductData(
-    private val user: User,
+    private val storeUser: StoreUser,
     private val httpClient: HttpClient
 ) {
 
@@ -48,7 +48,7 @@ class GetProductData(
                 urlString = "$severAddress/products/similars/localdb/v2?DepartmentInfo_ID=$depId&kbarcode=$barcode"
             ) {
                 contentType(ContentType.Application.Json)
-                header("Authorization", "Bearer ${user.accessToken}")
+                header("Authorization", "Bearer ${storeUser.accessToken}")
             }
 
         } catch (_: UnresolvedAddressException) {
@@ -85,8 +85,8 @@ class GetProductData(
                 urlString = "$severAddress/products/similars/localdb?DepartmentInfo_ID=$depId&&K_Bar_Code=$searchCode"
             ) {
                 contentType(ContentType.Application.Json)
-                header("Authorization", "Bearer ${user.accessToken}")
-                println("Bearer ${user.accessToken}")
+                header("Authorization", "Bearer ${storeUser.accessToken}")
+                println("Bearer ${storeUser.accessToken}")
             }
 
         } catch (_: UnresolvedAddressException) {
@@ -122,8 +122,8 @@ class GetProductData(
                 urlString = "$severAddress/products/gallery?KBarCode=$barcode"
             ) {
                 contentType(ContentType.Application.Json)
-                println("token: " + user.accessToken)
-                header("Authorization", "Bearer ${user.accessToken}")
+                println("token: " + storeUser.accessToken)
+                header("Authorization", "Bearer ${storeUser.accessToken}")
             }
 
         } catch (_: UnresolvedAddressException) {
@@ -166,7 +166,7 @@ class GetProductData(
             ) {
                 contentType(ContentType.Application.Json)
                 setBody(body)
-                header("Authorization", "Bearer ${user.accessToken}")
+                header("Authorization", "Bearer ${storeUser.accessToken}")
             }
 
         } catch (_: UnresolvedAddressException) {
@@ -198,7 +198,7 @@ class GetProductData(
     suspend fun loginUser(
         userName: String,
         password: String
-    ): com.jeanwest.reader.data.Result<User, NetworkError> {
+    ): com.jeanwest.reader.data.Result<StoreUser, NetworkError> {
         val response = try {
             httpClient.post(
                 urlString = "$severAddress/login"
@@ -210,7 +210,7 @@ class GetProductData(
                 val body = JsonObject(bodyMap)
                 setBody(body)
                 contentType(ContentType.Application.Json)
-                header("Authorization", "Bearer ${user.accessToken}")
+                header("Authorization", "Bearer ${storeUser.accessToken}")
             }
 
         } catch (_: UnresolvedAddressException) {
@@ -223,7 +223,7 @@ class GetProductData(
             in 200..299 -> {
                 println("response = ${response.body<JsonObject>()}")
                 val json = Json { ignoreUnknownKeys = true }
-                val response = json.decodeFromJsonElement<User>(response.body<JsonObject>())
+                val response = json.decodeFromJsonElement<StoreUser>(response.body<JsonObject>())
                 com.jeanwest.reader.data.Result.Success(data = response)
             }
 

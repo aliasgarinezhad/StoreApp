@@ -63,7 +63,7 @@ fun FeatureListScreen(
     state: SnackbarHostState,
     loading: Boolean,
     featuresList: List<Feature>,
-    factoryUser: FactoryUser,
+    factoryUser: String,
     textFieldValue: String,
     onTextFieldChanged: (value: String) -> Unit,
     onFeatureIconClick: (screen: Any) -> Unit,
@@ -96,7 +96,7 @@ fun FeatureListScreen(
 fun MainContent(
     loading: Boolean,
     featuresList: List<Feature>,
-    factoryUser: FactoryUser,
+    factoryUser: String,
     textFieldValue: String,
     onTextFieldChanged: (value: String) -> Unit,
     onFeatureIconClick: (screen: Any) -> Unit,
@@ -110,7 +110,7 @@ fun MainContent(
 
             Row {
                 Text(
-                    factoryUser.fullName,
+                    factoryUser,
                     modifier = Modifier.padding(top = 16.dp, start = 16.dp)
                         .align(Alignment.CenterVertically)
                 )

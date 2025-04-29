@@ -2,45 +2,41 @@ package com.jeanwest.reader.shop.viewModel
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
-import com.jeanwest.reader.shop.view.LoginScreen
-import com.jeanwest.reader.shop.view.MainScreen
 import com.jeanwest.reader.view.showLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import com.jeanwest.reader.shop.data.GetProductData
 import com.jeanwest.reader.shop.data.Product
-import com.jeanwest.reader.shop.data.User
+import com.jeanwest.reader.shop.data.StoreUser
 import com.jeanwest.reader.data.createHttpClient
 import com.jeanwest.reader.data.onError
 import com.jeanwest.reader.data.onSuccess
+import com.jeanwest.reader.saveERPUserData
 import com.jeanwest.reader.view.NotificationPopupHost
 
 /**
  * ViewModel for the application, managing UI state and interactions related to product data, user authentication, and navigation.
  *
- * @property saveUserData A function to save user data to persistent storage.  It takes a [User] object as input.
+ * @property saveERPUserData A function to save user data to persistent storage.  It takes a [StoreUser] object as input.
  * @property webPageRequestBarcode  A barcode passed from a web page request, used to automatically search for a product upon login if not empty.
- * @property savedUser The [User] object retrieved from persistent storage upon app launch.  If empty, the user is not logged in.
+ * @property savedStoreUser The [StoreUser] object retrieved from persistent storage upon app launch.  If empty, the user is not logged in.
  */
-class AppViewModel(
-    val saveUserData: (user: User) -> Unit,
+class KioskViewModel(
     val webPageRequestBarcode: String,
-    val savedUser: User,
-) {
+    val savedStoreUser: StoreUser,
+): ViewModel() {
 
     var popupHost = NotificationPopupHost()
-    private var user = User()
-    private var client = GetProductData(user, createHttpClient())
+    private var storeUser = StoreUser()
+    private var client = GetProductData(storeUser, createHttpClient())
     private var searchUiList = mutableStateListOf<Product>()
     var imgUrls = mutableListOf<String>()
 
@@ -70,15 +66,8 @@ class AppViewModel(
 
     var isCameraOn by mutableStateOf(false)
         private set
-    var username by mutableStateOf("")
-        private set
-    var password by mutableStateOf("")
-        private set
-    var routeScreen: MutableState<Any> = mutableStateOf(LoginScreen)
-        private set
 
     var uiListColorFiltered = mutableMapOf<String, String>()
-    private var loadDataRan = false
     private var itemBarcode = ""
 
     private val sizes = listOf("S", "M", "L", "XL", "XXL", "XXXL")
@@ -89,31 +78,25 @@ class AppViewModel(
 
         loading = true
 
-        println(savedUser.toString())
-        if (savedUser.username.isNotEmpty()) {
-            println("signed in")
-            user = savedUser
-            storeFilterValues.clear()
-            savedUser.warehouses.forEach {
-                storeFilterValues[it.WareHouseTitle] = it.DepartmentInfo_ID
-            }
-            storeFilterValue =
-                storeFilterValues.entries.find { it.value == user.locationCode.toString() }?.key
-                    ?: ""
+        CoroutineScope(Default).launch {
 
-            if (webPageRequestBarcode.isNotEmpty()) {
-                onScanResult(webPageRequestBarcode)
-            }
-            routeScreen.value = MainScreen
-            loading = false
+            println(savedStoreUser.toString())
+            if (savedStoreUser.username.isNotEmpty()) {
+                storeUser = savedStoreUser
+                storeFilterValues.clear()
+                savedStoreUser.warehouses.forEach {
+                    storeFilterValues[it.WareHouseTitle] = it.DepartmentInfo_ID
+                }
+                storeFilterValue =
+                    storeFilterValues.entries.find { it.value == storeUser.locationCode.toString() }?.key
+                        ?: ""
 
-        } else {
-            println("not signed in")
-            CoroutineScope(Main).launch {
+                if (webPageRequestBarcode.isNotEmpty()) {
+                    onScanResult(webPageRequestBarcode)
+                }
                 loading = false
             }
         }
-        loadDataRan = true
     }
 
     fun changeFullScreenState() {
@@ -124,10 +107,6 @@ class AppViewModel(
 
     fun onTextValueChange(value: String) {
         productCode = value
-    }
-
-    fun onSizeFilterValueChange(value: String) {
-        sizeFilterValue = value
     }
 
     fun onColorFilterValueChange(value: String) {
@@ -153,8 +132,8 @@ class AppViewModel(
 
     fun onStoreFilterValueChange(value: String) {
         storeFilterValue = value
-        user.locationCode = storeFilterValues[value]?.toInt() ?: 0
-        saveUserData(user)
+        storeUser.locationCode = storeFilterValues[value]?.toInt() ?: 0
+        saveERPUserData(storeUser)
         clear()
     }
 
@@ -166,19 +145,6 @@ class AppViewModel(
         colorFilterValue = ""
         sizeFilterValue = ""
         uiListColorFiltered.clear()
-    }
-
-    private suspend fun delayScreen() {
-
-        withContext(Main) {
-            loading = true
-        }
-        CoroutineScope(Default).launch {
-            delay(500)
-            withContext(Main) {
-                loading = false
-            }
-        }
     }
 
     fun onImeAction() {
@@ -193,58 +159,12 @@ class AppViewModel(
     fun onLogoutClick(navHostController: NavHostController) {
         loading = true
         clear()
-        user = User()
-        saveUserData(user)
+        storeUser = StoreUser()
+        saveERPUserData(storeUser)
         storeFilterValues.clear()
-        navHostController.navigate(LoginScreen)
-        routeScreen.value = LoginScreen
-        navHostController.clearBackStack<LoginScreen>()
+        navHostController.popBackStack()
         isAccountDialogOpen = !isAccountDialogOpen
         loading = false
-    }
-
-    fun signIn(navHostController: NavHostController) {
-        CoroutineScope(Default).launch {
-            if (username.isEmpty() || password.isEmpty()) {
-                showLog("لطفا تمامی مقادیر را وارد کنید", state)
-            } else {
-                loading = true
-                client.loginUser(username, password).onSuccess {
-                    user = it
-                    storeFilterValues.clear()
-                    it.warehouses.forEach { warehouse ->
-                        storeFilterValues[warehouse.WareHouseTitle] = warehouse.DepartmentInfo_ID
-                    }
-                    storeFilterValue =
-                        storeFilterValues.entries.find { it.value == user.locationCode.toString() }?.key
-                            ?: ""
-                    saveUserData(it)
-                    withContext(Main) {
-                        navHostController.navigate(MainScreen)
-                        routeScreen.value = MainScreen
-                        navHostController.clearBackStack<MainScreen>()
-                        delayScreen()
-                    }
-                }.onError {
-                    if (it.name == "UNAUTHORIZED") {
-                        showLog("نام کاربری یا رمزعبور اشتباه است", state)
-                    } else {
-                        showLog(it.toString(), state)
-                    }
-                    withContext(Main) {
-                        loading = false
-                    }
-                }
-            }
-        }
-    }
-
-    fun onUsernameValueChanges(value: String) {
-        username = value
-    }
-
-    fun onPasswordValueChanges(value: String) {
-        password = value
     }
 
     private fun filterUiList() {
@@ -299,13 +219,13 @@ class AppViewModel(
         CoroutineScope(Default).launch {
             loading = true
             try {
-                client.getSimilarProductsByBarcode(productCode.trim(), user.locationCode)
+                client.getSimilarProductsByBarcode(productCode.trim(), storeUser.locationCode)
                     .onSuccess {
                         if (it.isNotEmpty()) {
                             handleResponse(it, productCode)
                         } else {
                             client.getSimilarProductsBySearchCode(
-                                productCode.trim(), user.locationCode
+                                productCode.trim(), storeUser.locationCode
                             ).onSuccess { it1 ->
                                 if (it1.isEmpty()) {
                                     clear()
@@ -321,7 +241,7 @@ class AppViewModel(
                             }
                         }
                     }.onError { e2 ->
-                        client.getSimilarProductsBySearchCode(productCode.trim(), user.locationCode)
+                        client.getSimilarProductsBySearchCode(productCode.trim(), storeUser.locationCode)
                             .onSuccess { it1 ->
                                 if (it1.isEmpty()) {
                                     showLog("این کد فرعی هیچ موجودی در فروشگاه شما ندارد", state)

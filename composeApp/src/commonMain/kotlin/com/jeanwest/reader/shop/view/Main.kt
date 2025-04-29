@@ -54,18 +54,18 @@ import com.jeanwest.reader.view.FullScreenImage
 import com.jeanwest.reader.view.MyApplicationTheme
 import kotlinx.serialization.Serializable
 import com.jeanwest.reader.shop.data.Product
+import com.jeanwest.reader.shop.data.StoreUser
 import com.jeanwest.reader.view.EmptyBarcode
 import com.jeanwest.reader.view.ErrorSnackBar
 import com.jeanwest.reader.view.LoadingIndicator
 import com.jeanwest.reader.view.NotificationPopUp
 import com.jeanwest.reader.view.NotificationPopupHost
-import com.jeanwest.reader.view.backgroundLight
 import org.jetbrains.compose.resources.painterResource
 import storeapp.composeapp.generated.resources.Res
 import storeapp.composeapp.generated.resources.barcode_scan_icon
 
 @Serializable
-object MainScreen
+object KioskScreen
 
 /**
  * Composable function for the main page of the application.  It displays the search content,
@@ -94,7 +94,7 @@ object MainScreen
  * @param isFullScreenImage Boolean flag indicating if the image is displayed in full screen.
  * @param changeImageFullScreen Callback to toggle full-screen */
 @Composable
-fun MainPage(
+fun KioskMainPage(
     state: SnackbarHostState,
     isCameraOn: Boolean,
     colorFilterValue: String,
@@ -106,7 +106,7 @@ fun MainPage(
     onTextValueChange: (value: String) -> Unit,
     onImeAction: () -> Unit,
     onScanSuccess: (barcodes: String) -> Unit,
-    barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit,
+    barcodeScanner: @Composable () -> Unit,
     isFullScreenImage: Boolean,
     changeImageFullScreen: () -> Unit,
     colorFilterList: Map<String, String>,
@@ -129,7 +129,6 @@ fun MainPage(
                     textFieldValue = textFieldValue,
                     onTextValueChange = onTextValueChange,
                     onImeAction = onImeAction,
-                    onScanSuccess = onScanSuccess,
                     barcodeScanner = barcodeScanner,
                     isFullScreenImage = isFullScreenImage,
                     changeImageFullScreen = changeImageFullScreen,
@@ -156,8 +155,7 @@ fun SearchContent(
     textFieldValue: String,
     onTextValueChange: (value: String) -> Unit,
     onImeAction: () -> Unit,
-    onScanSuccess: (barcodes: String) -> Unit,
-    barcodeScanner: @Composable (onScanSuccess: (barcode: String) -> Unit) -> Unit,
+    barcodeScanner: @Composable () -> Unit,
     isFullScreenImage: Boolean,
     changeImageFullScreen: () -> Unit,
     colorFilterList: Map<String, String>,
@@ -221,9 +219,7 @@ fun SearchContent(
             }
 
             if (isCameraOn) {
-                barcodeScanner {
-                    onScanSuccess(it)
-                }
+                barcodeScanner()
             } else {
                 if (uiList.isEmpty()) {
                     EmptyBarcode(
